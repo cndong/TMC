@@ -1,0 +1,10 @@
+.gitignore 
+.settings
+.buildpath
+.project
+.htaccess
+.gitignore
+/assets
+/protected/runtime
+framework
+env.php
