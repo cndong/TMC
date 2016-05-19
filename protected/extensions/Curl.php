@@ -17,14 +17,31 @@ class Curl {
 	const STATUS_JSON_ERROR = 1001;
 	
 	private static $_instances = array(); 
-	public static function getInstance($key = 'curl') {
+	public static function getInstance($key = 'curl', $headerConfig = array(), $curlConfig = array()) {
 	    if (empty(self::$_instances[$key])) {
-	        self::$_instances[$key] = new Curl();
+	        self::$_instances[$key] = new Curl($key, $headerConfig, $curlConfig);
 	    }
 	    
 	    return self::$_instances[$key];
 	}
-	
+    
+    public static function mergeArray() {
+    	$args = func_get_args();
+		$res = array_shift($args);
+		while (!empty($args)) {
+			$next = array_shift($args);
+			foreach ($next as $k => $v) {
+				if (is_integer($k)) {
+					isset($res[$k]) ? $res[] = $v : $res[$k] = $v;
+				} else if (is_array($v) && isset($res[$k]) && is_array($res[$k]))
+					$res[$k] = self::mergeArray($res[$k], $v);
+				else
+					$res[$k] = $v;
+			}
+		}
+		return $res;
+    }
+    
 	public static function getStatus($status) {
 	    return is_array($status) ? $status['status'] : $status;
 	}
@@ -74,8 +91,8 @@ class Curl {
 		$this->key = $key;
 		$this->handler = curl_init();
 		
-		$headerConfig = CMap::mergeArray(self::getDefaultHeaderInit(), $headerConfig);
-		$curlConfig = CMap::mergeArray(self::getDefaultHandlerInit(), $curlConfig);
+		$headerConfig = self::mergeArray(self::getDefaultHeaderInit(), $headerConfig);
+		$curlConfig = self::mergeArray(self::getDefaultHandlerInit(), $curlConfig);
 		
 		$this->initHeader($headerConfig);
 		$this->initHandler($curlConfig);
@@ -126,7 +143,7 @@ class Curl {
 	//配置请求的header头信息
 	public function initHeader($headerConfig, $isMerge = True) {
 		if ($isMerge) {
-			$this->header = CMap::mergeArray($this->header, $headerConfig);
+			$this->header = self::mergeArray($this->header, $headerConfig);
 		} else {
 			foreach ($headerConfig as $k => $v) {
 				$this->header[$k] = $v;
@@ -218,8 +235,40 @@ class Curl {
 		$this->autoSetCookie = $status;
 	}
 	
+	public static function addQuote($k) {
+	    return '<{' . $k . '}>';
+	}
+	
+	private function _initUrl($url, $urlData, $isUrlEncode) {
+	    if (ctype_digit(key($urlData))) {
+	        array_unshift($urlData, $url);
+	        $url = count($urlData) > 1 ? call_user_func_array('sprintf', $urlData) : $url;
+	    } else {
+	        $count = 0;
+	        foreach ($urlData as $k => $v) {
+	            $tmp = self::addQuote($k);
+	            if (strpos($url, $tmp) !== False) {
+	                $count++;
+	            }
+	            
+	            $url = str_replace($tmp, $v, $url);
+	        }
+	        
+	        if ($count <= 0 && $urlData) {
+	            $queryString = array();
+	            foreach ($urlData as $k => $v) {
+	                $v = $isUrlEncode ? urlencode($v) : $v;
+	                $queryString[] = "{$k}={$v}";
+	            }
+	            $url .= implode('&', $queryString);
+	        }
+	    }
+	    
+	    return $url;
+	}
+	
 	//发送HTTP请求及处理
-	private function _request($urlType, $urlData = array()) {
+	private function _request($urlType, $urlData = array(), $isUrlEncode = False) {
 		$rtn = array('status' => self::STATUS_RIGHT, 'info' => array(), 'qheader' => array(), 'pheader' => array(), 'data' => '', 'urlType' => array());
 		
 		if (is_array($urlType)) {
@@ -230,19 +279,18 @@ class Curl {
 		
 		$rtn['urlType'] = $urlConfig;
 		
-		$urlConfig = CMap::mergeArray(array('reqLogUrl' => False, 'reqLogPData' => False, 'reqLogQData' => True), $urlConfig);
+		$urlConfig = self::mergeArray(array('reqLogUrl' => False, 'reqLogPData' => False, 'reqLogQData' => True), $urlConfig);
 		
-		array_unshift($urlData, $urlConfig['reqUrl']);
-		$url = count($urlData) > 1 ? call_user_func_array('sprintf', $urlData) : $urlConfig['reqUrl'];
+		$url = $this->_initUrl($urlConfig['reqUrl'], $urlData, $isUrlEncode);
+
 		$this->initHandler(array(
 			CURLOPT_URL => $url,
 			CURLOPT_HTTPHEADER => $this->getCurlHeader()
 		));
-
+        
 		$content = curl_exec($this->handler);
 		$content = explode("\r\n\r\n", $content, 2);
 		$rtn['data'] = count($content) < 2 ? $content[0] : $content[1];
-		
 		if (($errno = curl_errno($this->handler)) != 0) {
 		    $rtn['status'] = $errno;
 		    $rtn['info']['error_msg'] = curl_error($this->handler);
@@ -280,14 +328,14 @@ class Curl {
 		return $rtn;
 	}
 	
-	public function get($urlType, $urlData = array()) {
+	public function get($urlType, $urlData = array(), $isUrlEncode = False) {
 		$this->initHandler(array(
 			CURLOPT_POST => 0
 		));
-		return $this->_request($urlType, $urlData);
+		return $this->_request($urlType, $urlData, $isUrlEncode);
 	}
 	
-	public function post($urlType, $postData = array(), $urlData = array()) {
+	public function post($urlType, $postData = array(), $urlData = array(), $isUrlEncode = False) {
 		$ifHaveFile = False;
 		if (is_array($postData)) {
     		foreach ($postData as $k => $v) {
@@ -312,15 +360,15 @@ class Curl {
 			CURLOPT_POSTFIELDS => $postData
 		));
 		
-		return $this->_request($urlType, $urlData);
+		return $this->_request($urlType, $urlData, $isUrlEncode);
 	}
 	
-	public function getC($urlType, $urlData = array()) {
-		return $this->get($urlType, $urlData);
+	public function getC($urlType, $urlData = array(), $isUrlEncode = False) {
+		return $this->get($urlType, $urlData, $isUrlEncode);
 	}
 	
-	public function getJ($urlType, $urlData = array()) {
-		$rtn = $this->get($urlType, $urlData);
+	public function getJ($urlType, $urlData = array(), $isUrlEncode = False) {
+		$rtn = $this->get($urlType, $urlData, $isUrlEncode);
 		if ($rtn['status'] == self::STATUS_RIGHT) {
 			if (($rtn['data'] = json_decode($rtn['data'], True)) === Null) {
 			    $rtn['status'] = self::STATUS_JSON_ERROR;
@@ -329,12 +377,12 @@ class Curl {
 		return $rtn;
 	}
 	
-	public function postC($urlType, $postData = array(), $urlData = array()) {
-		return $this->post($urlType, $urlData, $postData);
+	public function postC($urlType, $postData = array(), $urlData = array(), $isUrlEncode = False) {
+		return $this->post($urlType, $postData, $urlData, $isUrlEncode);
 	}
 	
-	public function postJ($urlType, $postData = array(), $urlData = array()) {
-		$rtn = $this->post($urlType, $urlData, $postData);
+	public function postJ($urlType, $postData = array(), $urlData = array(), $isUrlEncode = False) {
+		$rtn = $this->post($urlType, $postData, $urlData, $isUrlEncode);
 		if ($rtn['status'] == self::STATUS_RIGHT) {
             if (($rtn['data'] = json_decode($rtn['data'], True)) === Null) {
 			    $rtn['status'] = self::STATUS_JSON_ERROR;

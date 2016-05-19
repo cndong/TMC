@@ -1,17 +1,16 @@
 <?php
-
-return CMap::mergeArray(
-	require(dirname(__FILE__).'/main.php'),
-	array(
-		'components'=>array(
-			'fixture'=>array(
-				'class'=>'system.test.CDbFixtureManager',
-			),
-			/* uncomment the following to provide test database connection
-			'db'=>array(
-				'connectionString'=>'DSN for test database',
-			),
-			*/
-		),
-	)
+return array(
+    'components' => array(
+        'cache'=> array(
+            'servers' => array(
+                array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 50)
+            ),
+        ),
+        'db' => array(
+            'connectionString' => 'mysql:host=127.0.0.1;dbname=tmc',
+            'enableProfiling' => True,
+            'username' => 'root',
+            'password' => 'Qumaiya520',
+        ),
+    )
 );

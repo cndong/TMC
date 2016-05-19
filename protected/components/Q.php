@@ -12,15 +12,15 @@ class Q {
     const HOST_PREFIX_M = 'm.';
     
     public static function isLocalEnv() {
-        return self::getEnv('env') == self::ENV_LOCAL;
+        return QEnv::ENV == self::ENV_LOCAL;
     }
     
     public static function isTestEnv() {
-        return self::getEnv('env') == self::ENV_TEST;
+        return QEnv::ENV == self::ENV_TEST;
     }
     
     public static function isProductEnv() {
-        return self::getEnv('env') == self::ENV_PRODUCT;
+        return QEnv::ENV == self::ENV_PRODUCT;
     }
     
     public static function isMobileHost() {
@@ -29,6 +29,8 @@ class Q {
     }
     
     public static function isMobilePlatform() {
+        if (!isset($_SERVER['HTTP_USER_AGENT'])) 
+            return False;
         if (self::isMobileHost())
             return True;
         if (preg_match('/(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|iphone|ipad|ipod|android|xoom)/i', strtolower($_SERVER['HTTP_USER_AGENT'])))
@@ -64,75 +66,74 @@ class Q {
         return Q_ROOT_PATH . DIRECTORY_SEPARATOR . 'env.php';
     }
     
-    public static function getEnv() {
-        static $env = '';
-        if (!$env) {
-            if (!file_exists($file = self::getEnvFile())) {
-                file_put_contents($file, '');
-            }
-            
-            $env = include($file);
-        }
-        
-        return $env;
-    }
-    
     public static function getPlatform() {
         return Q::isMobilePlatform() ? Q::PLATFORM_MOBILE : Q::PLATFORM_PC;
     }
     
     public static function getConfig() {
-        $env = Q::getEnvStr();
-        $platform = Q::getPlatformStr();
-    
-        $configPath = Q_ROOT_PATH . '/protected/config/';
-        $configFile = implode('.', array($env, $hostHeader, $platform)) . '.php';
-        if (file_exists($configPath . $configFile)) {
-            return require($configPath . $configFile);
+        if (!class_exists('QEnv', False)) {
+            require self::getEnvFile();
         }
-    
+        $configPath = Q_ROOT_PATH . '/protected/config/';
+        
+        $hostLower = strtolower(Q_HOST) . '.php';
+        if (file_exists($configPath . $hostLower)) {
+            return $configPath . $hostLower;
+        }
+        
         $config = require($configPath . 'base.php');
-        foreach (array($env, $hostHeader, $platform) as $k => $file) {
-            if (file_exists($configPath . $file . '.php') || ($k == 1 && file_exists($configPath . Qmy::DEFAULT_HOST_HEADER . '.php') && ($file = Qmy::DEFAULT_HOST_HEADER))) {
-                $config = CMap::mergeArray($config, require($configPath . $file . '.php'));
+        foreach (array(QEnv::ENV, Q::getPlatform()) as $file) {
+            $file = $configPath . $file . '.php';
+            if (file_exists($file)) {
+                $config = CMap::mergeArray($config, require($file));
             }
         }
-    
+        
         return $config;
     }
     
-    public static $return = array(
-        'rc' => QR::RC_SUCCESS,
-        'msg' => '',
-        'data' => array()
-    );
-    public static function corReturn($data = '') {
-        $rtn = self::$return;
-        $rtn['data'] = $data;
-    
-        return $rtn;
+    public static function getDataDocFile($fileName) {
+        return implode(DIRECTORY_SEPARATOR, array(Yii::app()->basePath, 'datas', 'doc', $fileName));
     }
     
-    public static function errReturn($status, $msg = '') {
-        $rtn = self::$return;
-        $rtn['rc'] = $status;
-        $rtn['msg'] = $msg ? $msg : QR::getMsg($status);
-    
-        return $rtn;
-    }
-    
-    public static function isCorrect($res) {
-        return $res['rc'] == QR::RC_SUCCESS;
-    }
-    
-    public static function getCurlError($res) {
-        if (Curl::isRequestError($res)) {
-            return QR::RC_EXT_CURL_REQUEST_ERROR;
-        }
-        if (Curl::isJsonError($res)) {
-            return QR::RC_EXT_CURL_JSON_ERROR;
+    public static function getUniqueID($time = Q_TIME, $providerID = '0', $maxLength = 3) {
+        $key = KeyManager::getUniqueIDKey($time, $providerID);
+        $mem = Yii::app()->cache->getMemCache();
+        if (Yii::app()->cache->useMemcached) {
+            $mem->add($key, 0, 5);
+        } else {
+            $mem->add($key, 0, False, 5);
         }
         
-        return QR::RC_EXT_CURL_SERVER_ERROR;
+        $num = $mem->increment($key);
+        if (!$num || strlen($num) > $maxLength) {
+            return False;
+        }
+        
+        $tmp = getdate($time);
+        $time = str_pad(strval($time % 3600), 4, '0', STR_PAD_LEFT);
+        
+        $rtn = $tmp['year'] - 2015;
+        $rtn .= str_pad($tmp['mon'], 2, '0', STR_PAD_LEFT);
+        $rtn .= str_pad($tmp['mday'], 2, '0', STR_PAD_LEFT);
+        $rtn .= str_pad($tmp['hours'], 2, '0', STR_PAD_LEFT);
+        $rtn .= $providerID;
+        $rtn .= $time{2};
+        $rtn .= $time{1};
+        $rtn .= $time{0};
+        $rtn .= str_pad($num, $maxLength, '0', STR_PAD_LEFT);
+        $rtn .= $time{3};
+        
+        return strtoupper($rtn);
+    }
+    
+    public static function log($message = '', $cat = 'application', $request = False,  $level = CLogger::LEVEL_ERROR){
+        if(!is_string($message)) $message = var_export($message, True);
+        $backtrace = debug_backtrace();
+        $request = $request ? ' Request: ' . $_SERVER['REQUEST_URI'] . '|' . json_encode($_POST) . '|' . json_encode($_FILES) : '';
+        if (isset($backtrace[1]['file'])) {
+            $request .= "[{$backtrace[1]['file']}]-[{$backtrace[1]['line']}]";
+        }
+        Yii::log($message . ' @' . F::getClientIP() . $request, CLogger::LEVEL_ERROR, $cat, 0);
     }
 }

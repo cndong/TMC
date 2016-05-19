@@ -2,9 +2,8 @@
 .settings
 .buildpath
 .project
-.htaccess
 .gitignore
-/assets
-/protected/runtime
-framework
+/assets/*
+!/assets/*.html
+/protected/runtime/*.log
 env.php
