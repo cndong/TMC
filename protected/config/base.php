@@ -11,6 +11,7 @@ return array(
     ),
     'defaultController' => 'boss/index',
     'modules' => array(
+        'api',
         'boss',
         'gii' => array(
             'class' => 'system.gii.GiiModule',
@@ -24,7 +25,13 @@ return array(
         ),
         'urlManager' => array(
             'urlFormat' => 'path',
-            'showScriptName' => False
+            'showScriptName' => False,
+            'rules' => array(
+                'Flight/<action:.+>/*' => 'api/Flight/<action>',
+                'Train/<action:.+>/*' => 'api/Train/<action>',
+                'Bus/<action:.+>/*' => 'api/Bus/<action>',
+                //'Provider/<action:.+>/*' => 'api/Provider/<action>',
+            )
         ),
         'log' => array(
             'class' => 'CLogRouter',
