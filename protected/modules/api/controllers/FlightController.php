@@ -1,7 +1,7 @@
 <?php
 class FlightController extends ApiController {
     public function actionCityList() {
-        $this->corAjax(array('cityList' => ProviderF::getCNCityList()));
+        $this->corAjax(array('cityList' => array_values(ProviderF::getCNCityList())));
     }
     
     public function actionFlightList() {
@@ -13,7 +13,7 @@ class FlightController extends ApiController {
     }
     
     public function actionFlightDetail() {
-        $res = ProviderF::getCNFlightDetail($_GET);
+        $this->onAjax(ProviderF::getCNFlightDetail($_GET));
     }
     
     public function actionBook() {
