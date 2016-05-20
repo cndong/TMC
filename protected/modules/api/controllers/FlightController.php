@@ -1,7 +1,8 @@
 <?php
 class FlightController extends ApiController {
     public function actionCityList() {
-        $this->corAjax(array('cityList' => array_values(ProviderF::getCNCityList())));
+        $cityList = ProviderF::getCNCityList();
+        $this->corAjax(array('cityList' => $cityList, 'hotList' => array('BJS', 'SHA', 'CAN')));
     }
     
     public function actionFlightList() {
