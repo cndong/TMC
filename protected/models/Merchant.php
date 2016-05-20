@@ -21,7 +21,7 @@ class Merchant {
     );
 
     public static function getMerchants($merchantID = Null) {
-        $merchants = F::mergeArrayInt(self::$merchants, QEnv::$sources);
+        $merchants = F::mergeArrayInt(self::$merchants, QEnv::$merchants);
         if ($merchantID) {
             return $merchants[$merchantID];
         }

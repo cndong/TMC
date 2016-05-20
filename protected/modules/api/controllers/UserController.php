@@ -1,7 +1,15 @@
 <?php
 class UserController extends ApiController {
+    private function _getUserInfo($user) {
+        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'ctime', 'companyID', 'departmentID'));
+        $rtn['company'] = $user->company->name;
+        $rtn['department'] = $user->department->name;
+        
+        return $rtn;
+    }
+    
     public function actionLogin() {
-        if (!F::checkParams($_POST, array('mobile' => ParamsFormat::MOBILE, 'password' => ParamsFormat::TEXTNZ)) || !($password = base64_decode($_POST['password']))) {
+        if (!F::checkParams($_POST, array('mobile' => ParamsFormat::MOBILE, 'password' => ParamsFormat::TEXTNZ)) || !($password = $_POST['password'])) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
@@ -10,7 +18,7 @@ class UserController extends ApiController {
             $this->errAjax(RC::RC_LOGIN_FAILED);
         }
         
-        $this->onAjax(array('id' => $identity->id));
+        $this->corAjax($this->_getUserInfo(User::model()->findByPk($identity->id)));
     }
     
     public function actionUserInfo() {
@@ -22,11 +30,7 @@ class UserController extends ApiController {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
-        $rtn = F::arrayGetByKeys($user, array('mobile', 'name', 'ctime', 'companyID', 'departmentID'));
-        $rtn['company'] = $user->company->name;
-        $rtn['department'] = $user->department->name;
-        
-        return F::corReturn($rtn);
+        $this->corAjax($this->__getUserInfo($user));
     }
     
     public function actionModifyPassword() {

@@ -27,6 +27,7 @@ return array(
             'urlFormat' => 'path',
             'showScriptName' => False,
             'rules' => array(
+                'User/<action:.+>/*' => 'api/User/<action>',
                 'Flight/<action:.+>/*' => 'api/Flight/<action>',
                 'Train/<action:.+>/*' => 'api/Train/<action>',
                 'Bus/<action:.+>/*' => 'api/Bus/<action>',
