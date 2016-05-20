@@ -55,6 +55,8 @@ class ParamsFormat {
     const PASSENGER_TYPE = 'array("Dict", "isPassengerType")';
     const CARD_TYPE = 'array("Dict", "isCardType")';
     const SEX = 'array("Dict", "isSex")';
+    const SMS_CODE = '/^\d{6}$/';
+    const SMS_SIGN = 'array("SMS", "isSMSSign")';
     
     public static function isDate($str) {
         return F::isDateTime($str, 'Y-m-d');

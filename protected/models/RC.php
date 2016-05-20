@@ -46,7 +46,7 @@ class RC {
     const RC_PASSENGER_CREATE_ERROR = 100222;
     const RC_PASSENGER_MODIFY_ERROR = 100223;
     const RC_PASSENGER_DELETE_ERROR = 100224;
-    
+
     const RC_P_ERROR = 100301;
     
     const RC_F_ROUTE_NOT_EXISTS = 100401;
@@ -54,6 +54,10 @@ class RC {
     const RC_F_INFO_CHANGED = 100403;
     const RC_F_NO_SUCH_CABIN = 100404;
     const RC_F_PRICE_ERROR = 100405;
+    
+    const RC_SMS_LOG_NOT_EXISTS = 100501;
+    const RC_SMS_HAD_SENDED = 100501;
+    
     
     public static function getMsg($status) {
         $config = array(

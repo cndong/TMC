@@ -10,17 +10,17 @@ class FlightCNOrder extends QActiveRecord {
     public function rules() {
         return array(
             array('merchantID, userID, contacterName, contacterMobile, isPrivate, isRound, isInsured, isInvoice, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengers, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice', 'required'),
-            array('merchantID, userID, isPrivate, isRound, isInsured, isInvoice, departTime, arriveTime, passengerNum, invoicePrice, invoicePostID, operaterID, bookOperaterID, payOperaterID, status, ctime, utime', 'numerical', 'integerOnly'=>true),
+            array('merchantID, userID, isPrivate, isRound, isInsured, isInvoice, departTime, arriveTime, passengerNum, invoicePrice, invoicePostID, operaterID, bookOperaterID, payOperaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
             array('adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePostPrice, refundPrice', 'numerical'),
-            array('contacterName', 'length', 'max'=>50),
-            array('contacterMobile', 'length', 'max'=>11),
-            array('flightNo', 'length', 'max'=>6),
-            array('airlineCode', 'length', 'max'=>2),
-            array('craftCode, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode', 'length', 'max'=>3),
-            array('cabin, cabinClass', 'length', 'max'=>1),
-            array('passengers', 'length', 'max'=>600),
-            array('invoiceAddress', 'length', 'max'=>255),
-            array('tradeNo, invoiceTradeNo', 'length', 'max'=>32),
+            array('contacterName', 'length', 'max' => 50),
+            array('contacterMobile', 'length', 'max' => 11),
+            array('flightNo', 'length', 'max' => 6),
+            array('airlineCode', 'length', 'max' => 2),
+            array('craftCode, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode', 'length', 'max' => 3),
+            array('cabin, cabinClass', 'length', 'max' => 2),
+            array('passengers', 'length', 'max' => 600),
+            array('invoiceAddress', 'length', 'max' => 255),
+            array('tradeNo, invoiceTradeNo', 'length', 'max' => 32),
             array('id, merchantID, userID, contacterName, contacterMobile, isPrivate, isRound, isInsured, isInvoice, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengers, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddress, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, refundPrice, operaterID, bookOperaterID, payOperaterID, status, ctime, utime', 'safe', 'on' => 'search'),
         );
     }

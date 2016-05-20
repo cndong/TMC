@@ -16,7 +16,6 @@ class DataAirport {
                     'cityName' => $airport['cityName'],
                     'citySpell' => empty($airport['citySpell']) ? $airport['airportSpell'] : $airport['citySpell'],
                     'cityShortSpell' => empty($airport['cityShortSpell']) ? $airport['airportShortSpell'] : $airport['cityShortSpell'],
-                    'firstChar' => $airport['airportSpell']{1}
                 );
             }
             
