@@ -32,18 +32,8 @@ class ProviderF extends Provider {
     }
     
     public static function getRule($airportCode, $cabin, $date) {
-        /*
-        array(
-        'CZ'=>array(
-            'F'=>array(
-    			'2016-05-10'=>'text',
-    			'2016-06-19'=>'text',
-    			'2016-08-10'=>'text',
-    			)
-    		)
-        )
-        */
-        return '这是退改规则';
+        //return PolicyRule::getRuleText('MU','P','2016-06-19');
+        return PolicyRule::getRuleText($airportCode, $cabin, $date);
     }
     
     public static function getRouteKey($flightKeys) {
