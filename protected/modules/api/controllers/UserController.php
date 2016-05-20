@@ -1,7 +1,7 @@
 <?php
 class UserController extends ApiController {
     private function _getUserInfo($user) {
-        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'ctime', 'companyID', 'departmentID'));
+        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'ctime'));
         $rtn['company'] = $user->company->name;
         $rtn['department'] = $user->department->name;
         
@@ -30,7 +30,7 @@ class UserController extends ApiController {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
-        $this->corAjax($this->__getUserInfo($user));
+        $this->corAjax($this->_getUserInfo($user));
     }
     
     public function actionModifyPassword() {
@@ -53,7 +53,7 @@ class UserController extends ApiController {
         $rtn = array();
         $contacters = UserContacter::model()->findAllByAttributes(array('userID' => $_GET['userID'], 'deleted' => UserContacter::DELETED_F));
         foreach ($contacters as $contacter) {
-            $rtn = F::arrayGetByKeys($contacter, array('name', 'mobile'));
+            $rtn[] = F::arrayGetByKeys($contacter, array('name', 'mobile'));
         }
         
         $this->corAjax(array('contacterList' => $rtn));
@@ -147,7 +147,7 @@ class UserController extends ApiController {
         $rtn = array();
         $addresses = UserAddress::model()->findAllByAttributes(array('userID' => $_GET['userID'], 'deleted' => UserContacter::DELETED_F));
         foreach ($addresses as $address) {
-            $rtn = F::arrayGetByKeys($addresses, array('name', 'mobile', 'provinceID', 'cityID', 'countyID', 'province', 'city', 'county', 'address'));
+            $rtn = F::arrayGetByKeys($address, array('name', 'mobile', 'provinceID', 'cityID', 'countyID', 'province', 'city', 'county', 'address'));
         }
         
         $this->corAjax(array('addressList' => $rtn));
@@ -174,7 +174,7 @@ class UserController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        if (!($address = UserAddress::model()->findByPk($_POST['passengerID'])) || $address->deleted) {
+        if (!($address = UserAddress::model()->findByPk($_POST['addressID'])) || $address->deleted) {
             $this->errAjax(RC::RC_ADDRESS_NOT_EXISTS);
         }
         

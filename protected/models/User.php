@@ -120,7 +120,7 @@ class User extends QActiveRecord {
     }
     
     public function modifyPassword($password = '') {
-        $this->password = User::getHashPassword($password, $user->ctime);
+        $this->password = User::getHashPassword($password, $this->ctime);
         if (!$this->save()) {
             return F::errReturn(RC::RC_USER_CHANGE_PASSWD_ERROR);
         }

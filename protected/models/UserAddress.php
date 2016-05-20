@@ -9,12 +9,13 @@ class UserAddress extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('userID, name, mobile, privinceID, cityID, countyID, address', 'required'),
-            array('userID, privinceID, cityID, countyID, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('userID, name, mobile, provinceID, cityID, countyID, province, city, county, address', 'required'),
+            array('userID, provinceID, cityID, countyID, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('province, city, county', 'length', 'max' => 50),
             array('address', 'length', 'max' => 500),
-            array('name' => 'length', 'max' => 50),
-            array('mobile' => 'length', 'max' => 11),
-            array('id, name, mobile, userID, privinceID, cityID, countyID, address, deleted, ctime, utime', 'safe', 'on' => 'search'),
+            array('name', 'length', 'max' => 50),
+            array('mobile', 'length', 'max' => 11),
+            array('id, name, mobile, userID, provinceID, cityID, countyID, province, city, county, address, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -49,7 +50,7 @@ class UserAddress extends QActiveRecord {
         if (!($params = F::checkParams($params, $formats))) {
             return F::errReturn(RC::RC_ADDRESS_PCC_NOT_EXISTS);
         }
-        if ($params['userID'] && !User::model()->findByPk($params['userID'])) {
+        if (!empty($params['userID']) && !User::model()->findByPk($params['userID'])) {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
@@ -61,8 +62,8 @@ class UserAddress extends QActiveRecord {
         }
         
         $params['province'] = $province['name'];
-        $params['city'] = $province['name'];
-        $params['county'] = $province['name'];
+        $params['city'] = $city['name'];
+        $params['county'] = $county['name'];
         
         return F::corReturn($params);
     }
@@ -81,7 +82,7 @@ class UserAddress extends QActiveRecord {
         return F::corReturn($address);
     }
     
-    public static function modify($params) {
+    public function modify($params) {
         if (!F::isCorrect($res = self::_getCreateOrModifyParams($params, False))) {
             return $res;
         }
@@ -89,7 +90,7 @@ class UserAddress extends QActiveRecord {
         if ($res['data'] == F::arrayGetByKeys($this, array_keys($res['data']))) {
             return F::corReturn();
         }
-        
+
         $this->attributes = $res['data'];
         if (!$this->save()) {
             return F::errReturn(RC::RC_ADDRESS_MODIFY_ERROR);

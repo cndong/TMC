@@ -41,7 +41,7 @@ class UserContacter extends QActiveRecord {
             $this->errAjax(RC::RC_USER_NOT_EXISTS);
         }
         
-        if (self::getByMobile($params['mobile'])) {
+        if (self::model()->findByAttributes(array('mobile' => $params['mobile']))) {
             $this->errAjax(RC::RC_CONTACTER_HAD_EXISTS);
         }
         
