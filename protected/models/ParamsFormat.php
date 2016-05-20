@@ -50,7 +50,7 @@ class ParamsFormat {
     const F_AIRLINE_TCODE = '/^[A-Z]{2}$/';
     const F_CRAFT_CODE = '/^[A-Z0-9]{3}$/';
     const F_FLIGHT_NO = '/^[A-Z0-9]{5,6}$/';
-    const F_CABIN_CODE = '/^[A-Z]$/';
+    const F_CABIN_CODE = '/^[A-Z]\d?$/';
     const F_CABIN_CLASS = '/^[A-Z]$/';
     const PASSENGER_TYPE = 'array("Dict", "isPassengerType")';
     const CARD_TYPE = 'array("Dict", "isCardType")';
