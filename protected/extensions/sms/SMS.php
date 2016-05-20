@@ -1,10 +1,9 @@
 <?php
 class SMS {
     const PROVIDER_WZ = 1;
-    public static $providersConfig = array(
+    public static $providers = array(
         self::PROVIDER_WZ => array('name' => '未知', 'str' => 'WZ')
     );
-    
     
     public static $signs = array(
         self::SIGN_QMY => '【去买呀】',
@@ -16,8 +15,8 @@ class SMS {
     protected static final function getProvider($providerID) {
         $className = get_called_class();
         
-        $providerStr = self::$providersConfig[$providerID]['str'];
-        if (!isset(self::$_providerObjects[$className][$providerStr])) {
+        $providerStr = self::$providers[$providerID]['str'];
+        if (!isset(self::$_instances[$className][$providerStr])) {
             $providerClassName = $className . $providerStr;
             self::$_providerObjects[$className][$providerID] = new $providerClassName();
         }

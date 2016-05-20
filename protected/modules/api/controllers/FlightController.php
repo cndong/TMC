@@ -6,11 +6,10 @@ class FlightController extends ApiController {
     }
     
     public function actionFlightList() {
-        //可以考虑增加 orderParams，base_64编码下单所需数据，给客户端下单使用
         $res = ProviderF::getCNFlightList($_GET);
         $rtn = F::isCorrect($res) ? $res['data'] : array();
         
-        $this->corAjax(array('flightList' => $rtn));
+        $this->corAjax($rtn);
     }
     
     public function actionFlightDetail() {
