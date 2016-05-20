@@ -4,7 +4,7 @@ class FlightController extends ApiController {
         $rtn = array('cityList' => array(), 'hotList' => array());
         $cityList = ProviderF::getCNCityList();
         foreach ($cityList as &$city) {
-            $city['firstChar'] = $firstChar = strtoupper($city['citySpell']{0});
+            $firstChar = strtoupper($city['citySpell']{0});
             if (!isset($rtn['cityList'][$firstChar])) {
                 $rtn['cityList'][$firstChar] = array();
             }
