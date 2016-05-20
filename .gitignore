@@ -6,4 +6,5 @@
 /assets/*
 !/assets/*.html
 /protected/runtime/*.log
+/protected/runtime/application.log.*
 env.php
