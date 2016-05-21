@@ -45,13 +45,13 @@ class SMS {
             if (!F::checkParams($params, array('mobile' => ParamsFormat::MOBILE))) {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
-            $tmp = SMSLog::getByDuration($params['mobile'], $type, Dict::STATUS_TRUE);
+            $tmp = SMSLog::getByLimitUnit($params['mobile'], $type, Dict::STATUS_TRUE);
             if (count($tmp) >= SMSTemplate::$templates[$type]['limit']) {
                 return F::errReturn(RC::RC_SMS_LIMIT_ERROR);
             }
             $tmp = current($tmp);
-            if (Q_TIME - $tmp->ctime < SMSTemplate::$templates[$type]['duration']) {
-                return F::errReturn(RC::RC_SMS_DURATION_ERROR);
+            if (Q_TIME - $tmp->ctime < SMSTemplate::$templates[$type]['interval']) {
+                return F::errReturn(RC::RC_SMS_INTERVAL_ERROR);
             }
         }
         

@@ -17,7 +17,7 @@ class SMSLog extends QActiveRecord {
         );
     }
     
-    public static function getByDuration($mobile, $type, $succeed) {
+    public static function getByLimitUnit($mobile, $type, $succeed) {
         $criteria = new CDbCriteria();
         $criteria->order = 'id DESC';
         $criteria->compare('mobile', $mobile);
