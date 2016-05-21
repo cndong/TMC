@@ -8,7 +8,7 @@ class FlightController extends ApiController {
             if (!isset($rtn['cityList'][$firstChar])) {
                 $rtn['cityList'][$firstChar] = array(
                     'cities' => array(),
-                    'firstchar' => $firstChar
+                    'firstChar' => $firstChar
                 );
             }
             

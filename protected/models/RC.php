@@ -58,9 +58,11 @@ class RC {
     const RC_SMS_LOG_NOT_EXISTS = 100501;
     const RC_SMS_HAD_SENDED = 100501;
     const RC_SMS_SEND_ERROR = 100502;
-    const RC_SMS_CODE_HAD_SENDED = 100503;
-    const RC_SMS_CODE_NOT_EXISTS = 100504;
-    const RC_SMS_CODE_NOT_CORRECT = 100505;
+    const RC_SMS_LIMIT_ERROR = 100503;
+    const RC_SMS_DURATION_ERROR = 100504;
+    const RC_SMS_CODE_HAD_SENDED = 100505;
+    const RC_SMS_CODE_NOT_EXISTS = 100506;
+    const RC_SMS_CODE_NOT_CORRECT = 100507;
     
     public static function getMsg($status) {
         $config = array(

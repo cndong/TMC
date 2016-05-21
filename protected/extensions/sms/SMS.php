@@ -41,6 +41,18 @@ class SMS {
             
             $params = F::arrayGetByKeys($smsLog, array('content', 'sign'));
             $type = SMSTemplate::COMMON;
+        } else {
+            if (!F::checkParams($params, array('mobile' => ParamsFormat::MOBILE))) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            $tmp = SMSLog::getByDuration($params['mobile'], $type, Dict::STATUS_TRUE);
+            if (count($tmp) >= SMSTemplate::$templates[$type]['limit']) {
+                return F::errReturn(RC::RC_SMS_LIMIT_ERROR);
+            }
+            $tmp = current($tmp);
+            if (Q_TIME - $tmp->ctime < SMSTemplate::$templates[$type]['duration']) {
+                return F::errReturn(RC::RC_SMS_DURATION_ERROR);
+            }
         }
         
         $smsLog = !empty($smsLog) ? $smsLog : new SMSLog();

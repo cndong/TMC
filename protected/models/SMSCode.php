@@ -47,10 +47,6 @@ class SMSCode extends QActiveRecord {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
-        if ($smsCode = SMSCode::getByType($params['mobile'], $type, SMSCode::STATUS_SENDED)) {
-            return F::errReturn(RC::RC_SMS_CODE_HAD_SENDED);
-        }
-        
         $tran = Yii::app()->db->beginTransaction();
         try {
             $smsCode = new SMSCode();

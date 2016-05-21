@@ -7,6 +7,7 @@ class SMSTemplate {
         self::COMMON => array(
             'name' => '普通信息',
             'limit' => 10,
+            'limitUnit' => '1d',
             'interval' => 60,
             'template' => '<{content}>',
             'formats' => array(
@@ -16,6 +17,7 @@ class SMSTemplate {
         self::FORGET_PASSWD => array(
             'name' => '忘记密码',
             'limit' => 10,
+            'limitUnit' => '1d',
             'interval' => 60,
             'template' => '尊敬的用户您好！您重置密码的验证码为：<{code}>',
             'formats' => array(
@@ -23,6 +25,29 @@ class SMSTemplate {
             )
         ),
     );
+    
+    public static function getLimitUnitTime($type) {
+        $limitUnit = self::$templates[$type]['limitUnit'];
+        $num = substr($limitUnit, 0, -1);
+        $unit = substr($limitUnit, -1);
+        
+        switch ($unit) {
+            case 'Y':
+                $num *= 365;
+            case 'm':
+                $num *= 30;
+            case 'd':
+                $num *= 24;
+            case 'H':
+                $num *= 60;
+            case 'M':
+                $num *= 60;
+            case 'S':
+                $num *= 60;
+        }
+        
+        return $num;
+    }
     
     public static function t($type, $params) {
         $formats = self::$templates[$type]['formats'];

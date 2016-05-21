@@ -54,6 +54,30 @@ class FlightCNOrder extends QActiveRecord {
         );
     }
     
+    private static function _getOrderParams() {
+        return array(
+            'merchantID' => 1,
+            'userID' => 1,
+            'isPrivate' => 0,
+            'isInsured' => 0,
+            'isInvoice' => 0,
+            'isRound' => 0,
+            'contacter' => array(
+                'name' => '随永杰',
+                'mobile' => '13141353663'
+            ),
+            'departRoute' => array(
+                'departCityCode' => 'BJS',
+                'arriveCityCode' => 'SHA',
+                'departDate' => '2016-06-18',
+                'routeKey' => 'a1f09859351278fe974893d629ff48bc',
+                'segments' => array(
+                    array('Z', 'lhjG1HaMJCY5SHO1G4bNv2P3iq0-OEZpUV8eWafKbCqz6JqiLYC0cQgm_3lp37N4Si-HJQK6ON6B_0mJg0OjKXLlyKubHORN3IYN1qBYlIFVTeoFch5OUzU2ZB4nOPCxdjmFelufMvpIBYuRWQ72zqM_5EihQWlEMX3AbZC4sSNUxtazZwcvBHXQ-nOyq2W2ZplYkrSwTq9dL5fc93nPRoamzDhgq1c5WtZ4G3_W50a6JAso-nAAHfSwBi06l2ABIkRIEIgI_EbbrO89lvkhToB0VIOmmPzLW8zRy6-Ymn4Naz9dBlcyPRUFCPyxQmY-SISMNg4JOhJwZshRlKWRyio_rJW6gdv5hElmWxzdB1fEUYE_D1DTx9dHbKKIv0ZU6g-i9lfQyIoxM8jwKp6ohGuhj2KcKCHFqJLQ2LbKJeKzr6XEw12lDz9VdvsE-xrF9ZeidO8ka1IqGMDbrAgDIzcUR28JYE8hhs5shVFqtzfsIRjAqvXavidnQl_mt30s7aBjJD530Sm-lqT-0c048QkpTFt51EowRdLrwiz_ptOq-L9hF2jOtu1qJ0jyEPgi9uz5CUh3OYFcODX5SoVLdbCZLiTBszx-')
+                )
+            ),
+        );
+    }
+    
     private static function _checkCreateOrderParams($params) {
         if (!$params = F::checkParams($params, self::_getCreateOrderFormats())) {
             return F::errReturn(RC::RC_VAR_ERROR);
@@ -201,6 +225,12 @@ class FlightCNOrder extends QActiveRecord {
         }
         $batchNo = $params['segmentNum'] > 1 ? Q::getUniqueID() : '';
         
+        $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
+        foreach ($routeTypes as $routeType) {
+            foreach ($params[$routeType]['segments'] as $flight) {
+                
+            }
+        }
         array(
             'merchantID' => ParamsFormat::M_ID,
             'userID' => ParamsFormat::INTNZ,

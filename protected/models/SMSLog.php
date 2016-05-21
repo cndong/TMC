@@ -16,4 +16,15 @@ class SMSLog extends QActiveRecord {
             array('id, mobile, type, sign, content, succeed, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
+    
+    public static function getByDuration($mobile, $type, $succeed) {
+        $criteria = new CDbCriteria();
+        $criteria->order = 'id DESC';
+        $criteria->compare('mobile', $mobile);
+        $criteria->compare('type', $type);
+        $criteria->compare('succeed', $succeed);
+        $criteria->addBetweenCondition('ctime', Q_TIME - SMSTemplate::getLimitUnitTime($type), Q_TIME);
+        
+        return self::model()->findAll($criteria);
+    }
 }
