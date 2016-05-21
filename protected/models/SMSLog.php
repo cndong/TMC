@@ -9,11 +9,11 @@ class SMSLog extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('mobile, type, content, succeed, rc', 'required'),
-            array('type, succeed, rc, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('mobile, type, sign, content, succeed', 'required'),
+            array('type, sign, succeed, ctime, utime', 'numerical', 'integerOnly' => True),
             array('mobile', 'length', 'max' => 11),
             array('content', 'length', 'max' => 1024),
-            array('id, mobile, type, content, succeed, rc, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, mobile, type, sign, content, succeed, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
 }

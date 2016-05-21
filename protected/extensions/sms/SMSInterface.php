@@ -1,4 +1,5 @@
 <?php
 interface SMSInterface {
-    public function send($params, $type = '');
+    public function getNum($content);
+    public function send($params, $type);
 }

@@ -33,6 +33,40 @@ class UserController extends ApiController {
         $this->corAjax($this->_getUserInfo($user));
     }
     
+    public function actionSendResetCode() {
+        if (!F::checkParams($_POST, array('mobile' => ParamsFormat::MOBILE))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+
+        if (!($user = User::model()->findByAttributes(array('mobile' => $_POST['mobile'], 'deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        
+        if (!F::isCorrect($res = SMSCode::send($_POST, SMSCode::TYPE_FORGET_PASSWD))) {
+            $this->onAjax($res);
+        }
+        
+        $this->corAjax();
+    }
+    
+    public function actionResetPassword() {
+        if (!($params = F::checkParams($_POST, array('mobile' => ParamsFormat::MOBILE, 'code' => ParamsFormat::SMS_CODE, 'password' => ParamsFormat::TEXTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($smsCode = SMSCode::getByType($params['mobile'], SMSCode::TYPE_FORGET_PASSWD, SMSCode::STATUS_SENDED))) {
+            $this->errAjax(RC::RC_SMS_CODE_NOT_EXISTS);
+        }
+        
+        if (!F::isCorrect($res = $smsCode->verify($params['code']))) {
+            $this->errAjax(RC::RC_SMS_CODE_NOT_CORRECT);
+        }
+        
+        $user = User::model()->findByAttributes(array('mobile' => $params['mobile'], 'deleted' => User::DELETED_F));
+
+        $this->onAjax($user->modifyPassword($params['password']));
+    }
+    
     public function actionModifyPassword() {
         if (!F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'password' => ParamsFormat::TEXTNZ)) || !($password = base64_decode($_POST['password']))) {
             $this->errAjax(RC::RC_VAR_ERROR);

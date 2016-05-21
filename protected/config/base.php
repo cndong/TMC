@@ -6,8 +6,9 @@ return array(
     'import' => array(
         'application.models.*',
         'application.components.*',
-        'application.extensions.*',
         'application.datas.*',
+        'application.extensions.*',
+        'application.extensions.sms.*'
     ),
     'defaultController' => 'boss/index',
     'modules' => array(

@@ -1,7 +1,7 @@
 <?php
 class SMSTemplate {
     const COMMON = 1;
-    const FORGET = 2;
+    const FORGET_PASSWD = 2;
     
     public static $templates = array(
         self::COMMON => array(
@@ -10,10 +10,10 @@ class SMSTemplate {
             'interval' => 60,
             'template' => '<{content}>',
             'formats' => array(
-                'text' => ParamsFormat::TEXTNZ
+                'content' => ParamsFormat::TEXTNZ
             ),
         ),
-        self::FORGET => array(
+        self::FORGET_PASSWD => array(
             'name' => '忘记密码',
             'limit' => 10,
             'interval' => 60,
@@ -31,13 +31,12 @@ class SMSTemplate {
         if (!($params = F::checkParams($params, $formats))) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
-        $sign = SMS::$signs[$params['sign']];
         
         $tr = array();
         foreach ($params as $field => $value) {
             $tr['<{' . $field . '}>'] = $value;
         }
         
-        return strtr(self::$templates[$type]['template'], $tr);
+        return F::corReturn(array('params' => $params, 'content' => strtr(self::$templates[$type]['template'], $tr)));
     }
 }

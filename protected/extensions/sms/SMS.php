@@ -19,10 +19,10 @@ class SMS {
         $providerStr = self::$providers[$providerID]['str'];
         if (!isset(self::$_instances[$className][$providerStr])) {
             $providerClassName = $className . $providerStr;
-            self::$_providerObjects[$className][$providerID] = new $providerClassName();
+            self::$_instances[$className][$providerID] = new $providerClassName();
         }
         
-        return self::$_providerObjects[$className][$providerID];
+        return self::$_instances[$className][$providerID];
     }
     
     public static function isSMSSign($sign) {
@@ -35,16 +35,15 @@ class SMS {
                 return F::errReturn(RC::RC_SMS_LOG_NOT_EXISTS);
             }
             
-            if ($sms->succeed) {
+            if ($smsLog->succeed) {
                 return F::errReturn(RC::RC_SMS_HAD_SENDED);
             }
             
-            $params = array('content' => $smsLog->content);
+            $params = F::arrayGetByKeys($smsLog, array('content', 'sign'));
             $type = SMSTemplate::COMMON;
         }
         
         $smsLog = !empty($smsLog) ? $smsLog : new SMSLog();
-        
         if (!F::isCorrect($res = self::getProvider(self::PROVIDER_WZ)->send($params, $type))) {
             return $res;
         }
@@ -52,12 +51,14 @@ class SMS {
         if (!$smsLog->isNewRecord) {
             $smsLog->succeed = $res['data']['succeed'];
         } else {
+            $smsLog->type = $type;
             $smsLog->attributes = $res['data'];
         }
         
         if (!$smsLog->save()) {
             Q::log('------保存短信发送结果失败开始------');
             Q::log($smsLog->getErrors());
+            Q::log($smsLog->attributes);
             Q::Log('------保存短信发送结果失败结束------');
             
             return F::errReturn(RC::RC_MODEL_UPDATE_ERROR);
