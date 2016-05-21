@@ -6,10 +6,13 @@ class FlightController extends ApiController {
         foreach ($cityList as &$city) {
             $city['firstChar'] = $firstChar = strtoupper($city['citySpell']{0});
             if (!isset($rtn['cityList'][$firstChar])) {
-                $rtn['cityList'][$firstChar] = array();
+                $rtn['cityList'][$firstChar] = array(
+                    'cities' => array(),
+                    'key' => $firstChar
+                );
             }
             
-            $rtn['cityList'][$firstChar][] = $city;
+            $rtn['cityList'][$firstChar]['cities'] = $city;
         }
         
         $rtn['cityList'] = array_values($rtn['cityList']);
