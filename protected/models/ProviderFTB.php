@@ -67,10 +67,7 @@ class ProviderFTB extends ProviderF {
                 'cabin' => $cabin['cabin'],
                 'cabinClass' => $cabinClass,
             );
-            $cabinClassesRtn[$cabinClass] = array(
-                'cabinClass' => $cabinClass,
-                'cabinClassName' => DictFlight::$cabinClasses[$cabinClass]['name']
-            );
+            $cabinClassesRtn[$cabinClass] = DictFlight::$cabinClasses[$cabinClass]['name'];
         }
         
         return array($cabinsRtn, $cabinClassesRtn);
@@ -83,7 +80,7 @@ class ProviderFTB extends ProviderF {
         $rtn['airportMap'] = json_decode($data['airport_info_map'], True);
         $rtn['cityMap'] = json_decode($data['city_info_map'], True);
         $rtn['craftMap'] = json_decode($data['flight_type_info_map'], True);
-        list($rtn['cabinMap'], $rtn['cabinClassMap']) = $this->_initCabins(json_decode($data['cabin_info_map'], True));
+        list($_, $rtn['cabinClassMap']) = $this->_initCabins(json_decode($data['cabin_info_map'], True));
         
         $flights = $this->_initFlights(json_decode($data['flight_info_map'], True));
         $rtn['flights'] = &$flights;
