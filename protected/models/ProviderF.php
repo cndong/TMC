@@ -55,10 +55,11 @@ class ProviderF extends Provider {
             foreach ($route['segments'] as &$segment) {
                 uasort($data['flights'][$segment['flightKey']]['cabins'], function($a, $b) {return $a['price'] > $b['price']; });
                 $cabin = current($data['flights'][$segment['flightKey']]['cabins']);
-                $segment['adultPrice'] = $cabin['price'];
-                $segment['childPrice'] = $cabin['standardPrice'] * DictFlight::RATE_CHILD;
-                $segment['babyPrice'] = $cabin['standardPrice'] * DictFlight::RATE_BABY;
+                $segment['adultPrice'] = $cabin['adultPrice'];
+                $segment['childPrice'] = $cabin['childPrice'];
+                $segment['babyPrice'] = $cabin['babyPrice'];
                 $segment['standardPrice'] = $cabin['standardPrice'];
+                //需要加入机建、燃油
                 
                 $route['adultPrice'] += $segment['adultPrice'];
                 $route['childPrice'] += $segment['childPrice'];
