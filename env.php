@@ -2,6 +2,7 @@
 class QEnv {
     const ENV = Q::ENV_LOCAL;
     
+    const IS_SEND_SMS = False;
     const CODE_ENCRYPT_KEY = 'fdaf26affbcea07cf492b591af7197b2';
     
     public static $merchants = array(

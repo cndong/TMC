@@ -28,10 +28,12 @@ class SMSWZ implements SMSInterface {
                 )
             )
         );
-        
-        $res = self::$_curl->postJ(self::URL, array('param' => json_encode($postParams)));
-        if (!Curl::isCorrect($res)) {
-            return F::errReturn(F::getCurlError($res));
+
+        if (QEnv::IS_SEND_SMS) {
+            $res = self::$_curl->postJ(self::URL, array('param' => json_encode($postParams)));
+            if (!Curl::isCorrect($res)) {
+                return F::errReturn(F::getCurlError($res));
+            }
         }
         
         return F::corReturn();
