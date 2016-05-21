@@ -4,7 +4,7 @@ class FlightController extends ApiController {
         $rtn = array('cityList' => array(), 'hotList' => array());
         $cityList = ProviderF::getCNCityList();
         foreach ($cityList as &$city) {
-            $firstChar = strtoupper($city['citySpell']{0});
+            $city['firstChar'] = $firstChar = strtoupper($city['citySpell']{0});
             if (!isset($rtn['cityList'][$firstChar])) {
                 $rtn['cityList'][$firstChar] = array();
             }
@@ -12,6 +12,7 @@ class FlightController extends ApiController {
             $rtn['cityList'][$firstChar][] = $city;
         }
         
+        $rtn['cityList'] = array_values($rtn['cityList']);
         $rtn['hotList'] = array_values(F::arrayGetByKeys($cityList, array('BJS', 'SHA', 'CAN')));
         
         $this->corAjax($rtn);
