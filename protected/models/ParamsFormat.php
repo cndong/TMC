@@ -26,6 +26,7 @@ class ParamsFormat {
     const MOBILE = '/^1[3578]\d{9}$/';
     const MD5 = '/^\w{32}$/';
     const UNIQ_ID = '/^[A-Z0-9]{14}$/';
+    const API_VERSION = '/^\d{1,2}\.\d{1,2}\.\d{1,2}$/';
     const U_ID = '/^\d{6,7}$/';
     const M_ID = 'array("Merchant", "isMerchantID")';
     const UNAME = '/^.{1,50}$/';

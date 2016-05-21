@@ -90,6 +90,11 @@ class ProviderFTB extends ProviderF {
         
         $flightRoutes = $data['items']['at_n_search_item_v_o'];//航程列表，一个航程有一个或多个航段
         foreach ($flightRoutes as $routeIndex => $flightRoute) {
+            if ($flightRoute['segments']['at_n_search_segment_v_o'] > 1) {
+                //暂停多航段功能，恢复时把这段去掉即可
+                continue;
+            }
+            
             if (!$flightRoute['is_qijian']) {
                 continue;
             }

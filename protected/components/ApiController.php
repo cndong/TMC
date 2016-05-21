@@ -6,6 +6,7 @@ class ApiController extends QController {
         return array(
             'merchantID' => ParamsFormat::M_ID,
             'requestTime' => ParamsFormat::TIMESTAMP,
+            'version' => ParamsFormat::API_VERSION,
             'sign' => ParamsFormat::MD5,
         );
     }
