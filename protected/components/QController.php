@@ -28,7 +28,7 @@ class QController extends CController {
     }
 
     public function onAjax($res) {
-        header('Content-Type: application; charset=utf-8');
+        header('Content-Type: application/json; charset=utf-8');
         
         if (isset($res['data']) && empty($res['data'])) {
             $res['data'] = new stdClass();
