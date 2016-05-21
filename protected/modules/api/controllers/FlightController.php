@@ -12,7 +12,7 @@ class FlightController extends ApiController {
                 );
             }
             
-            $rtn['cityList'][$firstChar]['cities'] = $city;
+            $rtn['cityList'][$firstChar]['cities'][] = $city;
         }
         
         $rtn['cityList'] = array_values($rtn['cityList']);
