@@ -42,7 +42,7 @@ class ProviderFTB extends ProviderF {
                 'airlineCode' => 'airlineCode',
                 'flightType' => 'craftCode',
                 'flight' => 'flightNo',
-                'fees' => 'airportTax',
+                'fees' => 'adultAirportTax',
                 'meals' => 'isHaveMeal',
                 'stops' => 'stopNum',
                 'cabins' => array()
@@ -50,6 +50,8 @@ class ProviderFTB extends ProviderF {
             $tmp['departTime'] = $flight['depTime'] / 1000;
             $tmp['arriveTime'] = $flight['arrTime'] / 1000;
             $tmp['duration'] = $tmp['arriveTime'] - $tmp['departTime'];
+            $tmp['childAirportTax'] = $tmp['babyAirportTax'] = 0;
+            $tmp['adultOilTax'] = $tmp['childOilTax'] = $tmp['babyOilTax'] = 0;
             
             $rtn[$flightKey] = $tmp;
         }
@@ -139,7 +141,6 @@ class ProviderFTB extends ProviderF {
     }
     
     public function pGetCNFlightList($params, $searchType = 'outbound') {
-        //可以考虑增加 orderParams 给客户端下单使用
         $req = new TripJipiaoNsearchOwSearchRequest();
         $req->setDepCityCode($params['departCityCode']);
         $req->setArrCityCode($params['arriveCityCode']);

@@ -69,10 +69,28 @@ class FlightCNOrder extends QActiveRecord {
             'departRoute' => array(
                 'departCityCode' => 'BJS',
                 'arriveCityCode' => 'SHA',
-                'departDate' => '2016-06-18',
+                'departDate' => '2016-06-22',
                 'routeKey' => 'a1f09859351278fe974893d629ff48bc',
                 'segments' => array(
-                    array('Z', 'lhjG1HaMJCY5SHO1G4bNv2P3iq0-OEZpUV8eWafKbCqz6JqiLYC0cQgm_3lp37N4Si-HJQK6ON6B_0mJg0OjKXLlyKubHORN3IYN1qBYlIFVTeoFch5OUzU2ZB4nOPCxdjmFelufMvpIBYuRWQ72zqM_5EihQWlEMX3AbZC4sSNUxtazZwcvBHXQ-nOyq2W2ZplYkrSwTq9dL5fc93nPRoamzDhgq1c5WtZ4G3_W50a6JAso-nAAHfSwBi06l2ABIkRIEIgI_EbbrO89lvkhToB0VIOmmPzLW8zRy6-Ymn4Naz9dBlcyPRUFCPyxQmY-SISMNg4JOhJwZshRlKWRyio_rJW6gdv5hElmWxzdB1fEUYE_D1DTx9dHbKKIv0ZU6g-i9lfQyIoxM8jwKp6ohGuhj2KcKCHFqJLQ2LbKJeKzr6XEw12lDz9VdvsE-xrF9ZeidO8ka1IqGMDbrAgDIzcUR28JYE8hhs5shVFqtzfsIRjAqvXavidnQl_mt30s7aBjJD530Sm-lqT-0c048QkpTFt51EowRdLrwiz_ptOq-L9hF2jOtu1qJ0jyEPgi9uz5CUh3OYFcODX5SoVLdbCZLiTBszx-')
+                    array(
+                        'departCityCode' => 'BJS',
+                        'arriveCityCode' => 'SHA',
+                        'departAirportCode' => 'PEK',
+                        'arriveAirportCode' => 'SHA',
+                        'departTime' => 1234567890,
+                        'arriveTime' => 1234568890,
+                        'cabin' => 'F',
+                        'standardPrice' => 1110,
+                        'adultPrice' => 110,
+                        'adultAirportTax' => 50,
+                        'adultOilTax' => 0,
+                        'childPrice' => 55,
+                        'childAirportTax' => 0,
+                        'childOilTax' => 0,
+                        'babyPrice' => 55,
+                        'babyAirportTax' => 0,
+                        'babyOilTax' => 0
+                    ),
                 )
             ),
         );
@@ -147,7 +165,7 @@ class FlightCNOrder extends QActiveRecord {
         $passengers = self::classifyPassengers($passengers);
         
         //检测往返航程、航段 array('routeKey' => 'ax8ands', 'segments' => array(array('F', 'orderParams')));
-        $totalTicketPrice = $totalInsurePrice = $segmentNum = 0;
+        $totalTicketPrice = $totalAirportTaxPrice = $totalOilTaxPrice = $totalInsurePrice = $segmentNum = 0;
         $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
         foreach ($routeTypes as $routeType) {
             if (!($tmp = F::checkParams($params[$routeType], array(
@@ -173,7 +191,7 @@ class FlightCNOrder extends QActiveRecord {
                 if (count($segment) != 2) {
                     return F::errReturn(RC::RC_F_SEGMENT_ERROR);
                 }
-                list($cabin, $flight) = $segment;
+                //list($cabin, $flight) = $segment;
                 $flight = ProviderF::decryptOrderParams($flight);
                 
                 $segmentParams = F::arrayGetByKeys($flight, array('departCityCode', 'arriveCityCode', 'flightNo'));
@@ -201,7 +219,7 @@ class FlightCNOrder extends QActiveRecord {
         $params['segmentNum'] = $segmentNum;
         
         //检测价格
-        $params['price'] = F::checkParams($params['price'], array_fill_keys(array('orderPrice', 'ticketPrice', 'insurePrice', 'invoicePrice'), '!' . ParamsFormat::INTNZ . '--0'));
+        $params['price'] = F::checkParams($params['price'], array_fill_keys(array('orderPrice', 'ticketPrice', 'airportTaxPrice', 'oilTaxPrice', 'insurePrice', 'invoicePrice'), '!' . ParamsFormat::INTNZ . '--0'));
         
         $invoicePrice = intval($params['isInvoice']) * Dict::INVOICE_PRICE;
         $tmp = array(

@@ -44,27 +44,14 @@ class ProviderF extends Provider {
         return $departCityCode . $arriveCityCode . $flightNo;
     }
     
-    //提交时使用routeKey, {segmentKey:segmentParams}
-    public static function addPriceSortParams($data) {
+    public static function addPriceOrderParams($data) {
         foreach ($data['flights'] as &$flight) {
-            $flight['orderParams'] = self::encryptOrderParams($flight);
+            //$flight['orderParams'] = self::encryptOrderParams($flight);
         }
         
         foreach ($data['routes'] as &$route) {
-            $route['adultPrice'] = $route['childPrice'] = $route['babyPrice'] = $route['standardPrice'] = 0;
             foreach ($route['segments'] as &$segment) {
-                uasort($data['flights'][$segment['flightKey']]['cabins'], function($a, $b) {return $a['price'] > $b['price']; });
-                $cabin = current($data['flights'][$segment['flightKey']]['cabins']);
-                $segment['adultPrice'] = $cabin['adultPrice'];
-                $segment['childPrice'] = $cabin['childPrice'];
-                $segment['babyPrice'] = $cabin['babyPrice'];
-                $segment['standardPrice'] = $cabin['standardPrice'];
-                //需要加入机建、燃油
-                
-                $route['adultPrice'] += $segment['adultPrice'];
-                $route['childPrice'] += $segment['childPrice'];
-                $route['babyPrice'] += $segment['babyPrice'];
-                $route['standardPrice'] += $segment['standardPrice'];
+                uasort($data['flights'][$segment['flightKey']]['cabins'], function($a, $b) {return $a['adultPrice'] > $b['adultPrice']; });
             }
         }
         
@@ -95,7 +82,7 @@ class ProviderF extends Provider {
             return $res;
         }
         
-        $data = self::addPriceSortParams($res['data']);
+        $data = self::addPriceOrderParams($res['data']);
         $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
@@ -117,7 +104,7 @@ class ProviderF extends Provider {
             return $res;
         }
         
-        $data = self::addPriceSortParams($res['data']);
+        $data = self::addPriceOrderParams($res['data']);
         $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
