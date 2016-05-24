@@ -1206,14 +1206,16 @@ class PolicyRule {
                 ),
         );
 
-    static function  getRuleText($apcode, $cam, $data){
+    static function getRuleText($apcode, $cam, $data){
+        //MU/FM(东方航空/海航空)一家的
+        self::$rule['FM'] = self::$rule['MU'];
         $log = "$apcode, $cam, $data";
         $text = '根据航司规则';
     
         if(isset(self::$rule[$apcode])){
             if(isset(self::$rule[$apcode][$cam])){
                 $timeArray = self::$rule[$apcode][$cam];
-                if(!$timeArray) Q::log($log, 'getRuleText.cam.empty');
+                if(!$timeArray) Q::log($log, 'getRuleText.apcode.cam.empty');
                 else if(count($timeArray) == 1) $text = self::rendRule($apcode, array_shift($timeArray));
                 else{
                     $choose = false;
@@ -1224,14 +1226,14 @@ class PolicyRule {
                             break;
                         }
                     }
-                    if(!$choose) Q::log($log, 'getRuleText.cam.data.choose.no');
+                    if(!$choose) Q::log($log, 'getRuleText.apcode.cam.timeRule.empty');
                 }
-            }else Q::log($log, 'getRuleText.cam.no');
+            }else Q::log($log, 'getRuleText.apcode.cam.no');
         }else Q::log($log, 'getRuleText.apcode.no');
         return $text;
     }
     
-    static function  rendRule($apcode, $rule){
+    static function rendRule($apcode, $rule){
         //HU是4小时分界点; CA,SC:只分起飞前跟起飞后，没有多少小时规定; MU和ZH是2小时分界点
         if($apcode == 'HU') $hour = 4;
         else if($apcode == 'CA' || $apcode == 'SC') $hour = 0;
