@@ -33,6 +33,20 @@ class FlightController extends ApiController {
     }
     
     public function actionBook() {
+        if (!($params = F::checkParams($_POST, array_fill_keys(array('contacter', 'departRoute', 'passengers', 'price'), ParamsFormat::JSON)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        foreach ($params as $k => $v) {
+            $_POST[$k] = json_decode($v);
+        }
+        
+        if (!($params = F::checkParams($_POST, array('returnRoute' => '!' . ParamsFormat::JSON . '--', 'invoiceAddress' => '!' . ParamsFormat::JSON . '--')))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        foreach ($params as $k => $v) {
+            $_POST[$k] = json_decode($v);
+        }
+        
         $this->onAjax(FlightCNOrder::createOrder($_POST));
     }
     
