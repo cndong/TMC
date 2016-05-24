@@ -24,6 +24,15 @@ class UserPassenger extends QActiveRecord {
         );
     }
     
+    public static function getPassengerKey($passenger) {
+        $rtn = array();
+        foreach (array('name', 'cardNo', 'type') as $k) {
+            $rtn[] = is_object($passenger) ? $passenger->$k : $passenger[$k];
+        }
+        
+        return implode('_', $rtn);
+    }
+    
     public static function getCreateOrModifyFormats($isCreate) {
         $rtn = array(
             'name' => ParamsFormat::TEXTNZ,
@@ -49,7 +58,7 @@ class UserPassenger extends QActiveRecord {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
-        if (self::model()->findByAttributes(array('name' => $params['name'], 'type' => $params['type'], 'cardNo' => $params['cardNo']))) {
+        if (self::model()->findByAttributes(F::arrayGetByKeys($params, array('cardNo', 'name', 'type')), 'deleted=:deleted', array(':deleted' => self::DELETED_F))) {
             return F::errReturn(RC::RC_PASSENGER_HAD_EXISTS);
         }
         

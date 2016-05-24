@@ -24,22 +24,13 @@ class FlightCNOrder extends QActiveRecord {
         );
     }
     
-    public static function getPassengerKey($passenger) {
-        $rtn = array();
-        foreach (array('name', 'cardNo', 'type') as $k) {
-            $rtn[] = is_object($passenger) ? $passenger->$k : $passenger[$k];
-        }
-        
-        return implode('_', $rtn);
-    }
-    
     public static function classifyPassengers($passengers) {
         $rtn = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
         foreach ($passengers as $passenger) {
             if (is_object($passenger)) {
                 $passenger = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
             }
-            $rtn[$passenger['type']][self::getPassengerKey($passenger)] = $passenger;
+            $rtn[$passenger['type']][UserPassenger::getPassengerKey($passenger)] = $passenger;
         }
     
         return $rtn;
@@ -213,7 +204,7 @@ class FlightCNOrder extends QActiveRecord {
         $passengers = self::classifyPassengers($passengers);
         
         //检测往返航程、航段 array('routeKey' => 'ax8ands', 'segments' => array(array(...)));
-        $totalTicketPrice = $totalAirportTaxPrice = $totalOilTaxPrice = $totalInsurePrice = $segmentNum = 0;
+        $totalOrderPrice = $totalTicketPrice = $totalAirportTaxPrice = $totalOilTaxPrice = $totalInsurePrice = $segmentNum = 0;
         $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
         foreach ($routeTypes as $routeType) {
             if (!($tmp = F::checkParams($params[$routeType], array(
@@ -272,8 +263,8 @@ class FlightCNOrder extends QActiveRecord {
                     return F::errReturn(RC::RC_F_INFO_CHANGED);
                 }
                 
-                if (is_numeric($realCabin['cabinNum']) && ) {
-                    
+                if (is_numeric($realCabin['cabinNum']) && $realCabin['cabinNum'] < DictFlight::MAX_PASSENGER_NUM) {
+                    return F::errReturn(RC::RC_F_CABIN_NUM_ERROR);
                 }
                 
                 $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
@@ -291,6 +282,8 @@ class FlightCNOrder extends QActiveRecord {
                     $modifySegment['airportTaxPrice'] += count($passengers[$ticketType]) * $segment[$ticketTypeConfig['str'] . 'AirportTax'];
                     $modifySegment['oilTaxPrice'] += count($passengers[$ticketType]) * $segment[$ticketTypeConfig['str'] . 'OilTax'];
                 }
+                $modifySegment['orderPrice'] = $modifySegment['ticketPrice'] + $modifySegment['insurePrice'] + $modifySegment['airportTaxPrice'] + $modifySegment['oilTaxPrice'];
+                $totalOrderPrice += $modifySegment['orderPrice'];
                 $totalTicketPrice += $modifySegment['ticketPrice'];
                 $totalInsurePrice += $modifySegment['insurePrice'];
                 $totalAirportTaxPrice += $modifySegment['airportTaxPrice'];
@@ -330,7 +323,7 @@ class FlightCNOrder extends QActiveRecord {
         $train = Yii::app()->db->beginTransaction();
         try {
             if (!isset($params['contacter']['contacterID'])) {
-                if (!F::isCorrect($res = UserContacter::createContacter($tmp))) {
+                if (!F::isCorrect($res = UserContacter::createContacter($params['contacter']))) {
                     throw new Exception(RC::RC_MODEL_CREATE_ERROR);
                 }
                 $params['contacter'] = array('contacterID' => $res['data']->id);
@@ -363,7 +356,7 @@ class FlightCNOrder extends QActiveRecord {
                     )));
                     $record = CMap::mergeArray($record, $segment['cabinInfo']);
                     $record['passengerIDs'] = implode('-', $passengerIDs);
-                    $record['passengerNum'] = 
+                    $record['passengerNum'] = $params['passengerNum'];
                 }
             }
             
@@ -372,6 +365,6 @@ class FlightCNOrder extends QActiveRecord {
             $train->rollback();
             return F::errReturn(RC::$e->getMessage());
         }
-        //'passengerIDs', 'passengerNum', 'payPrice', 'taoPrice', 
+        //'payPrice', 'taoPrice', 
     }
 }
