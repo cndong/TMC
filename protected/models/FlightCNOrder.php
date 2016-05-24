@@ -10,17 +10,16 @@ class FlightCNOrder extends QActiveRecord {
     public function rules() {
         return array(
             array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, taoPrice, batchNo', 'required'),
-            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, departTime, arriveTime, passengerNum, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, departTime, arriveTime, passengerNum, invoiceAddressID, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
             array('adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePostPrice', 'numerical'),
             array('flightNo', 'length', 'max' => 6),
             array('airlineCode', 'length', 'max' => 2),
             array('craftCode, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode', 'length', 'max' => 3),
             array('cabin, cabinClass', 'length', 'max' => 2),
             array('passengerIDs', 'length', 'max' => 60),
-            array('invoiceAddress', 'length', 'max' => 255),
             array('tradeNo, invoiceTradeNo', 'length', 'max' => 32),
             array('batchNo', 'length', 'max' => 15),
-            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddress, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -50,72 +49,6 @@ class FlightCNOrder extends QActiveRecord {
             'passengers' => ParamsFormat::ISARRAY,
             'price' => ParamsFormat::ISARRAY,
             'invoiceAddress' => '!' . ParamsFormat::ISARRAY . '--'
-        );
-    }
-    
-    private static function _getOrderParams() {
-        return array(
-            'merchantID' => 1,
-            'userID' => 1,
-            'isPrivate' => 0,
-            'isInsured' => 0,
-            'isInvoice' => 0,
-            'isRound' => 0,
-            'contacter' => array(
-                'name' => '随永杰',
-                'mobile' => '13141353663'
-            ),
-            'passengers' => array(
-                array(
-                    'name' => '随永杰',
-                    'type' => Dict::PASSENGER_TYPE_ADULT,
-                    'cardType' => Dict::CARD_TYPE_SF,
-                    'cardNo' => '130534198902094912',
-                    'birthday' => '1989-02-09',
-                    'sex' => Dict::SEX_MALE
-                )
-            ),
-            'price' => array(
-                'orderPrice' => 67000,
-                'ticketPrice' => 62000,
-                'airportTaxPrice' => 5000,
-                'oilTaxPrice' => 0,
-                'insurePrice' => 0,
-                'invoicePrice' => 0
-            ),
-            'departRoute' => array(
-                'departCityCode' => 'BJS',
-                'arriveCityCode' => 'SHA',
-                'departDate' => '2016-06-22',
-                'routeKey' => '0415319315b6c684b3e0c3c097bd7b49',
-                'segments' => array(
-                    array(
-                        'flightNo' => 'CZ9271',
-                        'departCityCode' => 'BJS',
-                        'arriveCityCode' => 'SHA',
-                        'departAirportCode' => 'PEK',
-                        'arriveAirportCode' => 'SHA',
-                        'departTime' => 1466550000,
-                        'arriveTime' => 1466558100,
-                        'airlineCode' => 'CZ',
-                        'craftCode' => '333',
-                        'cabinInfo' => array(
-                            'cabin' => 'E',
-                            'cabinClass' => 3,
-                            'adultPrice' => 62000,
-                            'childPrice' => 62000,
-                            'babyPrice' => 12400,
-                        ),
-                        'adultAirportTax' => 5000,
-                        'adultOilTax' => 0,
-                        'childAirportTax' => 0,
-                        'childOilTax' => 0,
-                        'babyAirportTax' => 0,
-                        'babyOilTax' => 0
-                    ),
-                    
-                )
-            ),
         );
     }
     
@@ -317,9 +250,6 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     public static function createOrder($params) {
-        if (Q::isLocalEnv()) {
-            $params = self::_getOrderParams();
-        }
         if (!F::isCorrect($res = self::_checkCreateOrderParams($params))) {
             return $res;
         }

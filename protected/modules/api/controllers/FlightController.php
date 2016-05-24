@@ -32,19 +32,88 @@ class FlightController extends ApiController {
         $this->onAjax(ProviderF::getCNFlightDetail($_GET));
     }
     
+    private static function _getOrderParams() {
+        return array(
+            'merchantID' => 1,
+            'userID' => 1,
+            'isPrivate' => 0,
+            'isInsured' => 0,
+            'isInvoice' => 0,
+            'isRound' => 0,
+            'contacter' => '{
+                "name": "随永杰",
+                "mobile": "13141353663"
+            }',
+            'passengers' => '[
+                {
+                    "name": "随永杰",
+                    "type": 1,
+                    "cardType": 1,
+                    "cardNo": "135596199911215888",
+                    "birthday": "1999-12-21",
+                    "sex": 0
+                }
+            ]',
+            'price' => '{
+                "orderPrice": 67000,
+                "ticketPrice": 62000,
+                "airportTaxPrice": 5000,
+                "oilTaxPrice": 0,
+                "insurePrice": 0,
+                "invoicePrice": 0
+            }',
+            'departRoute' => '{
+                "departCityCode": "BJS",
+                "arriveCityCode": "SHA",
+                "departDate": "2016-06-22",
+                "routeKey": "0415319315b6c684b3e0c3c097bd7b49",
+                "segments": [
+                    {
+                        "flightNo": "CZ9271",
+                        "departCityCode": "BJS",
+                        "arriveCityCode": "SHA",
+                        "departAirportCode": "PEK",
+                        "arriveAirportCode": "SHA",
+                        "departTime": 1466550000,
+                        "arriveTime": 1466558100,
+                        "airlineCode": "CZ",
+                        "craftCode": "333",
+                        "cabinInfo": {
+                            "cabin": "E",
+                            "cabinClass": 3,
+                            "adultPrice": 62000,
+                            "childPrice": 62000,
+                            "babyPrice": 12400
+                        },
+                        "adultAirportTax": 5000,
+                        "adultOilTax": 0,
+                        "childAirportTax": 0,
+                        "childOilTax": 0,
+                        "babyAirportTax": 0,
+                        "babyOilTax": 0
+                    }
+                ]
+            }'
+        );
+    }
+    
     public function actionBook() {
+        if (Q::isLocalEnv()) {
+            //$_POST = self::_getOrderParams();
+        }
         if (!($params = F::checkParams($_POST, array_fill_keys(array('contacter', 'departRoute', 'passengers', 'price'), ParamsFormat::JSON)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
+        
         foreach ($params as $k => $v) {
-            $_POST[$k] = json_decode($v);
+            $_POST[$k] = json_decode($v, True);
         }
         
         if (!($params = F::checkParams($_POST, array('returnRoute' => '!' . ParamsFormat::JSON . '--', 'invoiceAddress' => '!' . ParamsFormat::JSON . '--')))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         foreach ($params as $k => $v) {
-            $_POST[$k] = json_decode($v);
+            $_POST[$k] = json_decode($v, True);
         }
         
         if (!F::isCorrect($res = FlightCNOrder::createOrder($_POST))) {
