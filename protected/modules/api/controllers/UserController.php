@@ -197,7 +197,7 @@ class UserController extends ApiController {
         $rtn = array();
         $addresses = UserAddress::model()->findAllByAttributes(array('userID' => $_GET['userID'], 'deleted' => UserContacter::DELETED_F));
         foreach ($addresses as $address) {
-            $rtn = $this->_getAddressAttributes($address);
+            $rtn[] = $this->_getAddressAttributes($address);
         }
         
         $this->corAjax(array('addressList' => $rtn));
