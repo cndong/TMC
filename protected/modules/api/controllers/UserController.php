@@ -126,6 +126,10 @@ class UserController extends ApiController {
         $this->corAjax();
     }
     
+    private function _getPassengerAttributes($passenger) {
+        return F::arrayGetByKeys($passenger, array('id', 'name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
+    }
+    
     public function actionPassengerList() {
         if (!F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ))) {
             $this->errAjax(RC::RC_VAR_ERROR);
@@ -134,14 +138,18 @@ class UserController extends ApiController {
         $rtn = array();
         $passengers = UserPassenger::model()->findAllByAttributes(array('userID' => $_GET['userID'], 'deleted' => UserContacter::DELETED_F));
         foreach ($passengers as $passenger) {
-            $rtn = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
+            $rtn = $this->_getPassengerAttributes($passenger);
         }
         
         $this->corAjax(array('passengerList' => $rtn));
     }
     
     public function actionAddPassenger() {
-        $this->onAjax(UserPassenger::createPassenger($_POST));
+        if (!F::isCorrect($res = UserPassenger::createPassenger($_POST))) {
+            $this->onAjax($res);
+        }
+        
+        $this->onAjax($this->_getPassengerAttributes($res['data']));
     }
     
     public function actionModifyPassenger() {
@@ -153,7 +161,11 @@ class UserController extends ApiController {
             $this->errAjax(RC::RC_PASSENGER_NOT_EXISTS);
         }
         
-        $this->onAjax($passenger->modify($_POST));
+        if (!F::isCorrect($res = $passenger->modify($_POST))) {
+            $this->onAjax($res);
+        }
+        
+        $this->onAjax($this->_getPassengerAttributes($passenger));
     }
     
     public function actionDeletePassenger() {
@@ -173,6 +185,10 @@ class UserController extends ApiController {
         $this->corAjax();
     }
     
+    private function _getAddressAttributes($address) {
+        return F::arrayGetByKeys($address, array('id', 'name', 'mobile', 'provinceID', 'cityID', 'countyID', 'province', 'city', 'county', 'address'));
+    }
+    
     public function actionAddressList() {
         if (!F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ))) {
             $this->errAjax(RC::RC_VAR_ERROR);
@@ -181,14 +197,18 @@ class UserController extends ApiController {
         $rtn = array();
         $addresses = UserAddress::model()->findAllByAttributes(array('userID' => $_GET['userID'], 'deleted' => UserContacter::DELETED_F));
         foreach ($addresses as $address) {
-            $rtn = F::arrayGetByKeys($address, array('name', 'mobile', 'provinceID', 'cityID', 'countyID', 'province', 'city', 'county', 'address'));
+            $rtn = $this->_getAddressAttributes($address);
         }
         
         $this->corAjax(array('addressList' => $rtn));
     }
     
     public function actionAddAddress() {
-        $this->onAjax(UserAddress::createAddress($_POST));
+        if (!F::isCorrect($res = UserAddress::createAddress($_POST))) {
+            $this->onAjax($res);
+        }
+        
+        $this->corAjax($this->_getAddressAttributes($res['data']));
     }
     
     public function actionModifyAddress() {
@@ -200,7 +220,11 @@ class UserController extends ApiController {
             $this->errAjax(RC::RC_ADDRESS_NOT_EXISTS);
         }
         
-        $this->onAjax($address->modify($_POST));
+        if (!F::isCorrect($res = $address->modify($_POST))) {
+            $this->onAjax($res);
+        }
+        
+        $this->onAjax($this->_getAddressAttributes($address));
     }
     
     public function actionDeleteAddress() {

@@ -46,6 +46,25 @@ class DictFlight {
         self::CABIN_JJ => array('name' => '经济舱'),
     );
     
+    const CRAFT_LARGE = 1;
+    const CRAFT_MIDDLE = 2;
+    const CRAFT_SMALL = 3;
+    public static $craftTypes = array(
+        self::CRAFT_LARGE => array('name' => '大', 'str' => 'large'),
+        self::CRAFT_MIDDLE => array('name' => '中', 'str' => 'middle'),
+        self::CRAFT_SMALL => array('name' => '小', 'str' => 'small'),
+    );
+    
+    public static function getCraftTypeByStr($str) {
+        foreach (self::$craftTypes as $craftType => $config) {
+            if ($config['str'] == $str) {
+                return $craftType;
+            }
+        }
+        
+        return self::CRAFT_LARGE;
+    }
+    
     const RATE_CHILD = 0.5;
     const RATE_BABY = 0.1;
     

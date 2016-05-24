@@ -44,7 +44,7 @@ class ProviderF extends Provider {
         return $departCityCode . $arriveCityCode . $flightNo;
     }
     
-    public static function addPriceOrderParams($data) {
+    public static function addPriceSortParams($data) {
         foreach ($data['flights'] as &$flight) {
             //$flight['orderParams'] = self::encryptOrderParams($flight);
         }
@@ -82,7 +82,7 @@ class ProviderF extends Provider {
             return $res;
         }
         
-        $data = self::addPriceOrderParams($res['data']);
+        $data = self::addPriceSortParams($res['data']);
         $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
@@ -104,7 +104,7 @@ class ProviderF extends Provider {
             return $res;
         }
         
-        $data = self::addPriceOrderParams($res['data']);
+        $data = self::addPriceSortParams($res['data']);
         $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);

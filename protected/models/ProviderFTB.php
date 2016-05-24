@@ -115,8 +115,8 @@ class ProviderFTB extends ProviderF {
                     'cabinNum' => $flightSegment['cabin_num'],
                     'discount' => floatval(sprintf('%.1f', $flightSegment['price'] * 10 / $flightSegment['basic_cabin_price'])),
                     'adultPrice' => $flightSegment['price'],
-                    'childPrice' => $flightSegment['price'] * DictFlight::RATE_CHILD,
-                    'babyPrice' => $flightSegment['price'] * DictFlight::RATE_CHILD,
+                    'childPrice' => $flightSegment['basic_cabin_price'] * DictFlight::RATE_CHILD,
+                    'babyPrice' => $flightSegment['basic_cabin_price'] * DictFlight::RATE_BABY,
                     'standardPrice' => $flightSegment['basic_cabin_price'],
                     'rule' => self::getRule($flights[$flightKey]['airlineCode'], $flightSegment['cabin'], date('Y-m-d', $flights[$flightKey]['departTime']))
                 );
