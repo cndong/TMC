@@ -151,6 +151,10 @@ class FlightCNOrder extends QActiveRecord {
             if (!($contacter = UserContacter::model()->findByPk($tmp['contacterID'])) || $contacter->deleted || $contacter->userID != $params['userID']) {
                 return F::errReturn(RC::RC_CONTACTER_NOT_EXISTS);
             }
+        } else {
+            if ($contacter = UserContacter::model()->findByAttributes($tmp, 'deleted=:deleted', array(':deleted' => UserContacter::DELETED_F))) {
+                $tmp = array('contacterID' => $contacter->id);
+            }
         }
         $params['contacter'] = $tmp;
         
@@ -171,8 +175,16 @@ class FlightCNOrder extends QActiveRecord {
                 if (!($address = UserAddress::model()->findByPk($tmp['addressID'])) || $address->deleted || $address->userID != $params['userID']) {
                     return F::errReturn(RC::RC_ADDRESS_NOT_EXISTS);
                 }
+            } else {
+                if ($address = UserAddress::model()->findByAttributes($tmp, 'deleted=:deleted', array(':deleted' => UserAddress::DELETED_F))) {
+                    $tmp = array('addressID' => $address->id);
+                }
             }
             $params['invoiceAddress'] = $tmp;
+        }
+        
+        if (($params['passengerNum'] = count($params['passengers'])) > DictFlight::MAX_PASSENGER_NUM) {
+            return F::errReturn(RC::RC_F_PASSENGER_NUM_ERROR);
         }
         
         //检测常用乘客人
@@ -189,6 +201,10 @@ class FlightCNOrder extends QActiveRecord {
             if ($isUseID) {
                 if (!($passenger = UserPassenger::model()->findByPk($tmp['passengerID'])) || $passenger->deleted || $passenger->userID != $params['userID']) {
                     return F::errReturn(RC::RC_PASSENGER_NOT_EXISTS);
+                }
+            } else {
+                if ($tmpPassenger = UserPassenger::model()->findByAttributes($tmp, 'deleted=:deleted', array(':deleted' => UserPassenger::DELETED_F))) {
+                    $tmp = array('passengerID' => $tmpPassenger->id);
                 }
             }
             $passengers[] = $passenger;
@@ -256,6 +272,10 @@ class FlightCNOrder extends QActiveRecord {
                     return F::errReturn(RC::RC_F_INFO_CHANGED);
                 }
                 
+                if (is_numeric($realCabin['cabinNum']) && ) {
+                    
+                }
+                
                 $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
                 $modifySegment['craftType'] = DictFlight::CRAFT_LARGE;
                 foreach ($realCarftMap as $craftTypeStr => $craftCodes) {
@@ -305,33 +325,53 @@ class FlightCNOrder extends QActiveRecord {
             return $res;
         }
         $params = $res['data'];
+        $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'batchNo', 'passengerNum'));
         
-        $records = array();
-        $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'batchNo'));
-        $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
-        foreach ($routeTypes as $routeType) {
-            foreach ($params[$routeType]['segments'] as $segmentIndex => $segment) {
-                $record = CMap::mergeArray($attributes, F::arrayGetByKeys($segment, array(
-                    'flightNo', 'departCityCode', 'arriveCityCode', 'departTime', 'arriveTime', 'airlineCode', 'craftCode', 'craftType',
-                    'adultAirportTax', 'adultOilTax', 'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyAirportTax',
-                    'ticketPrice', 'insurePrice', 'airportTaxPrice', 'oilTaxPrice'
-                )));
-                $record = CMap::mergeArray($record, $segment['cabinInfo']);
-            }
-            
-            $records[] = $record;
-        }
-        
+        $train = Yii::app()->db->beginTransaction();
         try {
             if (!isset($params['contacter']['contacterID'])) {
-                if ($contacter = UserContacter::model()->findByAttributes($params['contacter'], 'deleted=:deleted', array(':deleted' => UserContacter::DELETED_F))) {
-                    
+                if (!F::isCorrect($res = UserContacter::createContacter($tmp))) {
+                    throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                }
+                $params['contacter'] = array('contacterID' => $res['data']->id);
+            }
+            
+            if (!isset($params['invoiceAddress']['addressID'])) {
+                if (!F::isCorrect($res = UserAddress::createAddress($params['invoiceAddress']))) {
+                    throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                }
+                $params['invoiceAddress'] = array('addressID' => $res['data']->id);
+            }
+            
+            foreach ($params['passengers'] as $index => $passenger) {
+                if (!isset($passenger['passengerID'])) {
+                    if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
+                        throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                    }
+                    $params['passengers'][$index] = array('passengerID' => $res['data']->id);
                 }
             }
+            
+            $passengerIDs = F::arrayGetField($params['passengers'], 'passengerID', True);
+            $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
+            foreach ($routeTypes as $routeType) {
+                foreach ($params[$routeType]['segments'] as $segmentIndex => $segment) {
+                    $record = CMap::mergeArray($attributes, F::arrayGetByKeys($segment, array(
+                        'flightNo', 'departCityCode', 'arriveCityCode', 'departTime', 'arriveTime', 'airlineCode', 'craftCode', 'craftType',
+                        'adultAirportTax', 'adultOilTax', 'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyAirportTax',
+                        'ticketPrice', 'insurePrice', 'airportTaxPrice', 'oilTaxPrice'
+                    )));
+                    $record = CMap::mergeArray($record, $segment['cabinInfo']);
+                    $record['passengerIDs'] = implode('-', $passengerIDs);
+                    $record['passengerNum'] = 
+                }
+            }
+            
+            $train->commit();
+        } catch (Exception $e) {
+            $train->rollback();
+            return F::errReturn(RC::$e->getMessage());
         }
         //'passengerIDs', 'passengerNum', 'payPrice', 'taoPrice', 
-        
-        //需要处理联系人、乘客、地址自动添加
-        var_dump($records);exit;
     }
 }

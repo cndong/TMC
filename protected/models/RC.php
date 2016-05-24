@@ -54,6 +54,8 @@ class RC {
     const RC_F_INFO_CHANGED = 100403;
     const RC_F_NO_SUCH_CABIN = 100404;
     const RC_F_PRICE_ERROR = 100405;
+    const RC_F_PASSENGER_NUM_ERROR = 100406;
+    const RC_F_CABIN_NUM_ERROR = 100407;
     
     const RC_SMS_LOG_NOT_EXISTS = 100501;
     const RC_SMS_HAD_SENDED = 100501;

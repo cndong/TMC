@@ -149,7 +149,7 @@ class UserController extends ApiController {
             $this->onAjax($res);
         }
         
-        $this->onAjax($this->_getPassengerAttributes($res['data']));
+        $this->corAjax($this->_getPassengerAttributes($res['data']));
     }
     
     public function actionModifyPassenger() {
@@ -165,7 +165,7 @@ class UserController extends ApiController {
             $this->onAjax($res);
         }
         
-        $this->onAjax($this->_getPassengerAttributes($passenger));
+        $this->corAjax($this->_getPassengerAttributes($passenger));
     }
     
     public function actionDeletePassenger() {
@@ -224,7 +224,7 @@ class UserController extends ApiController {
             $this->onAjax($res);
         }
         
-        $this->onAjax($this->_getAddressAttributes($address));
+        $this->corAjax($this->_getAddressAttributes($address));
     }
     
     public function actionDeleteAddress() {
