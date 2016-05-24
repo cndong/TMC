@@ -47,7 +47,11 @@ class FlightController extends ApiController {
             $_POST[$k] = json_decode($v);
         }
         
-        $this->onAjax(FlightCNOrder::createOrder($_POST));
+        if (!F::isCorrect($res = FlightCNOrder::createOrder($_POST))) {
+            $this->onAjax($res);
+        }
+        
+        $this->corAjax(array('orderID' => $res['data']->id));
     }
     
     public function actionOrderList() {
