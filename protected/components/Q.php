@@ -136,4 +136,12 @@ class Q {
         }
         Yii::log($message . ' @' . F::getClientIP() . $request, CLogger::LEVEL_ERROR, $cat, 0);
     }
+    
+    public static function logModel($model) {
+        $category = 'dberror.' . get_class($model);
+        Q::log('---------数据库操作失败开始---------', $category);
+        Q::log($model->attributes, $category);
+        Q::log($model->getErrors(), $category);
+        Q::log('---------数据库操作失败结束---------', $category);
+    }
 }

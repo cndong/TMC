@@ -50,6 +50,7 @@ class ProviderF extends Provider {
         }
         
         foreach ($data['routes'] as &$route) {
+            $route['routeInsurePrice'] = count($route['segments']) * DictFlight::INSURE_PRICE;
             foreach ($route['segments'] as &$segment) {
                 uasort($data['flights'][$segment['flightKey']]['cabins'], function($a, $b) {return $a['adultPrice'] > $b['adultPrice']; });
             }

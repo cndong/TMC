@@ -9,8 +9,8 @@ class FlightCNOrder extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('merchantID, userID, contacterID, isPrivate, isRound, isInsured, isInvoice, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, batchNo', 'required'),
-            array('merchantID, userID, contacterID, isPrivate, isRound, isInsured, isInvoice, departTime, arriveTime, passengerNum, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, taoPrice, batchNo', 'required'),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, departTime, arriveTime, passengerNum, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
             array('adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePostPrice', 'numerical'),
             array('flightNo', 'length', 'max' => 6),
             array('airlineCode', 'length', 'max' => 2),
@@ -19,8 +19,8 @@ class FlightCNOrder extends QActiveRecord {
             array('passengerIDs', 'length', 'max' => 60),
             array('invoiceAddress', 'length', 'max' => 255),
             array('tradeNo, invoiceTradeNo', 'length', 'max' => 32),
-            array('batchNo' => ''),
-            array('id, merchantID, userID, contacterID, isPrivate, isRound, isInsured, isInvoice, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengers, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddress, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, status, ctime, utime', 'safe', 'on' => 'search'),
+            array('batchNo', 'length', 'max' => 15),
+            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddress, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -125,9 +125,11 @@ class FlightCNOrder extends QActiveRecord {
         }
         
         //检测用户
-        if (!User::model()->findByPk($params['userID'])) {
+        if (!($user = User::model()->findByPk($params['userID']))) {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
+        $params['departmentID'] = $params['isPrivate'] ? 0 : $user->departmentID;
+        $params['companyID'] = $params['isPrivate'] ? 0 : $user->companyID;
         
         //检测联系人
         $isUseID = isset($params['contacter']['contacterID']);
@@ -269,6 +271,7 @@ class FlightCNOrder extends QActiveRecord {
                 
                 $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
                 $modifySegment['craftType'] = DictFlight::CRAFT_LARGE;
+                $modifySegment['isBack'] = $routeType == 'returnRoute' ? Dict::STATUS_TRUE : Dict::STATUS_FALSE;
                 foreach ($realCarftMap as $craftTypeStr => $craftCodes) {
                     if (in_array($segment['craftCode'], $craftCodes)) {
                         $modifySegment['craftType'] = DictFlight::getCraftTypeByStr($craftTypeStr);
@@ -282,7 +285,8 @@ class FlightCNOrder extends QActiveRecord {
                     $modifySegment['airportTaxPrice'] += count($passengers[$ticketType]) * $segment[$ticketTypeConfig['str'] . 'AirportTax'];
                     $modifySegment['oilTaxPrice'] += count($passengers[$ticketType]) * $segment[$ticketTypeConfig['str'] . 'OilTax'];
                 }
-                $modifySegment['orderPrice'] = $modifySegment['ticketPrice'] + $modifySegment['insurePrice'] + $modifySegment['airportTaxPrice'] + $modifySegment['oilTaxPrice'];
+                $modifySegment['taoPrice'] = $modifySegment['ticketPrice'] + $modifySegment['airportTaxPrice'] + $modifySegment['oilTaxPrice'];
+                $modifySegment['orderPrice'] = $modifySegment['taoPrice'] + $modifySegment['insurePrice'];
                 $totalOrderPrice += $modifySegment['orderPrice'];
                 $totalTicketPrice += $modifySegment['ticketPrice'];
                 $totalInsurePrice += $modifySegment['insurePrice'];
@@ -290,7 +294,7 @@ class FlightCNOrder extends QActiveRecord {
                 $totalOilTaxPrice += $modifySegment['oilTaxPrice'];
             }
         }
-        $params['batchNo'] = $segmentNum > 1 ? Q::getUniqueID() : '';
+        $params['batchNo'] = $segmentNum > 1 ? Q::getUniqueID() : 0;
         
         //检测价格
         $params['price'] = F::checkParams($params['price'], array_fill_keys(array('orderPrice', 'ticketPrice', 'airportTaxPrice', 'oilTaxPrice', 'insurePrice', 'invoicePrice'), '!' . ParamsFormat::INTNZ . '--0'));
@@ -313,12 +317,13 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     public static function createOrder($params) {
-        $params = self::_getOrderParams();
+        if (Q::isLocalEnv()) {
+            $params = self::_getOrderParams();
+        }
         if (!F::isCorrect($res = self::_checkCreateOrderParams($params))) {
             return $res;
         }
         $params = $res['data'];
-        $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'batchNo', 'passengerNum'));
         
         $train = Yii::app()->db->beginTransaction();
         try {
@@ -329,11 +334,13 @@ class FlightCNOrder extends QActiveRecord {
                 $params['contacter'] = array('contacterID' => $res['data']->id);
             }
             
-            if (!isset($params['invoiceAddress']['addressID'])) {
+            if ($params['isInvoice'] && !isset($params['invoiceAddress']['addressID'])) {
                 if (!F::isCorrect($res = UserAddress::createAddress($params['invoiceAddress']))) {
                     throw new Exception(RC::RC_MODEL_CREATE_ERROR);
                 }
                 $params['invoiceAddress'] = array('addressID' => $res['data']->id);
+            } else {
+                $params['invoiceAddress'] = array('addressID' => 0);
             }
             
             foreach ($params['passengers'] as $index => $passenger) {
@@ -345,26 +352,43 @@ class FlightCNOrder extends QActiveRecord {
                 }
             }
             
-            $passengerIDs = F::arrayGetField($params['passengers'], 'passengerID', True);
+            $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'batchNo', 'passengerNum'));
+            $attributes['contacterID'] = $params['contacter']['contacterID'];
+            $attributes['invoiceAddressID'] = $params['invoiceAddress']['addressID'];
+            $attributes['passengerIDs'] = implode('-', F::arrayGetField($params['passengers'], 'passengerID', True));
             $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
             foreach ($routeTypes as $routeType) {
                 foreach ($params[$routeType]['segments'] as $segmentIndex => $segment) {
                     $record = CMap::mergeArray($attributes, F::arrayGetByKeys($segment, array(
-                        'flightNo', 'departCityCode', 'arriveCityCode', 'departTime', 'arriveTime', 'airlineCode', 'craftCode', 'craftType',
-                        'adultAirportTax', 'adultOilTax', 'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyAirportTax',
-                        'ticketPrice', 'insurePrice', 'airportTaxPrice', 'oilTaxPrice'
+                        'flightNo', 'departCityCode', 'arriveCityCode', 'departAirportCode', 'arriveAirportCode',
+                        'departTime', 'arriveTime', 'airlineCode', 'craftCode', 'craftType', 'adultAirportTax', 'adultOilTax',
+                        'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyOilTax', 'orderPrice', 'ticketPrice',
+                        'airportTaxPrice', 'oilTaxPrice', 'taoPrice', 'insurePrice', 'isBack'
                     )));
+                    $record['invoicePrice'] = 0;
+                    if ($segmentIndex <= 0) {
+                        $record['invoicePrice'] = $params['price']['invoicePrice'];
+                        $record['orderPrice'] += $record['invoicePrice'];
+                    }
+                    
                     $record = CMap::mergeArray($record, $segment['cabinInfo']);
-                    $record['passengerIDs'] = implode('-', $passengerIDs);
                     $record['passengerNum'] = $params['passengerNum'];
+                    $record['status'] = $params['isPrivate'] ? FlightStatus::WAIT_PAY : FlightStatus::WAIT_CHECK;
+                    
+                    $order = new FlightCNOrder();
+                    $order->attributes = $record;
+                    if (!$order->save()) {
+                        Q::logModel($order);
+                        throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                    }
                 }
             }
             
             $train->commit();
+            return F::corReturn($order);
         } catch (Exception $e) {
             $train->rollback();
-            return F::errReturn(RC::$e->getMessage());
+            return F::errReturn($e->getMessage());
         }
-        //'payPrice', 'taoPrice', 
     }
 }
