@@ -193,8 +193,18 @@ class FlightController extends ApiController {
         $cities = DataAirport::getCNCities();
         $airports = DataAirport::getCNAiports();
         
-        $rtn = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0);
+        $rtn = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'passengers' => array());
         foreach ($orders as $order) {
+            if (empty($rtn['passengers'])) {
+                $passengerIDs = explode('-', $order->passengerIDs);
+                $criteria = new CDbCriteria();
+                $criteria->addInCondition('id', $passengerIDs);
+                $passengers = UserPassenger::model()->findAll($criteria);
+                foreach ($passengers as $passenger) {
+                    $rtn['passengers'][] = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
+                }
+            }
+            
             $routeType = $order->isBack ? 'returnRoute' : 'departRoute';
             if (empty($rtn[$routeType]['segments'])) {
                 $rtn[$routeType]['segments'] = array();
