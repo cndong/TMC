@@ -9,8 +9,8 @@ class FlightCNOrder extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, taoPrice, batchNo', 'required'),
-            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, departTime, arriveTime, passengerNum, invoiceAddressID, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, taoPrice, batchNo', 'required'),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, departTime, arriveTime, passengerNum, craftType,, invoiceAddressID, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
             array('adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePostPrice', 'numerical'),
             array('flightNo', 'length', 'max' => 6),
             array('airlineCode', 'length', 'max' => 2),
@@ -19,7 +19,7 @@ class FlightCNOrder extends QActiveRecord {
             array('passengerIDs', 'length', 'max' => 60),
             array('tradeNo, invoiceTradeNo', 'length', 'max' => 32),
             array('batchNo', 'length', 'max' => 15),
-            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, craftType,, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
