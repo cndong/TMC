@@ -137,7 +137,7 @@ class FlightController extends ApiController {
         $rtn = array();
         
         $keys = array(
-            'id', 'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
+            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
             'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
         );
         
@@ -149,7 +149,7 @@ class FlightController extends ApiController {
             $index = empty($order->batchNo) ? $order->id : $order->batchNo;
             $routeType = $order->isBack ? 'returnRoute' : 'departRoute';
             if (empty($rtn[$index])) {
-                $rtn[$index] = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0);
+                $rtn[$index] = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'id' => $order->id);
             }
             if (empty($rtn[$index][$routeType]['segments'])) {
                 $rtn[$index][$routeType]['segments'] = array();
