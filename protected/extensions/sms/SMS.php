@@ -48,10 +48,11 @@ class SMS {
             $tmp = SMSLog::getByLimitUnit($params['mobile'], $type, Dict::STATUS_TRUE);
             if (count($tmp) >= SMSTemplate::$templates[$type]['limit']) {
                 return F::errReturn(RC::RC_SMS_LIMIT_ERROR);
-            }
-            $tmp = current($tmp);
-            if (Q_TIME - $tmp->ctime < SMSTemplate::$templates[$type]['interval']) {
-                return F::errReturn(RC::RC_SMS_INTERVAL_ERROR);
+            } else if (!empty($tmp)) {
+                $tmp = current($tmp);
+                if (Q_TIME - $tmp->ctime < SMSTemplate::$templates[$type]['interval']) {
+                    return F::errReturn(RC::RC_SMS_INTERVAL_ERROR);
+                }
             }
         }
         
