@@ -154,12 +154,13 @@ $(function() {
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工姓名:</label><div class="col-sm-6"><input type="text" class="form-control" name="create_user_name" data-format="!TEXTZ|TEXTNZ" data-err="员工姓名不能为空!|员工姓名错误!" /></div></div></div>';
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工手机:</label><div class="col-sm-6"><input type="text" class="form-control" name="create_user_mobile" data-format="!TEXTZ|MOBILE" data-err="员工手机不能为空!|员工手机错误!" /></div></div></div>';
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工密码:</label><div class="col-sm-6"><input type="text" class="form-control" name="create_user_password" data-format="!TEXTZ" data-err="员工密码不能为空!" /></div></div></div>';
+			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">是否审核:</label><div class="col-sm-6"><label class="radio-inline"><input type="radio" name="create_user_isReviewer" value="1" />审核人</label><label class="radio-inline"><input type="radio" name="create_user_isReviewer" value="0" checked />非审核人</label></div></div></div>';
 			
 			return html;
 		},
 		createUserParams: function() {
 			var field = "create_user_";
-			return _$.collectParams("input[name^='" + field + "'],select[name^='" + field + "']", field, _$.createTips);
+			return _$.collectParams("input[name^='" + field + "']:text,select[name^='" + field + "'],input:checked", field, _$.createTips);
 		},
 		createUserShow: function(obj) {
 			var companySelect = $("select[name='create_user_companyID']");
@@ -177,10 +178,27 @@ $(function() {
 			$(".c_create").unbind("click").click(function() {
 				_$.create($(this).attr("data-create-type"), $(this));
 			});
+		},
+		reviewerBindClick: function() {
+			$(".c_reviewer").unbind("click").click(function() {
+				var obj = $(this);
+				$.post("/boss/company/ajaxToggleReviewer", {userID: $(this).attr("data-user-id")}, function(data) {
+					if (!data.rc) {
+						if (obj.hasClass("btn-danger")) {
+							obj.html("设为审核").toggleClass("btn-danger").toggleClass("btn-success");
+						} else {
+							obj.html("取消审核").toggleClass("btn-success").toggleClass("btn-danger");
+						}
+					} else {
+						_$.createTips(data.msg);
+					}
+				}, "json");
+			});
 		}
 	});
 	
 	_$.createBindClick();
+	_$.reviewerBindClick();
 	
 	$(".c_department").click(function() {
 		var companyID = $(this).attr("data-company-id");

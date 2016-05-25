@@ -186,15 +186,15 @@ class FlightController extends ApiController {
         }
         
         $keys = array(
-            'id', 'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
+            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
             'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
         );
         
         $cities = DataAirport::getCNCities();
         $airports = DataAirport::getCNAiports();
         
-        $rtn = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'passengers' => array());
-        foreach ($orders as $order) {
+        $rtn = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'passengers' => array(), 'id' => $order->id);
+        foreach ($orders as $index => $order) {
             if (empty($rtn['passengers'])) {
                 $passengerIDs = explode('-', $order->passengerIDs);
                 $criteria = new CDbCriteria();
