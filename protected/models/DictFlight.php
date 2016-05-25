@@ -69,7 +69,7 @@ class DictFlight {
     const RATE_BABY = 0.1;
     
     const MAX_PASSENGER_NUM = 9;
-    const INSURE_PRICE = 30;
+    const INSURE_PRICE = 3000;
     
     public static function isCNCityCode($cityCode) {
         $cities = ProviderF::getCNCityList();

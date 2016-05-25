@@ -1,7 +1,7 @@
 <?php
 class UserController extends ApiController {
     private function _getUserInfo($user) {
-        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'ctime'));
+        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'isReviewer', 'ctime'));
         $rtn['company'] = $user->company->name;
         $rtn['department'] = $user->department->name;
         

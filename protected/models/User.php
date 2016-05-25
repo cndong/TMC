@@ -11,12 +11,12 @@ class User extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('mobile, name, companyID, departmentID, password', 'required'),
-            array('companyID, departmentID, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('mobile, name, companyID, departmentID, password, isReviewer', 'required'),
+            array('companyID, departmentID, isReviewer, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
             array('mobile', 'length', 'max' => 11),
             array('name', 'length', 'max' => 50),
             array('password', 'length', 'max' => 32),
-            array('id, mobile, name, companyID, departmentID, password, deleted, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, mobile, name, companyID, departmentID, password, isReviewer, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -54,7 +54,8 @@ class User extends QActiveRecord {
             'name' => ParamsFormat::TEXTNZ,
             'companyID' => ParamsFormat::INTNZ,
             'departmentID' => ParamsFormat::INTNZ,
-            'password' => ParamsFormat::TEXTNZ
+            'password' => ParamsFormat::TEXTNZ,
+            'isReviewer' => '!' . ParamsFormat::BOOL . '--' . Dict::STATUS_FALSE
         );
     }
     
@@ -91,6 +92,17 @@ class User extends QActiveRecord {
         }
         
         return F::corReturn($user);
+    }
+    
+    public function toggleRewiewer() {
+        $this->isReviewer = $this->isReviewer ? Dict::STATUS_FALSE : Dict::STATUS_TRUE;
+        if (!$this->save()) {
+            Q::logModel($this);
+            
+            return F::errReturn(RC::RC_MODEL_UPDATE_ERROR);
+        }
+        
+        return F::corReturn();
     }
     
     public static function search($params, $isGetCriteria = False) {

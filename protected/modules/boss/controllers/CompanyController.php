@@ -24,6 +24,18 @@ class CompanyController extends BossController {
         $this->onAjax($res);
     }
     
+    public function actionAjaxToggleReviewer() {
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        
+        $this->onAjax($user->toggleRewiewer());
+    }
+    
     public function actionAjaxCompanyList() {
         $rtn = array();
         $companies = Company::model()->findAll();
