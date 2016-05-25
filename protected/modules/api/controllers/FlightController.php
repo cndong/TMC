@@ -137,7 +137,7 @@ class FlightController extends ApiController {
         $rtn = array();
         
         $keys = array(
-            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
+            'id', 'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
             'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
         );
         
@@ -186,7 +186,7 @@ class FlightController extends ApiController {
         }
         
         $keys = array(
-            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
+            'id', 'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
             'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
         );
         
