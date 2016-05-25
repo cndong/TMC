@@ -172,8 +172,47 @@ class FlightController extends ApiController {
     }
     
     public function actionOrderDetail() {
-    if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
+        
+        if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $params['userID']) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+        
+        $orders = array($order);
+        if (!empty($order->batchNo)) {
+            $orders = FlightCNOrder::model()->findAllByAttributes(array('batchNo' => $order->batchNo));
+        }
+        
+        $keys = array(
+            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
+            'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
+        );
+        
+        $cities = DataAirport::getCNCities();
+        $airports = DataAirport::getCNAiports();
+        
+        $rtn = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0);
+        foreach ($orders as $order) {
+            $routeType = $order->isBack ? 'returnRoute' : 'departRoute';
+            if (empty($rtn[$routeType]['segments'])) {
+                $rtn[$routeType]['segments'] = array();
+            }
+            
+            $rtn['orderPrice'] += $order->orderPrice;
+            $rtn['insurePrice'] += $order->insurePrice;
+            $rtn['invoicePrice'] += $order->invoicePrice;
+            
+            $tmp = F::arrayGetByKeys($order, $keys);
+            $tmp['departAirport'] = $airports[$order['departAirportCode']]['airportName'];
+            $tmp['arriveAirport'] = $airports[$order['arriveAirportCode']]['airportName'];
+            $tmp['departCity'] = $cities[$order['departCityCode']]['cityName'];
+            $tmp['arriveCity'] = $cities[$order['arriveCityCode']]['cityName'];
+            
+            $rtn[$routeType]['segments'][] = $tmp;
+        }
+        
+        $this->corAjax($rtn);
     }
 }
