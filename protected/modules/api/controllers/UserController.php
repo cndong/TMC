@@ -68,7 +68,7 @@ class UserController extends ApiController {
     }
     
     public function actionModifyPassword() {
-        if (!F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'password' => ParamsFormat::TEXTNZ)) || !($password = base64_decode($_POST['password']))) {
+        if (!F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'password' => ParamsFormat::TEXTNZ))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
