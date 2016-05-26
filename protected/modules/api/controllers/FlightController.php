@@ -98,6 +98,9 @@ class FlightController extends ApiController {
     }
     
     public function actionBook() {
+        if (YII_DEBUG) {
+            $_POST = self::_getOrderParams();
+        }
         if (!($params = F::checkParams($_POST, array_fill_keys(array('contacter', 'departRoute', 'passengers', 'price'), ParamsFormat::JSON)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
@@ -162,7 +165,5 @@ class FlightController extends ApiController {
         if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $user->id) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
-        
-        
     }
 }

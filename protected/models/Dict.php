@@ -113,5 +113,5 @@ class Dict {
         return isset(self::$cardTypes[$cardType]);
     }
     
-    const INVOICE_PRICE = 20;
+    const INVOICE_PRICE = 2000;
 }
