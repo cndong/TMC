@@ -9,8 +9,8 @@ class FlightCNOrder extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, taoPrice, batchNo', 'required'),
-            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, departTime, arriveTime, passengerNum, craftType,, invoiceAddressID, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, setmengNum, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, taoPrice, batchNo', 'required'),
+            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, setmengNum, departTime, arriveTime, passengerNum, craftType,, invoiceAddressID, invoicePrice, invoicePostID, batchNo, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
             array('adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePostPrice', 'numerical'),
             array('flightNo', 'length', 'max' => 6),
             array('airlineCode', 'length', 'max' => 2),
@@ -19,7 +19,7 @@ class FlightCNOrder extends QActiveRecord {
             array('passengerIDs', 'length', 'max' => 60),
             array('tradeNo, invoiceTradeNo', 'length', 'max' => 32),
             array('batchNo', 'length', 'max' => 15),
-            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, flightNo, airlineCode, craftCode, craftType,, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, isBack, setmengNum, flightNo, airlineCode, craftCode, craftType,, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, passengerIDs, passengerNum, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, orderPrice, payPrice, taoPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostID, invoicePostPrice, tradeNo, invoiceTradeNo, operaterID, batchNo, status, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -139,7 +139,7 @@ class FlightCNOrder extends QActiveRecord {
         $passengers = self::classifyPassengers($passengers);
         
         //检测往返航程、航段 array('routeKey' => 'ax8ands', 'segments' => array(array(...)));
-        $totalOrderPrice = $totalTicketPrice = $totalAirportTaxPrice = $totalOilTaxPrice = $totalInsurePrice = $segmentNum = 0;
+        $params['segmentNum'] = $totalOrderPrice = $totalTicketPrice = $totalAirportTaxPrice = $totalOilTaxPrice = $totalInsurePrice = 0;
         $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
         foreach ($routeTypes as $routeType) {
             if (!($tmp = F::checkParams($params[$routeType], array(
@@ -163,7 +163,7 @@ class FlightCNOrder extends QActiveRecord {
             $realCarftMap = $res['data']['craftMap'];
             //检测此航程的航段信息是否正确
             foreach ($tmp['segments'] as $segmentIndex => $segment) {
-                $segmentNum++;
+                $params['segmentNum']++;
                 
                 if ($realSegments[$segmentIndex]['flightKey'] != ProviderF::getFlightKey($segment['departCityCode'], $segment['arriveCityCode'], $segment['flightNo'])) {
                     return F::errReturn(RC::RC_F_SEGMENT_ERROR);
@@ -227,7 +227,7 @@ class FlightCNOrder extends QActiveRecord {
                 $totalOilTaxPrice += $modifySegment['oilTaxPrice'];
             }
         }
-        $params['batchNo'] = $segmentNum > 1 ? Q::getUniqueID() : 0;
+        $params['batchNo'] = Q::getUniqueID();
         
         //检测价格
         $params['price'] = F::checkParams($params['price'], array_fill_keys(array('orderPrice', 'ticketPrice', 'airportTaxPrice', 'oilTaxPrice', 'insurePrice', 'invoicePrice'), '!' . ParamsFormat::INTNZ . '--0'));
@@ -282,7 +282,7 @@ class FlightCNOrder extends QActiveRecord {
                 }
             }
             
-            $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'batchNo', 'passengerNum'));
+            $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'segmentNum', 'batchNo', 'passengerNum'));
             $attributes['contacterID'] = $params['contacter']['contacterID'];
             $attributes['invoiceAddressID'] = $params['invoiceAddress']['addressID'];
             $attributes['passengerIDs'] = implode('-', F::arrayGetField($params['passengers'], 'passengerID', True));
@@ -322,16 +322,23 @@ class FlightCNOrder extends QActiveRecord {
         }
     }
     
+    public static function getOrder($order, $orders = array()) {
+        
+    }
+    
     public static function search($params) {
         $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
         if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         $criteria = new CDbCriteria();
+        $criteria->order = 'id DESC';
+        $criteria->group = 'batchNo';
         $criteria->compare('userID', $params['userID']);
         $criteria->addBetweenCondition('ctime', strtotime($params['beginDate']), strtotime($params['endDate']));
-        
+
         $rtn = array();
+        $orders = FlightCNOrder::model()->findAll($criteria);
         
         $keys = array(
             'id', 'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
@@ -341,7 +348,6 @@ class FlightCNOrder extends QActiveRecord {
         $cities = DataAirport::getCNCities();
         $airports = DataAirport::getCNAiports();
         
-        $orders = FlightCNOrder::model()->findAllByAttributes(array('userID' => $_GET['userID']));
         $oldIndex = $index = 0;
         foreach ($orders as $order) {
             $index = empty($order->batchNo) ? $order->id : $order->batchNo;
