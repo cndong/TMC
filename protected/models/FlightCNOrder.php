@@ -505,12 +505,4 @@ class FlightCNOrder extends QActiveRecord {
     
         return F::corReturn();
     }
-    
-    public static function changeStatus($batchNo) {
-        
-        $orders = self::model()->findByAttributes(array('batchNo' => $batchNo));
-        foreach ($orders as $order) {
-            
-        }
-    }
 }
