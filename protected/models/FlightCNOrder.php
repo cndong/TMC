@@ -336,7 +336,7 @@ class FlightCNOrder extends QActiveRecord {
     public static function filterBatchNo($bOrders) {
         $rtn = array_values($bOrders);
         foreach ($rtn as &$bOrder) {
-            foreach (array('departRoute', 'arriveRoute') as $routeType) {
+            foreach (array('departRoute', 'returnRoute') as $routeType) {
                 if (isset($bOrder[$routeType])) {
                     $bOrder[$routeType]['segments'] = array_values($bOrder[$routeType]['segments']);
                 }
