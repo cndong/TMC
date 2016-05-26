@@ -117,7 +117,6 @@ class FlightController extends ApiController {
             $this->onAjax($res);
         }
         
-        var_dump($res);exit;
         $this->corAjax(array('orderID' => $res['data']->id));
     }
     
