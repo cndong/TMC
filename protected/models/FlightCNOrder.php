@@ -270,14 +270,14 @@ class FlightCNOrder extends QActiveRecord {
         try {
             if (!isset($params['contacter']['contacterID'])) {
                 if (!F::isCorrect($res = UserContacter::createContacter($params['contacter']))) {
-                    throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                    throw new Exception($res['rc']);
                 }
                 $params['contacter'] = array('contacterID' => $res['data']->id);
             }
             
             if ($params['isInvoice'] && !isset($params['invoiceAddress']['addressID'])) {
                 if (!F::isCorrect($res = UserAddress::createAddress($params['invoiceAddress']))) {
-                    throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                    throw new Exception($res['rc']);
                 }
                 $params['invoiceAddress'] = array('addressID' => $res['data']->id);
             } else {
@@ -287,7 +287,7 @@ class FlightCNOrder extends QActiveRecord {
             foreach ($params['passengers'] as $index => $passenger) {
                 if (!isset($passenger['passengerID'])) {
                     if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
-                        throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                        throw new Exception($res['rc']);
                     }
                     $params['passengers'][$index] = array('passengerID' => $res['data']->id);
                 }
