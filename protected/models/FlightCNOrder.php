@@ -30,7 +30,7 @@ class FlightCNOrder extends QActiveRecord {
         
         $rtn = array();
         foreach ($passengers as $passenger) {
-            $rtn[UserPassenger::getPassengerKey($passenger)] = F::arrayGetByKeys($passenger, array('id', 'name' , 'type', 'cardType', 'carNo', 'birthday', 'sex'));
+            $rtn[UserPassenger::getPassengerKey($passenger)] = F::arrayGetByKeys($passenger, array('id', 'name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
         }
         
         return $rtn;
