@@ -369,7 +369,7 @@ class FlightCNOrder extends QActiveRecord {
                 $rtn[$order->batchNo] = array(
                     'id' => $order->id, 'orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0
                 );
-                $rtn[$order->batchNo] = array_merge($rtn[$order->batchNo], F::arrayGetByKeys($order, array('ctime', 'isRound', 'status', 'departTime')));
+                $rtn[$order->batchNo] = array_merge($rtn[$order->batchNo], F::arrayGetByKeys($order, array('ctime', 'isPrivate', 'isRound', 'status', 'departTime', 'segmentNum')));
                 if ($isWithPassengers) {
                     $rtn[$order->batchNo]['passengers'] = $order->getPassengers();
                 }
@@ -429,5 +429,88 @@ class FlightCNOrder extends QActiveRecord {
         $batchNos = F::arrayGetField($batchNos, 'batchNo');
         
         return self::getByBatchNos($batchNos);
+    }
+    
+    public static function changeStatus($batchNo, $status, $params = array(), $condition = '', $conditionParams = array()) {
+        if ($batchNo instanceof FlightCNOrder) {
+            $batchNo = $order->batchNo;
+        }
+        
+        if (empty(FlightStatus::$orderStatus[$status])) {
+            return F::errReturn(RC::RC_O_STATUS_NOT_EXISTS);
+        }
+    
+        $isDriverStatus = OrderStatus::isDriverStatus($this->status, $status);
+        $isAdminStatus = OrderStatus::isAdminStatus($this->status, $status);
+        if (!$isAdminStatus && !$isDriverStatus) {
+            return F::errReturn(RC::RC_O_STATUS_NOT_A_D);
+        }
+    
+        $toStatusConfig = OrderStatus::$orderStatus[$status];
+        $trans = Yii::app()->db->beginTransaction();
+        try {
+            $res = F::$return;
+            $beforeMethodName = '_cS2' . $toStatusConfig['str'] . 'Before';
+            $methodName = '_cS2' . $toStatusConfig['str'];
+            $afterMethodName = '_cS2' . $toStatusConfig['str'] . 'After';
+    
+            $params['status'] = $status;
+            $tmp = array('params' => array('status' => $status), 'condition' => '', 'conditionParams' => array());
+            if (method_exists($this, $beforeMethodName)) {
+                if (F::isCorrect($res = $this->$beforeMethodName($params, $condition, $conditionParams))) {
+                    $tmp = CMap::mergeArray($tmp, $res['data']);
+                }
+            }
+    
+            if (F::isCorrect($res)) {
+                $func = method_exists($this, $methodName) ? $methodName : '_changeStatus';
+                if (F::isCorrect($res = $this->$func($tmp['params'], $condition, $conditionParams)) && method_exists($this, $afterMethodName)) {
+                    $res = $this->$afterMethodName();
+                }
+            }
+    
+            $func = F::isCorrect($res) ? 'commit' : 'rollback';
+            $trans->$func();
+        } catch (Exception $e) {
+            Q::log($e->getMessage(), 'dberror.changeStatus');
+    
+            $trans->rollback();
+            $res = F::errReturn(RC::RC_DB_ERROR);
+        }
+    
+        $this->_setCollectParams($status, array(), False);
+    
+        Log::add(Log::TYPE_ORDER, $this->id, array('status' => $this->status, 'isSucc' => F::isCorrect($res), 'params' => $params, 'res'=>$res));
+    
+        return $res;
+    }
+    
+    private function _changeStatus($sets, $condition, $conditionParams) {
+        $newSets = $sets;
+        $sets = array();
+        foreach ($newSets as $k => $v) {
+            if ($this->hasAttribute($k)) {
+                $sets[$k] = $v;
+            }
+        }
+    
+        $condition .= empty($condition) ? '' : ' AND';
+        $condition .= ' status=:status';
+        $conditionParams[':status'] = $this->status;
+        if (!Order::model()->updateByPk($this->id, $sets, $condition, $conditionParams)) {
+            return F::errReturn(RC::RC_O_STATUS_CHANGE_ERROR);
+        }
+    
+        $this->setAttributes($sets);
+    
+        return F::corReturn();
+    }
+    
+    public static function changeStatus($batchNo) {
+        
+        $orders = self::model()->findByAttributes(array('batchNo' => $batchNo));
+        foreach ($orders as $order) {
+            
+        }
     }
 }
