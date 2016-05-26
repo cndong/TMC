@@ -23,12 +23,23 @@ class FlightCNOrder extends QActiveRecord {
         );
     }
     
+    public function getPassengers() {
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('id', explode('-', $this->passengerIDs));
+        $passengers = UserPassenger::model()->findAll($criteria);
+        
+        $rtn = array();
+        foreach ($passengers as $passenger) {
+            $rtn[UserPassenger::getPassengerKey($passenger)] = F::arrayGetByKeys($passenger, array('id', 'name' , 'type', 'cardType', 'carNo', 'birthday', 'sex'));
+        }
+        
+        return $rtn;
+    }
+    
     public static function classifyPassengers($passengers) {
         $rtn = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
         foreach ($passengers as $passenger) {
-            if (is_object($passenger)) {
-                $passenger = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
-            }
+            $passenger = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
             $rtn[$passenger['type']][UserPassenger::getPassengerKey($passenger)] = $passenger;
         }
     
@@ -322,56 +333,101 @@ class FlightCNOrder extends QActiveRecord {
         }
     }
     
-    public static function getOrder($order, $orders = array()) {
+    public static function filterBatchNo($bOrders) {
+        $rtn = array_values($bOrders);
+        foreach ($rtn as &$bOrder) {
+            foreach (array('departRoute', 'arriveRoute') as $routeType) {
+                if (isset($bOrder[$routeType])) {
+                    $bOrder[$routeType]['segments'] = array_values($bOrder[$routeType]['segments']);
+                }
+            }
+            if (isset($bOrder['passengers'])) {
+                $bOrder['passengers'] = array_values($bOrder['passengers']);
+            }
+        }
         
+        return $rtn;
     }
     
-    public static function search($params) {
-        $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
-        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
-            $this->errAjax(RC::RC_VAR_ERROR);
-        }
-        $criteria = new CDbCriteria();
-        $criteria->order = 'id DESC';
-        $criteria->group = 'batchNo';
-        $criteria->compare('userID', $params['userID']);
-        $criteria->addBetweenCondition('ctime', strtotime($params['beginDate']), strtotime($params['endDate']));
-
-        $rtn = array();
-        $orders = FlightCNOrder::model()->findAll($criteria);
+    public static function getByBatchNo($batchNo, $isWithPassengers = True) {
+        $bOrders = self::getByBatchNos(array($batchNo), $isWithPassengers);
         
-        $keys = array(
-            'id', 'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
-            'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
-        );
+        return $bOrders[$batchNo];
+    }
+    
+    public static function getByBatchNos($batchNos, $isWithPassengers = False) {
+        $rtn = array();
         
         $cities = DataAirport::getCNCities();
         $airports = DataAirport::getCNAiports();
         
-        $oldIndex = $index = 0;
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('batchNo', $batchNos);
+        $orders = FlightCNOrder::model()->findAll($criteria);
         foreach ($orders as $order) {
-            $index = empty($order->batchNo) ? $order->id : $order->batchNo;
+            if (empty($rtn[$order->batchNo])) {
+                $rtn[$order->batchNo] = array(
+                    'id' => $order->id, 'orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0
+                );
+                $rtn[$order->batchNo] = array_merge($rtn[$order->batchNo], F::arrayGetByKeys($order, array('ctime', 'isRound', 'status', 'departTime')));
+                if ($isWithPassengers) {
+                    $rtn[$order->batchNo]['passengers'] = $order->getPassengers();
+                }
+            }
             $routeType = $order->isBack ? 'returnRoute' : 'departRoute';
-            if (empty($rtn[$index])) {
-                $rtn[$index] = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'id' => $order->id);
-            }
-            if (empty($rtn[$index][$routeType]['segments'])) {
-                $rtn[$index][$routeType]['segments'] = array();
-            }
-        
-            $rtn[$index]['orderPrice'] += $order->orderPrice;
-            $rtn[$index]['insurePrice'] += $order->insurePrice;
-            $rtn[$index]['invoicePrice'] += $order->invoicePrice;
-        
-            $tmp = F::arrayGetByKeys($order, $keys);
-            $tmp['departAirport'] = $airports[$order['departAirportCode']]['airportName'];
-            $tmp['arriveAirport'] = $airports[$order['arriveAirportCode']]['airportName'];
-            $tmp['departCity'] = $cities[$order['departCityCode']]['cityName'];
-            $tmp['arriveCity'] = $cities[$order['arriveCityCode']]['cityName'];
-        
-            $rtn[$index][$routeType]['segments'][] = $tmp;
+            
+            $rtn[$order->batchNo]['orderPrice'] += $order->orderPrice;
+            $rtn[$order->batchNo]['insurePrice'] += $order->insurePrice;
+            $rtn[$order->batchNo]['invoicePrice'] += $order->invoicePrice;
+            
+            $tmp = $order->attributes;
+            $tmp['departAirport'] = $airports[$order->departAirportCode]['airportName'];
+            $tmp['arriveAirport'] = $airports[$order->arriveAirportCode]['airportName'];
+            $tmp['departCity'] = $cities[$order->departCityCode]['cityName'];
+            $tmp['arriveCity'] = $cities[$order->arriveCityCode]['cityName'];
+            
+            $rtn[$order->batchNo][$routeType]['segments'][$order->id] = $tmp;
         }
         
-        $this->corAjax(array_values($rtn));
+        foreach ($rtn as $batchNo => &$bOrder) {
+            foreach (array('departRoute', 'arriveRoute') as $routeType) {
+                if (isset($bOrder[$routeType])) {
+                    ksort($bOrder[$routeType]['segments']);
+                    $departSegment = current($bOrder[$routeType]['segments']);
+                    $arriveSegment = end($bOrder[$routeType]['segments']);
+                    $bOrder['departTime'] = $departSegment['departTime'];
+                    $bOrder['departCity'] = $departSegment['departCity'];
+                    $bOrder['arriveCity'] = $arriveSegment['arriveCity'];
+                }
+            }
+        }
+        
+        return $rtn;
+    }
+    
+    public static function search($params, $isGetCriteria = False) {
+        $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
+        
+        $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
+        $rtn['params'] = $params = F::checkParams($_GET, array('userID' => '!' . ParamsFormat::INTNZ . '--0', 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE));
+        
+        $criteria = new CDbCriteria();
+        $criteria->select = 'batchNo';
+        $criteria->distinct = 'batchNo';
+        $criteria->order = 'id DESC';
+        if ($params['userID']) {
+            $criteria->compare('userID', $params['userID']);
+        }
+        $criteria->addBetweenCondition('ctime', strtotime($params['beginDate']), strtotime($params['endDate']));
+        
+        $rtn['criteria'] = $criteria;
+        if ($isGetCriteria) {
+            return $rtn;
+        }
+
+        $batchNos = self::model()->findAll($criteria);
+        $batchNos = F::arrayGetField($batchNos, 'batchNo');
+        
+        return self::getByBatchNos($batchNos);
     }
 }

@@ -98,11 +98,6 @@ class FlightController extends ApiController {
     }
     
     public function actionBook() {
-        /*
-        if (Q::isLocalEnv()) {
-            $_POST = self::_getOrderParams();
-        }
-        */
         if (!($params = F::checkParams($_POST, array_fill_keys(array('contacter', 'departRoute', 'passengers', 'price'), ParamsFormat::JSON)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
@@ -130,45 +125,14 @@ class FlightController extends ApiController {
         if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
-        $criteria = new CDbCriteria();
-        $criteria->compare('userID', $params['userID']);
-        $criteria->addBetweenCondition('ctime', strtotime($params['beginDate']), strtotime($params['endDate']));
-
-        $rtn = array();
         
-        $keys = array(
-            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
-            'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
-        );
-        
-        $cities = DataAirport::getCNCities();
-        $airports = DataAirport::getCNAiports();
-        
-        $orders = FlightCNOrder::model()->findAllByAttributes(array('userID' => $_GET['userID']));
-        foreach ($orders as $order) {
-            $index = empty($order->batchNo) ? $order->id : $order->batchNo;
-            $routeType = $order->isBack ? 'returnRoute' : 'departRoute';
-            if (empty($rtn[$index])) {
-                $rtn[$index] = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'id' => $order->id);
-            }
-            if (empty($rtn[$index][$routeType]['segments'])) {
-                $rtn[$index][$routeType]['segments'] = array();
-            }
-            
-            $rtn[$index]['orderPrice'] += $order->orderPrice;
-            $rtn[$index]['insurePrice'] += $order->insurePrice;
-            $rtn[$index]['invoicePrice'] += $order->invoicePrice;
-            
-            $tmp = F::arrayGetByKeys($order, $keys);
-            $tmp['departAirport'] = $airports[$order['departAirportCode']]['airportName'];
-            $tmp['arriveAirport'] = $airports[$order['arriveAirportCode']]['airportName'];
-            $tmp['departCity'] = $cities[$order['departCityCode']]['cityName'];
-            $tmp['arriveCity'] = $cities[$order['arriveCityCode']]['cityName'];
-            
-            $rtn[$index][$routeType]['segments'][] = $tmp;
+        $bOrders = FlightCNOrder::search($params);
+        $bOrders = array_values($bOrders);
+        foreach ($bOrders as $k => $bOrder) {
+            $bOrders[$k] = F::arrayGetByKeys($bOrder, array('id', 'departCity', 'arriveCity', 'orderPrice', 'isRound', 'status', 'departTime', 'ctime'));
         }
         
-        $this->corAjax(array_values($rtn));
+        $this->corAjax(FlightCNOrder::filterBatchNo($bOrders));
     }
     
     public function actionOrderDetail() {
@@ -180,48 +144,8 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $orders = array($order);
-        if (!empty($order->batchNo)) {
-            $orders = FlightCNOrder::model()->findAllByAttributes(array('batchNo' => $order->batchNo));
-        }
-        
-        $keys = array(
-            'departAirportCode', 'arriveAirportCode', 'departCity', 'arriveCity', 'departTime', 'arriveTime', 'ctime',
-            'orderPrice', 'insurePrice', 'invoicePrice', 'airlineCode', 'craftCode', 'craftType'
-        );
-        
-        $cities = DataAirport::getCNCities();
-        $airports = DataAirport::getCNAiports();
-        
-        $rtn = array('orderPrice' => 0, 'insurePrice' => 0, 'invoicePrice' => 0, 'passengers' => array(), 'id' => $order->id);
-        foreach ($orders as $index => $order) {
-            if (empty($rtn['passengers'])) {
-                $passengerIDs = explode('-', $order->passengerIDs);
-                $criteria = new CDbCriteria();
-                $criteria->addInCondition('id', $passengerIDs);
-                $passengers = UserPassenger::model()->findAll($criteria);
-                foreach ($passengers as $passenger) {
-                    $rtn['passengers'][] = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
-                }
-            }
-            
-            $routeType = $order->isBack ? 'returnRoute' : 'departRoute';
-            if (empty($rtn[$routeType]['segments'])) {
-                $rtn[$routeType]['segments'] = array();
-            }
-            
-            $rtn['orderPrice'] += $order->orderPrice;
-            $rtn['insurePrice'] += $order->insurePrice;
-            $rtn['invoicePrice'] += $order->invoicePrice;
-            
-            $tmp = F::arrayGetByKeys($order, $keys);
-            $tmp['departAirport'] = $airports[$order['departAirportCode']]['airportName'];
-            $tmp['arriveAirport'] = $airports[$order['arriveAirportCode']]['airportName'];
-            $tmp['departCity'] = $cities[$order['departCityCode']]['cityName'];
-            $tmp['arriveCity'] = $cities[$order['arriveCityCode']]['cityName'];
-            
-            $rtn[$routeType]['segments'][] = $tmp;
-        }
+        $rtn = array(FlightCNOrder::getByBatchNo($order->batchNo));
+        $rtn = current(FlightCNOrder::filterBatchNo($rtn));
         
         $this->corAjax($rtn);
     }
