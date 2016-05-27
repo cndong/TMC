@@ -1,10 +1,10 @@
 <?php
 class UserController extends ApiController {
     private function _getUserInfo($user) {
-        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'isReviewer', 'ctime'));
+        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'isReviewer', 'ctime', 'avatar'));
         $rtn['company'] = $user->company->name;
         $rtn['department'] = $user->department->name;
-        
+        $rtn['avatar'] =  $rtn['avatar'] ? "http://{$_SERVER['HTTP_HOST']}/avatar/{$rtn['avatar']}" : '';
         return $rtn;
     }
     
@@ -245,21 +245,23 @@ class UserController extends ApiController {
     }
     
     public function actionUploadAvatar() {
-       if (!F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ))) {
+       if (!F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        if (!($user = User::model()->findByPk($_GET['userID']))) {
+        if (!($user = User::model()->findByPk($_POST['userID']))) {
             $this->errAjax(RC::RC_USER_NOT_EXISTS);
         }
-        $upload = $this->upload($_GET['userID']);
+        
+        $upload = $this->_uploadAvatar($_POST['userID']);
         if ($upload['errorCode'] != UPLOAD_ERR_OK) {
             $this->errAjax(RC::RC_USER_UPLOAD_ERROR);
         }
+        
         $this->onAjax($user->setAvatar($upload['fileName']));
     }
     
-    public function upload($userId){
+    private function _uploadAvatar($userID){
         $upload = array('errorCode'=>UPLOAD_ERR_OK);
         $uploadedFile = CUploadedFile::getInstanceByName('upload');
         if($uploadedFile){
@@ -268,7 +270,7 @@ class UserController extends ApiController {
                 mkdir(Yii::getPathOfAlias('webroot').$path);
             }
             $oldfileName = explode(".", $uploadedFile->name);
-            $fileName = md5($userId.$oldfileName).'.'.end($oldfileName);
+            $fileName = md5($userID.$oldfileName).'.'.end($oldfileName);
             $fullPath = $path.'/'.$fileName;
             if($uploadedFile->saveAs(Yii::getPathOfAlias('webroot').$fullPath)){
                 $upload['fileName'] = $fileName;

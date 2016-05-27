@@ -36,6 +36,7 @@ class QController extends CController {
         
         if ($res['rc'] != RC::RC_SUCCESS && empty($res['msg'])) {
             $res['msg'] = RC::getMsg($res['rc']);
+            Q::log($res, 'error');
         }
         
         echo json_encode($res);
