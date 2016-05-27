@@ -87,6 +87,6 @@ class SMSCode extends QActiveRecord {
             return F::errReturn(RC::RC_MODEL_UPDATE_ERROR);
         }
         
-        return F::corReturn();
+        return $this->status == self::STATUS_VERIFY_SUCCEED ? F::corReturn() : F::errReturn(RC::RC_SMS_CODE_NOT_CORRECT);
     }
 }
