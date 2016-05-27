@@ -16,6 +16,8 @@ class User extends QActiveRecord {
             array('mobile', 'length', 'max' => 11),
             array('name', 'length', 'max' => 50),
             array('password', 'length', 'max' => 32),
+            array('avatar', 'length', 'max' => 37),
+            array('deviceToken', 'length', 'max' => 64),
             array('id, mobile, name, companyID, departmentID, password, isReviewer, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
@@ -137,6 +139,24 @@ class User extends QActiveRecord {
             return F::errReturn(RC::RC_USER_CHANGE_PASSWD_ERROR);
         }
         
+        return F::corReturn();
+    }
+    
+    public function setAvatar($avatar) {
+        $this->avatar = $avatar;
+        if (!$this->save()) {
+            return F::errReturn(RC::RC_USER_UPLOAD_AVATER_ERROR);
+        }
+    
+        return F::corReturn();
+    }
+    
+    public function setDeviceToken($deviceToken) {
+        $this->deviceToken = $deviceToken;
+        if (!$this->save()) {
+            return F::errReturn(RC::RC_USER_SET_DEVICETOKEN_ERROR);
+        }
+    
         return F::corReturn();
     }
 }

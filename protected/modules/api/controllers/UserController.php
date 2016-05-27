@@ -243,4 +243,39 @@ class UserController extends ApiController {
         
         $this->corAjax();
     }
+    
+    public function actionUploadAvatar() {
+       if (!F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($user = User::model()->findByPk($_GET['userID']))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        $upload = $this->upload($_GET['userID']);
+        if ($upload['errorCode'] != UPLOAD_ERR_OK) {
+            $this->errAjax(RC::RC_USER_UPLOAD_ERROR);
+        }
+        $this->onAjax($user->setAvatar($upload['fileName']));
+    }
+    
+    public function upload($userId){
+        $upload = array('errorCode'=>UPLOAD_ERR_OK);
+        $uploadedFile = CUploadedFile::getInstanceByName('upload');
+        if($uploadedFile){
+            $path = "/avatar";
+            if (!is_dir(Yii::getPathOfAlias('webroot').$path)) {
+                mkdir(Yii::getPathOfAlias('webroot').$path);
+            }
+            $oldfileName = explode(".", $uploadedFile->name);
+            $fileName = md5($userId.$oldfileName).'.'.end($oldfileName);
+            $fullPath = $path.'/'.$fileName;
+            if($uploadedFile->saveAs(Yii::getPathOfAlias('webroot').$fullPath)){
+                $upload['fileName'] = $fileName;
+            }else $upload['errorCode'] = $uploadedFile->getError();
+        }else $upload['errorCode']  = -1;
+        if ($upload['errorCode'] != UPLOAD_ERR_OK) Q::log($upload, 'upload.error');
+        return $upload;
+    }
+    
 }
