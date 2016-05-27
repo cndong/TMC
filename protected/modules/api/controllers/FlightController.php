@@ -135,7 +135,7 @@ class FlightController extends ApiController {
             $rtn[] = $tmp;
         }
         
-        $this->corAjax($rtn);
+        $this->corAjax(array('orderList' => $rtn));
     }
     
     public function actionOrderDetail() {

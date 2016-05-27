@@ -21,9 +21,13 @@ class FlightCNOrder extends QActiveRecord {
     
     public function relations() {
         return array(
+            'user' => array(self::BELONGS_TO, 'User', 'userID'),
+            'department' => array(self::BELONGS_TO, 'Department', 'departmentID'),
+            'company' => array(self::BELONGS_TO, 'Company', 'companyID'),
             'contacter' => array(self::BELONGS_TO, 'UserContacter', 'contacterID'),
             'address' => array(self::BELONGS_TO, 'UserAddress', 'invoiceAddressID'),
-            'segments' => array(self::HAS_MANY, 'FlightCNSegment', 'orderID')
+            'segments' => array(self::HAS_MANY, 'FlightCNSegment', 'orderID'),
+            'operater' => array(self::BELONGS_TO, 'BossAdmin', 'operaterID')
         );
     }
     
@@ -380,21 +384,21 @@ class FlightCNOrder extends QActiveRecord {
     public static function search($params, $isGetCriteria = False) {
         $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
     
-        $defaultBeginDate = date('Y-m-d');
+        $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
         $rtn['params'] = $params = F::checkParams($params, array(
             'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0',
             'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE
         ));
     
         $criteria = new CDbCriteria();
-        $criteria->with = array('contacter', 'address', 'segments');
+        $criteria->with = array_keys(self::model()->relations());
         $criteria->order = 't.id DESC';
         foreach (array('userID', 'departmentID', 'companyID') as $id) {
             if (!empty($params[$id])) {
                 $criteria->compare('t.' . $id, $params[$id]);
             }
         }
-        $criteria->addBetweenCondition('t.ctime', strtotime($params['beginDate']), strtotime($params['endDate']));
+        $criteria->addBetweenCondition('t.ctime', strtotime($params['beginDate']), strtotime($params['endDate'] . ' 23:59:59'));
     
         $rtn['criteria'] = $criteria;
         if ($isGetCriteria) {

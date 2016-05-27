@@ -162,15 +162,20 @@ class ProviderFTB extends ProviderF {
     }
     
     public function pGetCNFlightDetail($params) {
+        if (F::isCorrect($res = $this->pGetCNFlightList($params))) {
+            return $res;
+        }
+        $outboundData = $res['data'];
+        
         if (!F::isCorrect($res = $this->pGetCNFlightList($params, 'lowprice'))) {
             return $res;
         }
-        $data = $res['data'];
+        $lowpriceData = $res['data'];
         
         if (!F::isCorrect($res = $this->pGetCNFlightList($params, 'gaoduan'))) {
             return $res;
         }
         
-        return F::corReturn(F::mergeArrayInt($data, $res['data']));
+        return F::corReturn(F::mergeArrayInt($outboundData, $lowpriceData, $res['data']));
     }
 }
