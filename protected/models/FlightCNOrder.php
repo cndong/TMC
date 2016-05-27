@@ -327,6 +327,7 @@ class FlightCNOrder extends QActiveRecord {
             $train->commit();
             return F::corReturn($order);
         } catch (Exception $e) {
+            var_dump($e->getMessage());exit;
             $train->rollback();
             return F::errReturn($e->getMessage());
         }

@@ -21,8 +21,8 @@ class ProviderFTB extends ProviderF {
         }
         $data = json_decode(json_encode(self::$_client->execute($req)), True);
         
-        //Q::log($req, 'tb');
-        //Q::log($data, 'tb');
+        Q::log($req, 'tb');
+        Q::log($data, 'tb');
         
         if (isset($data['code'])) {
             return F::errReturn(RC::RC_P_ERROR);
