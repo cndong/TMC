@@ -121,12 +121,6 @@ class FlightController extends ApiController {
     }
     
     public function actionOrderList() {
-        if (YII_DEBUG) {
-            $_GET['userID'] = 1;
-            $_GET['orderID'] = 1;
-            $this->actionOrderDetail();exit;
-        }
-        
         $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
         if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
