@@ -98,9 +98,6 @@ class FlightController extends ApiController {
     }
     
     public function actionBook() {
-        if (YII_DEBUG) {
-            $_POST = self::_getOrderParams();
-        }
         if (!($params = F::checkParams($_POST, array_fill_keys(array('contacter', 'departRoute', 'passengers', 'price'), ParamsFormat::JSON)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
@@ -124,18 +121,27 @@ class FlightController extends ApiController {
     }
     
     public function actionOrderList() {
+        if (YII_DEBUG) {
+            $_GET['userID'] = 1;
+            $_GET['orderID'] = 1;
+            $this->actionOrderDetail();exit;
+        }
+        
         $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
         if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $bOrders = FlightCNOrder::search($params);
-        $bOrders = array_values($bOrders);
-        foreach ($bOrders as $k => $bOrder) {
-            $bOrders[$k] = F::arrayGetByKeys($bOrder, array('id', 'departCity', 'arriveCity', 'orderPrice', 'isRound', 'status', 'departTime', 'ctime'));
+        $rtn = array();
+        
+        $res = FlightCNOrder::search($params);
+        foreach ($res['data'] as $order) {
+            $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'status', 'ctime'));
+            $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
+            $rtn[] = $tmp;
         }
         
-        $this->corAjax(FlightCNOrder::filterBatchNo($bOrders));
+        $this->corAjax($rtn);
     }
     
     public function actionOrderDetail() {
@@ -147,8 +153,7 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $rtn = array(FlightCNOrder::getByBatchNo($order->batchNo));
-        $rtn = current(FlightCNOrder::filterBatchNo($rtn));
+        $rtn = FlightCNOrder::initWithSegments($order, True);
         
         $this->corAjax($rtn);
     }

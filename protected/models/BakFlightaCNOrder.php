@@ -421,7 +421,7 @@ class BakFlightaCNOrder extends QActiveRecord {
                 }
             }
         }
-        
+
         return $rtn;
     }
     

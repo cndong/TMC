@@ -331,4 +331,81 @@ class FlightCNOrder extends QActiveRecord {
             return F::errReturn($e->getMessage());
         }
     }
+    
+    public static function initWithSegments($order, $isWithPassengers = False) {
+        $rtn = $order->attributes;
+        unset($rtn['segments']);
+        
+        $cities = DataAirport::getCNCities();
+        $airports = DataAirport::getCNAiports();
+        foreach ($order->segments as $segment) {
+            $routeType = $segment->isBack ? 'returnRoute' : 'departRoute';
+            if (empty($rtn[$routeType])) {
+                $rtn[$routeType] = array(
+                    'segments' => array()
+                );
+            }
+            
+            $segment = $segment->attributes;
+            $segment['departCity'] = $cities[$segment['departCityCode']]['cityName'];
+            $segment['arriveCity'] = $cities[$segment['arriveCityCode']]['cityName'];
+            $segment['departAirport'] = $airports[$segment['departAirportCode']]['airportName'];
+            $segment['arriveAirport'] = $airports[$segment['arriveAirportCode']]['airportName'];
+            
+            $rtn[$routeType]['segments'][] = $segment;
+        }
+        
+        foreach (array('departRoute', 'returnRoute') as $routeType) {
+            if (isset($rtn[$routeType])) {
+                $departSegment = current($rtn[$routeType]['segments']);
+                $arriveSegment = end($rtn[$routeType]['segments']);
+                
+                $rtn[$routeType] = array_merge($rtn[$routeType], F::arrayGetByKeys($departSegment, array('departCity', 'arriveCity', 'departCityCode', 'arriveCityCode', 'departTime')));
+                $rtn[$routeType]['arriveTime'] = $arriveSegment['arriveTime'];
+                
+                if ($routeType == 'departRoute') {
+                    $rtn = array_merge($rtn, F::arrayGetByKeys($rtn[$routeType], array('departCity', 'arriveCity', 'departTime', 'arriveTime')));
+                }
+            }
+        }
+        
+        if ($isWithPassengers) {
+            $rtn['passengers'] = array_values($order->getPassengers());
+        }
+        
+        return $rtn;
+    }
+    
+    public static function search($params, $isGetCriteria = False) {
+        $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
+    
+        $defaultBeginDate = date('Y-m-d');
+        $rtn['params'] = $params = F::checkParams($params, array(
+            'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0',
+            'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE
+        ));
+    
+        $criteria = new CDbCriteria();
+        $criteria->with = array('contacter', 'address', 'segments');
+        $criteria->order = 't.id DESC';
+        foreach (array('userID', 'departmentID', 'companyID') as $id) {
+            if (!empty($params[$id])) {
+                $criteria->compare('t.' . $id, $params[$id]);
+            }
+        }
+        $criteria->addBetweenCondition('t.ctime', strtotime($params['beginDate']), strtotime($params['endDate']));
+    
+        $rtn['criteria'] = $criteria;
+        if ($isGetCriteria) {
+            return $rtn;
+        }
+    
+        $orders = F::arrayAddField(self::model()->findAll($criteria), 'id');
+        foreach ($orders as $orderID => $order) {
+            $orders[$orderID] = self::initWithSegments($order);
+        }
+        $rtn['data'] = $orders;
+        
+        return $rtn;
+    }
 }
