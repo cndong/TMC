@@ -83,7 +83,10 @@ class SMSCode extends QActiveRecord {
         
         $this->status = $code == $this->code ? self::STATUS_VERIFY_SUCCEED : self::STATUS_VERIFY_FAILED;
         if (!$this->save()) {
-            
+            Q::logModel($this);
+            return F::errReturn(RC::RC_MODEL_UPDATE_ERROR);
         }
+        
+        return F::corReturn();
     }
 }
