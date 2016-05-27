@@ -34,15 +34,15 @@ class UserContacter extends QActiveRecord {
     
     public static function createContacter($params) {
         if (!($params = F::checkParams($params, self::getCreateOrModifyFormats(True)))) {
-            $this->errAjax(RC::RC_VAR_ERROR);
+            return F::errReturn(RC::RC_VAR_ERROR);
         }
         
         if (!($user = User::model()->findByPk($params['userID']))) {
-            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+            return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
-        if (self::model()->findByAttributes(array('mobile' => $params['mobile']))) {
-            $this->errAjax(RC::RC_CONTACTER_HAD_EXISTS);
+        if (self::model()->findByAttributes($params)) {
+            return F::errReturn(RC::RC_CONTACTER_HAD_EXISTS);
         }
         
         $contacter = new UserContacter();

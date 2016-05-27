@@ -98,9 +98,6 @@ class FlightController extends ApiController {
     }
     
     public function actionBook() {
-        if (Q::isLocalEnv()) {
-            //$_POST = self::_getOrderParams();
-        }
         if (!($params = F::checkParams($_POST, array_fill_keys(array('contacter', 'departRoute', 'passengers', 'price'), ParamsFormat::JSON)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
@@ -124,10 +121,48 @@ class FlightController extends ApiController {
     }
     
     public function actionOrderList() {
+        $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
         
+        $rtn = array();
+        
+        $res = FlightCNOrder::search($params);
+        foreach ($res['data'] as $order) {
+            $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'status', 'ctime'));
+            $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
+            $rtn[] = $tmp;
+        }
+        
+        $this->corAjax($rtn);
     }
     
     public function actionOrderDetail() {
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
         
+        if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $params['userID']) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+        
+        $rtn = FlightCNOrder::initWithSegments($order, True);
+        
+        $this->corAjax($rtn);
+    }
+    
+    public function actionReview() {
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ, 'status' => ParamsFormat::BOOL)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        
+        if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $user->id) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
     }
 }

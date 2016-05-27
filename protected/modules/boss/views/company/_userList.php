@@ -20,7 +20,9 @@
             <td class="text-center"><?php echo $data->department->name; ?></td>
             <td class="text-center"><?php echo $data->company->name; ?></td>
             <td class="text-center"><?php echo date('Y-m-d H:i:s', $data->ctime); ?></td>
-            <td class="text-center">无</td>
+            <td class="text-center">
+                <button data-user-id="<?php echo $data->id; ?>" class="c_reviewer btn btn-<?php echo $data->isReviewer ? 'danger' : 'success'; ?>"><?php echo $data->isReviewer ? '取消审核' : '设为审核'; ?></button>
+            </td>
         </tr>
 <?php if ($index + 1 == $widget->dataProvider->getItemCount()) { ?>
     </tbody>

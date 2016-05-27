@@ -1,7 +1,7 @@
 <?php
 class UserController extends ApiController {
     private function _getUserInfo($user) {
-        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'ctime'));
+        $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'isReviewer', 'ctime'));
         $rtn['company'] = $user->company->name;
         $rtn['department'] = $user->department->name;
         
@@ -68,7 +68,7 @@ class UserController extends ApiController {
     }
     
     public function actionModifyPassword() {
-        if (!F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'password' => ParamsFormat::TEXTNZ)) || !($password = base64_decode($_POST['password']))) {
+        if (!F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'password' => ParamsFormat::TEXTNZ))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         

@@ -1,6 +1,6 @@
 [
     {
-        "airtportName":"阿拉善右旗机场",
+        "airportName":"阿拉善右旗机场",
         "airportCode":"RHT",
         "airportSpell":"alashanyouqi",
         "airportShortSpell":"alsyq",
@@ -8,7 +8,7 @@
         "cityCode":"RHT"
     },
     {
-        "airtportName":"安康五里铺机场",
+        "airportName":"安康五里铺机场",
         "airportCode":"AKA",
         "airportSpell":"ankang",
         "airportShortSpell":"ak",
@@ -16,7 +16,7 @@
         "cityCode":"AKA"
     },
     {
-        "airtportName":"安庆机场",
+        "airportName":"安庆机场",
         "airportCode":"AQG",
         "airportSpell":"anqing",
         "airportShortSpell":"aq",
@@ -24,7 +24,7 @@
         "cityCode":"AQG"
     },
     {
-        "airtportName":"鞍山机场",
+        "airportName":"鞍山机场",
         "airportCode":"AOG",
         "airportSpell":"anshan",
         "airportShortSpell":"as",
@@ -32,7 +32,7 @@
         "cityCode":"AOG"
     },
     {
-        "airtportName":"阿里昆莎机场",
+        "airportName":"阿里昆莎机场",
         "airportCode":"NGQ",
         "airportSpell":"ali",
         "airportShortSpell":"al",
@@ -40,7 +40,7 @@
         "cityCode":"NGQ"
     },
     {
-        "airtportName":"阿克苏温宿机场",
+        "airportName":"阿克苏温宿机场",
         "airportCode":"AKU",
         "airportSpell":"akesu",
         "airportShortSpell":"aks",
@@ -48,7 +48,7 @@
         "cityCode":"AKU"
     },
     {
-        "airtportName":"安顺机场",
+        "airportName":"安顺机场",
         "airportCode":"AVA",
         "airportSpell":"anshun",
         "airportShortSpell":"as",
@@ -56,7 +56,7 @@
         "cityCode":"AVA"
     },
     {
-        "airtportName":"阿拉善左旗机场",
+        "airportName":"阿拉善左旗机场",
         "airportCode":"AXF",
         "airportSpell":"alashanzuoqi",
         "airportShortSpell":"alszq",
@@ -64,7 +64,7 @@
         "cityCode":"AXF"
     },
     {
-        "airtportName":"阿尔山伊尔施机场 ",
+        "airportName":"阿尔山伊尔施机场 ",
         "airportCode":"YIE",
         "airportSpell":"aershan",
         "airportShortSpell":"aes",
@@ -72,7 +72,7 @@
         "cityCode":"YIE"
     },
     {
-        "airtportName":"阿勒泰机场",
+        "airportName":"阿勒泰机场",
         "airportCode":"AAT",
         "airportSpell":"aletai",
         "airportShortSpell":"alt",
@@ -80,7 +80,7 @@
         "cityCode":"AAT"
     },
     {
-        "airtportName":"北京首都国际机场",
+        "airportName":"北京首都国际机场",
         "airportCode":"PEK",
         "airportSpell":"beijingshoudu",
         "airportShortSpell":"bjsd",
@@ -90,7 +90,7 @@
         "cityShortSpell": "bj"
     },
     {
-        "airtportName":"北京南苑机场",
+        "airportName":"北京南苑机场",
         "airportCode":"NAY",
         "airportSpell":"beijingnanyuan",
         "airportShortSpell":"bjny",
@@ -100,7 +100,7 @@
         "cityShortSpell": "bj"
     },
     {
-        "airtportName":"毕节飞雄机场",
+        "airportName":"毕节飞雄机场",
         "airportCode":"BFJ",
         "airportSpell":"bijie",
         "airportShortSpell":"bj",
@@ -108,7 +108,7 @@
         "cityCode":"BFJ"
     },
     {
-        "airtportName":"百色机场",
+        "airportName":"百色机场",
         "airportCode":"AEB",
         "airportSpell":"baise",
         "airportShortSpell":"bs",
@@ -116,7 +116,7 @@
         "cityCode":"AEB"
     },
     {
-        "airtportName":"巴彦淖尔天吉泰机场",
+        "airportName":"巴彦淖尔天吉泰机场",
         "airportCode":"RLK",
         "airportSpell":"bayannaoer",
         "airportShortSpell":"byne",
@@ -124,7 +124,7 @@
         "cityCode":"RLK"
     },
     {
-        "airtportName":"二里半机场",
+        "airportName":"二里半机场",
         "airportCode":"BAV",
         "airportSpell":"baotou",
         "airportShortSpell":"bt",
@@ -132,7 +132,7 @@
         "cityCode":"BAV"
     },
     {
-        "airtportName":"保山机场",
+        "airportName":"保山机场",
         "airportCode":"BSD",
         "airportSpell":"baoshan",
         "airportShortSpell":"bs",
@@ -140,7 +140,7 @@
         "cityCode":"BSD"
     },
     {
-        "airtportName":"北海福成机场",
+        "airportName":"北海福成机场",
         "airportCode":"BHY",
         "airportSpell":"beihai",
         "airportShortSpell":"bh",
@@ -148,7 +148,7 @@
         "cityCode":"BHY"
     },
     {
-        "airtportName":"博乐机场",
+        "airportName":"博乐机场",
         "airportCode":"BPL",
         "airportSpell":"bole",
         "airportShortSpell":"bl",
@@ -156,7 +156,7 @@
         "cityCode":"BPL"
     },
     {
-        "airtportName":"成都双流国际机场",
+        "airportName":"成都双流国际机场",
         "airportCode":"CTU",
         "airportSpell":"chengdu",
         "airportShortSpell":"cd",
@@ -164,7 +164,7 @@
         "cityCode":"CTU"
     },
     {
-        "airtportName":"重庆江北机场",
+        "airportName":"重庆江北机场",
         "airportCode":"CKG",
         "airportSpell":"chongqing",
         "airportShortSpell":"cq",
@@ -172,7 +172,7 @@
         "cityCode":"CKG"
     },
     {
-        "airtportName":"长沙黄花国际机场",
+        "airportName":"长沙黄花国际机场",
         "airportCode":"CSX",
         "airportSpell":"changsha",
         "airportShortSpell":"cs",
@@ -180,7 +180,7 @@
         "cityCode":"CSX"
     },
     {
-        "airtportName":"长海大长山岛机场",
+        "airportName":"长海大长山岛机场",
         "airportCode":"CNI",
         "airportSpell":"changhai",
         "airportShortSpell":"ch",
@@ -188,7 +188,7 @@
         "cityCode":"CNI"
     },
     {
-        "airtportName":"池州九华山机场",
+        "airportName":"池州九华山机场",
         "airportCode":"JUH",
         "airportSpell":"chizhou",
         "airportShortSpell":"cz",
@@ -196,7 +196,7 @@
         "cityCode":"JUH"
     },
     {
-        "airtportName":"常德桃花源机场",
+        "airportName":"常德桃花源机场",
         "airportCode":"CGD",
         "airportSpell":"changde",
         "airportShortSpell":"cd",
@@ -204,7 +204,7 @@
         "cityCode":"CGD"
     },
     {
-        "airtportName":"玉龙机场",
+        "airportName":"玉龙机场",
         "airportCode":"CIF",
         "airportSpell":"chifeng",
         "airportShortSpell":"cf",
@@ -212,7 +212,7 @@
         "cityCode":"CIF"
     },
     {
-        "airtportName":"长春龙嘉机场",
+        "airportName":"长春龙嘉机场",
         "airportCode":"CGQ",
         "airportSpell":"changchun",
         "airportShortSpell":"cc",
@@ -220,7 +220,7 @@
         "cityCode":"CGQ"
     },
     {
-        "airtportName":"常州奔牛机场",
+        "airportName":"常州奔牛机场",
         "airportCode":"CZX",
         "airportSpell":"changzhou",
         "airportShortSpell":"cz",
@@ -228,7 +228,7 @@
         "cityCode":"CZX"
     },
     {
-        "airtportName":"朝阳机场",
+        "airportName":"朝阳机场",
         "airportCode":"CHG",
         "airportSpell":"chaoyang",
         "airportShortSpell":"cy",
@@ -236,7 +236,7 @@
         "cityCode":"CHG"
     },
     {
-        "airtportName":"长治王村机场",
+        "airportName":"长治王村机场",
         "airportCode":"CIH",
         "airportSpell":"changzhi",
         "airportShortSpell":"cz",
@@ -244,7 +244,7 @@
         "cityCode":"CIH"
     },
     {
-        "airtportName":"昌都邦达机场",
+        "airportName":"昌都邦达机场",
         "airportCode":"BPX",
         "airportSpell":"changdu",
         "airportShortSpell":"cd",
@@ -252,7 +252,7 @@
         "cityCode":"BPX"
     },
     {
-        "airtportName":"长白山机场",
+        "airportName":"长白山机场",
         "airportCode":"NBS",
         "airportSpell":"changbaishan",
         "airportShortSpell":"cbs",
@@ -260,7 +260,7 @@
         "cityCode":"NBS"
     },
     {
-        "airtportName":"大连周水子机场",
+        "airportName":"大连周水子机场",
         "airportCode":"DLC",
         "airportSpell":"dalian",
         "airportShortSpell":"dl",
@@ -268,7 +268,7 @@
         "cityCode":"DLC"
     },
     {
-        "airtportName":"达县河坝机场",
+        "airportName":"达县河坝机场",
         "airportCode":"DAX",
         "airportSpell":"dazhou",
         "airportShortSpell":"dz",
@@ -276,7 +276,7 @@
         "cityCode":"DAX"
     },
     {
-        "airtportName":"大庆萨尔图机场",
+        "airportName":"大庆萨尔图机场",
         "airportCode":"DQA",
         "airportSpell":"daqing",
         "airportShortSpell":"dq",
@@ -284,7 +284,7 @@
         "cityCode":"DQA"
     },
     {
-        "airtportName":"丹东浪头机场",
+        "airportName":"丹东浪头机场",
         "airportCode":"DDG",
         "airportSpell":"dandong",
         "airportShortSpell":"dd",
@@ -292,7 +292,7 @@
         "cityCode":"DDG"
     },
     {
-        "airtportName":"东营机场",
+        "airportName":"东营机场",
         "airportCode":"DOY",
         "airportSpell":"dongying",
         "airportShortSpell":"dy",
@@ -300,7 +300,7 @@
         "cityCode":"DOY"
     },
     {
-        "airtportName":"德令哈机场",
+        "airportName":"德令哈机场",
         "airportCode":"HXD",
         "airportSpell":"delingha",
         "airportShortSpell":"dlh",
@@ -308,7 +308,7 @@
         "cityCode":"HXD"
     },
     {
-        "airtportName":"大同云冈机场",
+        "airportName":"大同云冈机场",
         "airportCode":"DAT",
         "airportSpell":"datong",
         "airportShortSpell":"dt",
@@ -316,7 +316,7 @@
         "cityCode":"DAT"
     },
     {
-        "airtportName":"香格里拉机场",
+        "airportName":"香格里拉机场",
         "airportCode":"DIG",
         "airportSpell":"diqing",
         "airportShortSpell":"dq",
@@ -324,7 +324,7 @@
         "cityCode":"DIG"
     },
     {
-        "airtportName":"大理机场",
+        "airportName":"大理机场",
         "airportCode":"DLU",
         "airportSpell":"dali",
         "airportShortSpell":"dl",
@@ -332,7 +332,7 @@
         "cityCode":"DLU"
     },
     {
-        "airtportName":"稻城亚丁机场",
+        "airportName":"稻城亚丁机场",
         "airportCode":"DCY",
         "airportSpell":"daocheng",
         "airportShortSpell":"dc",
@@ -340,7 +340,7 @@
         "cityCode":"DCY"
     },
     {
-        "airtportName":"敦煌机场",
+        "airportName":"敦煌机场",
         "airportCode":"DNH",
         "airportSpell":"dunhuang",
         "airportShortSpell":"dh",
@@ -348,7 +348,7 @@
         "cityCode":"DNH"
     },
     {
-        "airtportName":"额济纳旗机场",
+        "airportName":"额济纳旗机场",
         "airportCode":"EJN",
         "airportSpell":"ejina",
         "airportShortSpell":"ejn",
@@ -356,7 +356,7 @@
         "cityCode":"EJN"
     },
     {
-        "airtportName":"恩施许家坪机场",
+        "airportName":"恩施许家坪机场",
         "airportCode":"ENH",
         "airportSpell":"enshi",
         "airportShortSpell":"es",
@@ -364,7 +364,7 @@
         "cityCode":"ENH"
     },
     {
-        "airtportName":"鄂尔多斯伊金霍洛机场",
+        "airportName":"鄂尔多斯伊金霍洛机场",
         "airportCode":"DSN",
         "airportSpell":"eerduosi",
         "airportShortSpell":"eeds",
@@ -372,7 +372,7 @@
         "cityCode":"DSN"
     },
     {
-        "airtportName":"二连浩特机场",
+        "airportName":"二连浩特机场",
         "airportCode":"ERL",
         "airportSpell":"erlianhaote",
         "airportShortSpell":"elht",
@@ -380,7 +380,7 @@
         "cityCode":"ERL"
     },
     {
-        "airtportName":"佛山机场",
+        "airportName":"佛山机场",
         "airportCode":"FUO",
         "airportSpell":"foshan",
         "airportShortSpell":"fs",
@@ -388,7 +388,7 @@
         "cityCode":"FUO"
     },
     {
-        "airtportName":"阜阳西关机场",
+        "airportName":"阜阳西关机场",
         "airportCode":"FUG",
         "airportSpell":"fuyang",
         "airportShortSpell":"fy",
@@ -396,7 +396,7 @@
         "cityCode":"FUG"
     },
     {
-        "airtportName":"福州长乐国际机场",
+        "airportName":"福州长乐国际机场",
         "airportCode":"FOC",
         "airportSpell":"fuzhou",
         "airportShortSpell":"fz",
@@ -404,7 +404,7 @@
         "cityCode":"FOC"
     },
     {
-        "airtportName":"抚远东极机场",
+        "airportName":"抚远东极机场",
         "airportCode":"FYJ",
         "airportSpell":"fuyuan",
         "airportShortSpell":"fy",
@@ -412,7 +412,7 @@
         "cityCode":"FYJ"
     },
     {
-        "airtportName":"广州白云国际机场",
+        "airportName":"广州白云国际机场",
         "airportCode":"CAN",
         "airportSpell":"guangzhou",
         "airportShortSpell":"gz",
@@ -420,7 +420,7 @@
         "cityCode":"CAN"
     },
     {
-        "airtportName":"广汉机场",
+        "airportName":"广汉机场",
         "airportCode":"GHN",
         "airportSpell":"guanghan",
         "airportShortSpell":"gh",
@@ -428,7 +428,7 @@
         "cityCode":"GHN"
     },
     {
-        "airtportName":"贵阳龙洞堡机场",
+        "airportName":"贵阳龙洞堡机场",
         "airportCode":"KWE",
         "airportSpell":"guiyang",
         "airportShortSpell":"gy",
@@ -436,7 +436,7 @@
         "cityCode":"KWE"
     },
     {
-        "airtportName":"广元盘龙机场",
+        "airportName":"广元盘龙机场",
         "airportCode":"GYS",
         "airportSpell":"guangyuan",
         "airportShortSpell":"gy",
@@ -444,7 +444,7 @@
         "cityCode":"GYS"
     },
     {
-        "airtportName":"六盘山机场",
+        "airportName":"六盘山机场",
         "airportCode":"GYU",
         "airportSpell":"guyuan",
         "airportShortSpell":"gy",
@@ -452,7 +452,7 @@
         "cityCode":"GYU"
     },
     {
-        "airtportName":"格尔木机场",
+        "airportName":"格尔木机场",
         "airportCode":"GOQ",
         "airportSpell":"grermu",
         "airportShortSpell":"gem",
@@ -460,7 +460,7 @@
         "cityCode":"GOQ"
     },
     {
-        "airtportName":"赣州黄金机场",
+        "airportName":"赣州黄金机场",
         "airportCode":"KOW",
         "airportSpell":"ganzhou",
         "airportShortSpell":"gz",
@@ -468,7 +468,7 @@
         "cityCode":"KOW"
     },
     {
-        "airtportName":"桂林两江国际机场",
+        "airportName":"桂林两江国际机场",
         "airportCode":"KWL",
         "airportSpell":"guilin",
         "airportShortSpell":"gl",
@@ -476,7 +476,7 @@
         "cityCode":"KWL"
     },
     {
-        "airtportName":"萧山机场",
+        "airportName":"萧山机场",
         "airportCode":"HGH",
         "airportSpell":"hangzhou",
         "airportShortSpell":"hz",
@@ -484,7 +484,7 @@
         "cityCode":"HGH"
     },
     {
-        "airtportName":"呼和浩特白塔机场",
+        "airportName":"呼和浩特白塔机场",
         "airportCode":"HET",
         "airportSpell":"huhehaote",
         "airportShortSpell":"hhht",
@@ -492,7 +492,7 @@
         "cityCode":"HET"
     },
     {
-        "airtportName":"阿坝红原机场",
+        "airportName":"阿坝红原机场",
         "airportCode":"AHJ",
         "airportSpell":"hongyuan",
         "airportShortSpell":"hy",
@@ -500,7 +500,7 @@
         "cityCode":"AHJ"
     },
     {
-        "airtportName":"惠州平谭机场",
+        "airportName":"惠州平谭机场",
         "airportCode":"HUZ",
         "airportSpell":"huizhou",
         "airportShortSpell":"hz",
@@ -508,7 +508,7 @@
         "cityCode":"HUZ"
     },
     {
-        "airtportName":"合肥新桥国际机场",
+        "airportName":"合肥新桥国际机场",
         "airportCode":"HFE",
         "airportSpell":"hefei",
         "airportShortSpell":"hf",
@@ -516,7 +516,7 @@
         "cityCode":"HFE"
     },
     {
-        "airtportName":"黄山屯溪机场",
+        "airportName":"黄山屯溪机场",
         "airportCode":"TXN",
         "airportSpell":"huangshan",
         "airportShortSpell":"hs",
@@ -524,7 +524,7 @@
         "cityCode":"TXN"
     },
     {
-        "airtportName":"海口美兰国际机场",
+        "airportName":"海口美兰国际机场",
         "airportCode":"HAK",
         "airportSpell":"haikou",
         "airportShortSpell":"hk",
@@ -532,7 +532,7 @@
         "cityCode":"HAK"
     },
     {
-        "airtportName":"邯郸机场",
+        "airportName":"邯郸机场",
         "airportCode":"HDG",
         "airportSpell":"handan",
         "airportShortSpell":"hd",
@@ -540,7 +540,7 @@
         "cityCode":"HDG"
     },
     {
-        "airtportName":"哈尔滨太平国际机场",
+        "airportName":"哈尔滨太平国际机场",
         "airportCode":"HRB",
         "airportSpell":"haerbin",
         "airportShortSpell":"heb",
@@ -548,7 +548,7 @@
         "cityCode":"HRB"
     },
     {
-        "airtportName":"黑河机场",
+        "airportName":"黑河机场",
         "airportCode":"HEK",
         "airportSpell":"heihe",
         "airportShortSpell":"hh",
@@ -556,7 +556,7 @@
         "cityCode":"HEK"
     },
     {
-        "airtportName":"衡阳南岳机场",
+        "airportName":"衡阳南岳机场",
         "airportCode":"HNY",
         "airportSpell":"hengyang",
         "airportShortSpell":"hy",
@@ -564,7 +564,7 @@
         "cityCode":"HNY"
     },
     {
-        "airtportName":"芷江机场",
+        "airportName":"芷江机场",
         "airportCode":"HJJ",
         "airportSpell":"huaihua",
         "airportShortSpell":"hh",
@@ -572,7 +572,7 @@
         "cityCode":"HJJ"
     },
     {
-        "airtportName":"涟水机场",
+        "airportName":"涟水机场",
         "airportCode":"HIA",
         "airportSpell":"huaian",
         "airportShortSpell":"ha",
@@ -580,7 +580,7 @@
         "cityCode":"HIA"
     },
     {
-        "airtportName":"台州路桥（原路桥）机场",
+        "airportName":"台州路桥（原路桥）机场",
         "airportCode":"HYN",
         "airportSpell":"huangyan",
         "airportShortSpell":"hy",
@@ -588,7 +588,7 @@
         "cityCode":"HYN"
     },
     {
-        "airtportName":"汉中城固机场",
+        "airportName":"汉中城固机场",
         "airportCode":"HZG",
         "airportSpell":"hanzhong",
         "airportShortSpell":"hz",
@@ -596,7 +596,7 @@
         "cityCode":"HZG"
     },
     {
-        "airtportName":"哈密机场",
+        "airportName":"哈密机场",
         "airportCode":"HMI",
         "airportSpell":"hami",
         "airportShortSpell":"hm",
@@ -604,7 +604,7 @@
         "cityCode":"HMI"
     },
     {
-        "airtportName":"和田机场",
+        "airportName":"和田机场",
         "airportCode":"HTN",
         "airportSpell":"hetian",
         "airportShortSpell":"ht",
@@ -612,7 +612,7 @@
         "cityCode":"HTN"
     },
     {
-        "airtportName":"河池金城江机场",
+        "airportName":"河池金城江机场",
         "airportCode":"HCJ",
         "airportSpell":"hechi",
         "airportShortSpell":"hc",
@@ -620,7 +620,7 @@
         "cityCode":"HCJ"
     },
     {
-        "airtportName":"海拉尔东山机场",
+        "airportName":"海拉尔东山机场",
         "airportCode":"HLD",
         "airportSpell":"hailaer",
         "airportShortSpell":"hle",
@@ -628,7 +628,7 @@
         "cityCode":"HLD"
     },
     {
-        "airtportName":"济南遥墙国际机场",
+        "airportName":"济南遥墙国际机场",
         "airportCode":"TNA",
         "airportSpell":"jinan",
         "airportShortSpell":"jn",
@@ -636,7 +636,7 @@
         "cityCode":"TNA"
     },
     {
-        "airtportName":"嘉峪关机场",
+        "airportName":"嘉峪关机场",
         "airportCode":"JGN",
         "airportSpell":"jiayuguan",
         "airportShortSpell":"jyg",
@@ -644,7 +644,7 @@
         "cityCode":"JGN"
     },
     {
-        "airtportName":"金昌金川机场",
+        "airportName":"金昌金川机场",
         "airportCode":"JIC",
         "airportSpell":"jinchang",
         "airportShortSpell":"jc",
@@ -652,7 +652,7 @@
         "cityCode":"JIC"
     },
     {
-        "airtportName":"潮汕机场",
+        "airportName":"潮汕机场",
         "airportCode":"SWA",
         "airportSpell":"jieyang",
         "airportShortSpell":"jy",
@@ -660,7 +660,7 @@
         "cityCode":"SWA"
     },
     {
-        "airtportName":"泉州晋江机场",
+        "airportName":"泉州晋江机场",
         "airportCode":"JJN",
         "airportSpell":"jinjiang",
         "airportShortSpell":"jj",
@@ -668,7 +668,7 @@
         "cityCode":"JJN"
     },
     {
-        "airtportName":"济宁机场",
+        "airportName":"济宁机场",
         "airportCode":"JNG",
         "airportSpell":"jining",
         "airportShortSpell":"jn",
@@ -676,7 +676,7 @@
         "cityCode":"JNG"
     },
     {
-        "airtportName":"鸡西机场",
+        "airportName":"鸡西机场",
         "airportCode":"JXA",
         "airportSpell":"jixi",
         "airportShortSpell":"jx",
@@ -684,7 +684,7 @@
         "cityCode":"JXA"
     },
     {
-        "airtportName":"佳木斯东郊机场",
+        "airportName":"佳木斯东郊机场",
         "airportCode":"JMU",
         "airportSpell":"jiamusi",
         "airportShortSpell":"jms",
@@ -692,7 +692,7 @@
         "cityCode":"JMU"
     },
     {
-        "airtportName":"锦州小岭子机场",
+        "airportName":"锦州小岭子机场",
         "airportCode":"JNZ",
         "airportSpell":"jinzhou",
         "airportShortSpell":"jz",
@@ -700,7 +700,7 @@
         "cityCode":"JNZ"
     },
     {
-        "airtportName":"景德镇罗家机场",
+        "airportName":"景德镇罗家机场",
         "airportCode":"JDZ",
         "airportSpell":"jingdezhen",
         "airportShortSpell":"jdz",
@@ -708,7 +708,7 @@
         "cityCode":"JDZ"
     },
     {
-        "airtportName":"庐山机场",
+        "airportName":"庐山机场",
         "airportCode":"JIU",
         "airportSpell":"jiujiang",
         "airportShortSpell":"jj",
@@ -716,7 +716,7 @@
         "cityCode":"JIU"
     },
     {
-        "airtportName":"九寨沟黄龙机场",
+        "airportName":"九寨沟黄龙机场",
         "airportCode":"JZH",
         "airportSpell":"jiuzhaigou",
         "airportShortSpell":"jzg",
@@ -724,7 +724,7 @@
         "cityCode":"JZH"
     },
     {
-        "airtportName":"加格达奇机场",
+        "airportName":"加格达奇机场",
         "airportCode":"JGD",
         "airportSpell":"jiagedaqi",
         "airportShortSpell":"jgdq",
@@ -732,7 +732,7 @@
         "cityCode":"JGD"
     },
     {
-        "airtportName":"井冈山机场",
+        "airportName":"井冈山机场",
         "airportCode":"JGS",
         "airportSpell":"jinggangshan",
         "airportShortSpell":"jgs",
@@ -740,7 +740,7 @@
         "cityCode":"JGS"
     },
     {
-        "airtportName":"昆明长水机场",
+        "airportName":"昆明长水机场",
         "airportCode":"KMG",
         "airportSpell":"kunming",
         "airportShortSpell":"km",
@@ -748,7 +748,7 @@
         "cityCode":"KMG"
     },
     {
-        "airtportName":"甘孜康定机场",
+        "airportName":"甘孜康定机场",
         "airportCode":"KGT",
         "airportSpell":"kangding",
         "airportShortSpell":"kd",
@@ -756,7 +756,7 @@
         "cityCode":"KGT"
     },
     {
-        "airtportName":"喀什机场",
+        "airportName":"喀什机场",
         "airportCode":"KHG",
         "airportSpell":"kashi",
         "airportShortSpell":"ks",
@@ -764,7 +764,7 @@
         "cityCode":"KHG"
     },
     {
-        "airtportName":"克拉玛依机场",
+        "airportName":"克拉玛依机场",
         "airportCode":"KRY",
         "airportSpell":"kelamayi",
         "airportShortSpell":"klmy",
@@ -772,7 +772,7 @@
         "cityCode":"KRY"
     },
     {
-        "airtportName":"库车机场",
+        "airportName":"库车机场",
         "airportCode":"KCA",
         "airportSpell":"kuche",
         "airportShortSpell":"kc",
@@ -780,7 +780,7 @@
         "cityCode":"KCA"
     },
     {
-        "airtportName":"库尔勒机场",
+        "airportName":"库尔勒机场",
         "airportCode":"KRL",
         "airportSpell":"kuerle",
         "airportShortSpell":"kel",
@@ -788,7 +788,7 @@
         "cityCode":"KRL"
     },
     {
-        "airtportName":"喀纳斯机场",
+        "airportName":"喀纳斯机场",
         "airportCode":"KJI",
         "airportSpell":"kanasi",
         "airportShortSpell":"kns",
@@ -796,7 +796,7 @@
         "cityCode":"KJI"
     },
     {
-        "airtportName":"贵州机场",
+        "airportName":"贵州机场",
         "airportCode":"KJH",
         "airportSpell":"kaili",
         "airportShortSpell":"kl",
@@ -804,7 +804,7 @@
         "cityCode":"KJH"
     },
     {
-        "airtportName":"兰州中川机场",
+        "airportName":"兰州中川机场",
         "airportCode":"LHW",
         "airportSpell":"lanzhou",
         "airportShortSpell":"lz",
@@ -812,7 +812,7 @@
         "cityCode":"LHW"
     },
     {
-        "airtportName":"冠豸山机场",
+        "airportName":"冠豸山机场",
         "airportCode":"LCX",
         "airportSpell":"longyan",
         "airportShortSpell":"ly",
@@ -820,7 +820,7 @@
         "cityCode":"LCX"
     },
     {
-        "airtportName":"临沂沭埠岭机场",
+        "airportName":"临沂沭埠岭机场",
         "airportCode":"LYI",
         "airportSpell":"linyi",
         "airportShortSpell":"ly",
@@ -828,7 +828,7 @@
         "cityCode":"LYI"
     },
     {
-        "airtportName":"六盘水月照机场",
+        "airportName":"六盘水月照机场",
         "airportCode":"LPF",
         "airportSpell":"liupanshui",
         "airportShortSpell":"lps",
@@ -836,7 +836,7 @@
         "cityCode":"LPF"
     },
     {
-        "airtportName":"黎平机场",
+        "airportName":"黎平机场",
         "airportCode":"HZH",
         "airportSpell":"liping",
         "airportShortSpell":"lp",
@@ -844,7 +844,7 @@
         "cityCode":"HZH"
     },
     {
-        "airtportName":"泸州蓝田机场",
+        "airportName":"泸州蓝田机场",
         "airportCode":"LZO",
         "airportSpell":"luzhou",
         "airportShortSpell":"lz",
@@ -852,7 +852,7 @@
         "cityCode":"LZO"
     },
     {
-        "airtportName":"洛阳北郊机场",
+        "airportName":"洛阳北郊机场",
         "airportCode":"LYA",
         "airportSpell":"luoyang",
         "airportShortSpell":"ly",
@@ -860,7 +860,7 @@
         "cityCode":"LYA"
     },
     {
-        "airtportName":"连云港白塔埠机场",
+        "airportName":"连云港白塔埠机场",
         "airportCode":"LYG",
         "airportSpell":"lianyungang",
         "airportShortSpell":"lyg",
@@ -868,7 +868,7 @@
         "cityCode":"LYG"
     },
     {
-        "airtportName":"九江机场",
+        "airportName":"九江机场",
         "airportCode":"JIU",
         "airportSpell":"lushan",
         "airportShortSpell":"ls",
@@ -876,7 +876,7 @@
         "cityCode":"JIU"
     },
     {
-        "airtportName":"吕梁大武机场",
+        "airportName":"吕梁大武机场",
         "airportCode":"LLV",
         "airportSpell":"lvliang",
         "airportShortSpell":"ll",
@@ -884,7 +884,7 @@
         "cityCode":"LLV"
     },
     {
-        "airtportName":"拉萨贡嘎机场",
+        "airportName":"拉萨贡嘎机场",
         "airportCode":"LXA",
         "airportSpell":"lasa",
         "airportShortSpell":"ls",
@@ -892,7 +892,7 @@
         "cityCode":"LXA"
     },
     {
-        "airtportName":"林芝机场",
+        "airportName":"林芝机场",
         "airportCode":"LZY",
         "airportSpell":"linzhi",
         "airportShortSpell":"lz",
@@ -900,7 +900,7 @@
         "cityCode":"LZY"
     },
     {
-        "airtportName":"柳州白莲机场",
+        "airportName":"柳州白莲机场",
         "airportCode":"LZH",
         "airportSpell":"liuzhou",
         "airportShortSpell":"lz",
@@ -908,7 +908,7 @@
         "cityCode":"LZH"
     },
     {
-        "airtportName":"丽江机场",
+        "airportName":"丽江机场",
         "airportCode":"LJG",
         "airportSpell":"lijiang",
         "airportShortSpell":"lj",
@@ -916,7 +916,7 @@
         "cityCode":"LJG"
     },
     {
-        "airtportName":"临沧机场",
+        "airportName":"临沧机场",
         "airportCode":"LNJ",
         "airportSpell":"lincang",
         "airportShortSpell":"lc",
@@ -924,7 +924,7 @@
         "cityCode":"LNJ"
     },
     {
-        "airtportName":"荔波机场",
+        "airportName":"荔波机场",
         "airportCode":"LLB",
         "airportSpell":"libo",
         "airportShortSpell":"lb",
@@ -932,7 +932,7 @@
         "cityCode":"LLB"
     },
     {
-        "airtportName":"梅县机场",
+        "airportName":"梅县机场",
         "airportCode":"MXZ",
         "airportSpell":"meixian",
         "airportShortSpell":"mx",
@@ -940,7 +940,7 @@
         "cityCode":"MXZ"
     },
     {
-        "airtportName":"绵阳南郊机场",
+        "airportName":"绵阳南郊机场",
         "airportCode":"MIG",
         "airportSpell":"mianyang",
         "airportShortSpell":"my",
@@ -948,7 +948,7 @@
         "cityCode":"MIG"
     },
     {
-        "airtportName":"漠河机场",
+        "airportName":"漠河机场",
         "airportCode":"OHE",
         "airportSpell":"mohe",
         "airportShortSpell":"mh",
@@ -956,7 +956,7 @@
         "cityCode":"OHE"
     },
     {
-        "airtportName":"牡丹江海浪机场",
+        "airportName":"牡丹江海浪机场",
         "airportCode":"MDG",
         "airportSpell":"mudanjiang",
         "airportShortSpell":"mdj",
@@ -964,7 +964,7 @@
         "cityCode":"MDG"
     },
     {
-        "airtportName":"满洲里西郊机场",
+        "airportName":"满洲里西郊机场",
         "airportCode":"NZH",
         "airportSpell":"manzhouli",
         "airportShortSpell":"mzl",
@@ -972,7 +972,7 @@
         "cityCode":"NZH"
     },
     {
-        "airtportName":"芒市机场",
+        "airportName":"芒市机场",
         "airportCode":"LUM",
         "airportSpell":"mangshi",
         "airportShortSpell":"ms",
@@ -980,7 +980,7 @@
         "cityCode":"LUM"
     },
     {
-        "airtportName":"南京禄口国际机场",
+        "airportName":"南京禄口国际机场",
         "airportCode":"NKG",
         "airportSpell":"nanjing",
         "airportShortSpell":"nj",
@@ -988,7 +988,7 @@
         "cityCode":"NKG"
     },
     {
-        "airtportName":"宁波栎社机场",
+        "airportName":"宁波栎社机场",
         "airportCode":"NGB",
         "airportSpell":"ningbo",
         "airportShortSpell":"nb",
@@ -996,7 +996,7 @@
         "cityCode":"NGB"
     },
     {
-        "airtportName":"泸沽湖机场",
+        "airportName":"泸沽湖机场",
         "airportCode":"NLH",
         "airportSpell":"ninglang",
         "airportShortSpell":"nl",
@@ -1004,7 +1004,7 @@
         "cityCode":"NLH"
     },
     {
-        "airtportName":"高坪机场",
+        "airportName":"高坪机场",
         "airportCode":"NAO",
         "airportSpell":"nanchong",
         "airportShortSpell":"nc",
@@ -1012,7 +1012,7 @@
         "cityCode":"NAO"
     },
     {
-        "airtportName":"南阳姜营机场",
+        "airportName":"南阳姜营机场",
         "airportCode":"NNY",
         "airportSpell":"nanyang",
         "airportShortSpell":"ny",
@@ -1020,7 +1020,7 @@
         "cityCode":"NNY"
     },
     {
-        "airtportName":"南通兴东机场",
+        "airportName":"南通兴东机场",
         "airportCode":"NTG",
         "airportSpell":"nantong",
         "airportShortSpell":"nt",
@@ -1028,7 +1028,7 @@
         "cityCode":"NTG"
     },
     {
-        "airtportName":"南昌昌北机场",
+        "airportName":"南昌昌北机场",
         "airportCode":"KHN",
         "airportSpell":"nanchang",
         "airportShortSpell":"nc",
@@ -1036,7 +1036,7 @@
         "cityCode":"KHN"
     },
     {
-        "airtportName":"那拉提机场",
+        "airportName":"那拉提机场",
         "airportCode":"NLT",
         "airportSpell":"nalati",
         "airportShortSpell":"nlt",
@@ -1044,7 +1044,7 @@
         "cityCode":"NLT"
     },
     {
-        "airtportName":"南宁吴圩机场",
+        "airportName":"南宁吴圩机场",
         "airportCode":"NNG",
         "airportSpell":"nanning",
         "airportShortSpell":"nn",
@@ -1052,7 +1052,7 @@
         "cityCode":"NNG"
     },
     {
-        "airtportName":"攀枝花机场",
+        "airportName":"攀枝花机场",
         "airportCode":"PZI",
         "airportSpell":"panzhihua",
         "airportShortSpell":"pzh",
@@ -1060,7 +1060,7 @@
         "cityCode":"PZI"
     },
     {
-        "airtportName":"普洱机场",
+        "airportName":"普洱机场",
         "airportCode":"SYM",
         "airportSpell":"puer",
         "airportShortSpell":"pe",
@@ -1068,7 +1068,7 @@
         "cityCode":"SYM"
     },
     {
-        "airtportName":"青岛流亭国际机场",
+        "airportName":"青岛流亭国际机场",
         "airportCode":"TAO",
         "airportSpell":"qingdao",
         "airportShortSpell":"qd",
@@ -1076,7 +1076,7 @@
         "cityCode":"TAO"
     },
     {
-        "airtportName":"且末机场",
+        "airportName":"且末机场",
         "airportCode":"IQM",
         "airportSpell":"qiemo",
         "airportShortSpell":"qm",
@@ -1084,7 +1084,7 @@
         "cityCode":"IQM"
     },
     {
-        "airtportName":"庆阳西峰镇机场",
+        "airportName":"庆阳西峰镇机场",
         "airportCode":"IQN",
         "airportSpell":"qingyang",
         "airportShortSpell":"qy",
@@ -1092,7 +1092,7 @@
         "cityCode":"IQN"
     },
     {
-        "airtportName":"晋江机场",
+        "airportName":"晋江机场",
         "airportCode":"JJN",
         "airportSpell":"quanzhou",
         "airportShortSpell":"qz",
@@ -1100,7 +1100,7 @@
         "cityCode":"JJN"
     },
     {
-        "airtportName":"秦皇岛机场",
+        "airportName":"秦皇岛机场",
         "airportCode":"SHP",
         "airportSpell":"qinhuangdao",
         "airportShortSpell":"qhd",
@@ -1108,7 +1108,7 @@
         "cityCode":"SHP"
     },
     {
-        "airtportName":"齐齐哈尔三家子机场",
+        "airportName":"齐齐哈尔三家子机场",
         "airportCode":"NDG",
         "airportSpell":"qiqihaer",
         "airportShortSpell":"qqhe",
@@ -1116,7 +1116,7 @@
         "cityCode":"NDG"
     },
     {
-        "airtportName":"衢州机场",
+        "airportName":"衢州机场",
         "airportCode":"JUZ",
         "airportSpell":"quzhou",
         "airportShortSpell":"qz",
@@ -1124,7 +1124,7 @@
         "cityCode":"JUZ"
     },
     {
-        "airtportName":"重庆武陵山机场",
+        "airportName":"重庆武陵山机场",
         "airportCode":"JIQ",
         "airportSpell":"qianjiang",
         "airportShortSpell":"qj",
@@ -1132,7 +1132,7 @@
         "cityCode":"JIQ"
     },
     {
-        "airtportName":"日喀则和平机场",
+        "airportName":"日喀则和平机场",
         "airportCode":"RKZ",
         "airportSpell":"rikaze",
         "airportShortSpell":"rkz",
@@ -1140,7 +1140,7 @@
         "cityCode":"RKZ"
     },
     {
-        "airtportName":"上海虹桥国际机场",
+        "airportName":"上海虹桥国际机场",
         "airportCode":"SHA",
         "airportSpell":"shanghaihongqiao",
         "airportShortSpell":"shhq",
@@ -1150,7 +1150,7 @@
         "cityShortSpell": "sh"
     },
     {
-        "airtportName":"上海浦东国际机场",
+        "airportName":"上海浦东国际机场",
         "airportCode":"PVG",
         "airportSpell":"shanghaipudong",
         "airportShortSpell":"shpd",
@@ -1160,7 +1160,7 @@
         "cityShortSpell": "sh"
     },
     {
-        "airtportName":"深圳宝安国际机场",
+        "airportName":"深圳宝安国际机场",
         "airportCode":"SZX",
         "airportSpell":"shenzhen",
         "airportShortSpell":"sz",
@@ -1168,7 +1168,7 @@
         "cityCode":"SZX"
     },
     {
-        "airtportName":"十堰武当山机场",
+        "airportName":"十堰武当山机场",
         "airportCode":"SYA",
         "airportSpell":"shiyan",
         "airportShortSpell":"sy",
@@ -1176,7 +1176,7 @@
         "cityCode":"SYA"
     },
     {
-        "airtportName":"三亚凤凰国际机场",
+        "airportName":"三亚凤凰国际机场",
         "airportCode":"SYX",
         "airportSpell":"sanya",
         "airportShortSpell":"sy",
@@ -1184,7 +1184,7 @@
         "cityCode":"SYX"
     },
     {
-        "airtportName":"正定机场",
+        "airportName":"正定机场",
         "airportCode":"SJW",
         "airportSpell":"shijiazhuang",
         "airportShortSpell":"sjz",
@@ -1192,7 +1192,7 @@
         "cityCode":"SJW"
     },
     {
-        "airtportName":"神农架红坪机场",
+        "airportName":"神农架红坪机场",
         "airportCode":"HPG",
         "airportSpell":"shennongjia",
         "airportShortSpell":"snj",
@@ -1200,7 +1200,7 @@
         "cityCode":"HPG"
     },
     {
-        "airtportName":"沈阳桃仙机场",
+        "airportName":"沈阳桃仙机场",
         "airportCode":"SHE",
         "airportSpell":"shenyang",
         "airportShortSpell":"sy",
@@ -1208,7 +1208,7 @@
         "cityCode":"SHE"
     },
     {
-        "airtportName":"荆州沙市机场",
+        "airportName":"荆州沙市机场",
         "airportCode":"SHS",
         "airportSpell":"shashi",
         "airportShortSpell":"ss",
@@ -1216,7 +1216,7 @@
         "cityCode":"SHS"
     },
     {
-        "airtportName":"天津滨海国际机场",
+        "airportName":"天津滨海国际机场",
         "airportCode":"TSN",
         "airportSpell":"tianjin",
         "airportShortSpell":"tj",
@@ -1224,7 +1224,7 @@
         "cityCode":"TSN"
     },
     {
-        "airtportName":"太原武宿机场",
+        "airportName":"太原武宿机场",
         "airportCode":"TYN",
         "airportSpell":"taiyuan",
         "airportShortSpell":"ty",
@@ -1232,7 +1232,7 @@
         "cityCode":"TYN"
     },
     {
-        "airtportName":"天水机场",
+        "airportName":"天水机场",
         "airportCode":"THQ",
         "airportSpell":"tianshui",
         "airportShortSpell":"ts",
@@ -1240,7 +1240,7 @@
         "cityCode":"THQ"
     },
     {
-        "airtportName":"铜仁大兴机场",
+        "airportName":"铜仁大兴机场",
         "airportCode":"TEN",
         "airportSpell":"tongren",
         "airportShortSpell":"tr",
@@ -1248,7 +1248,7 @@
         "cityCode":"TEN"
     },
     {
-        "airtportName":"唐山机场",
+        "airportName":"唐山机场",
         "airportCode":"TVS",
         "airportSpell":"tangshan",
         "airportShortSpell":"ts",
@@ -1256,7 +1256,7 @@
         "cityCode":"TVS"
     },
     {
-        "airtportName":"通辽机场",
+        "airportName":"通辽机场",
         "airportCode":"TGO",
         "airportSpell":"tongliao",
         "airportShortSpell":"tl",
@@ -1264,7 +1264,7 @@
         "cityCode":"TGO"
     },
     {
-        "airtportName":"通化机场",
+        "airportName":"通化机场",
         "airportCode":"TNH",
         "airportSpell":"tonghua",
         "airportShortSpell":"th",
@@ -1272,7 +1272,7 @@
         "cityCode":"TNH"
     },
     {
-        "airtportName":"台州路桥（原黄岩路桥）机场",
+        "airportName":"台州路桥（原黄岩路桥）机场",
         "airportCode":"HYN",
         "airportSpell":"taizhou",
         "airportShortSpell":"tz",
@@ -1280,7 +1280,7 @@
         "cityCode":"HYN"
     },
     {
-        "airtportName":"吐鲁番机场",
+        "airportName":"吐鲁番机场",
         "airportCode":"TLQ",
         "airportSpell":"tulufan",
         "airportShortSpell":"tlf",
@@ -1288,7 +1288,7 @@
         "cityCode":"TLQ"
     },
     {
-        "airtportName":"腾冲机场",
+        "airportName":"腾冲机场",
         "airportCode":"TCZ",
         "airportSpell":"tengchong",
         "airportShortSpell":"tc",
@@ -1296,7 +1296,7 @@
         "cityCode":"TCZ"
     },
     {
-        "airtportName":"塔城机场",
+        "airportName":"塔城机场",
         "airportCode":"TCG",
         "airportSpell":"tacheng",
         "airportShortSpell":"tc",
@@ -1304,7 +1304,7 @@
         "cityCode":"TCG"
     },
     {
-        "airtportName":"武汉天河国际机场",
+        "airportName":"武汉天河国际机场",
         "airportCode":"WUH",
         "airportSpell":"wuhan",
         "airportShortSpell":"wh",
@@ -1312,7 +1312,7 @@
         "cityCode":"WUH"
     },
     {
-        "airtportName":"威海大水泊机场",
+        "airportName":"威海大水泊机场",
         "airportCode":"WEH",
         "airportSpell":"weihai",
         "airportShortSpell":"wh",
@@ -1320,7 +1320,7 @@
         "cityCode":"WEH"
     },
     {
-        "airtportName":"乌海机场",
+        "airportName":"乌海机场",
         "airportCode":"WUA",
         "airportSpell":"wuhai",
         "airportShortSpell":"wh",
@@ -1328,7 +1328,7 @@
         "cityCode":"WUA"
     },
     {
-        "airtportName":"苏南硕放国际机场",
+        "airportName":"苏南硕放国际机场",
         "airportCode":"WUX",
         "airportSpell":"wuxi",
         "airportShortSpell":"wx",
@@ -1336,7 +1336,7 @@
         "cityCode":"WUX"
     },
     {
-        "airtportName":"潍坊南苑机场",
+        "airportName":"潍坊南苑机场",
         "airportCode":"WEF",
         "airportSpell":"weifang",
         "airportShortSpell":"wf",
@@ -1344,7 +1344,7 @@
         "cityCode":"WEF"
     },
     {
-        "airtportName":"温州龙湾机场",
+        "airportName":"温州龙湾机场",
         "airportCode":"WNZ",
         "airportSpell":"wenzhou",
         "airportShortSpell":"wz",
@@ -1352,7 +1352,7 @@
         "cityCode":"WNZ"
     },
     {
-        "airtportName":"乌鲁木齐地窝堡机场",
+        "airportName":"乌鲁木齐地窝堡机场",
         "airportCode":"URC",
         "airportSpell":"wulumuqi",
         "airportShortSpell":"wlmq",
@@ -1360,7 +1360,7 @@
         "cityCode":"URC"
     },
     {
-        "airtportName":"梧州机场",
+        "airportName":"梧州机场",
         "airportCode":"WUZ",
         "airportSpell":"wuzhou",
         "airportShortSpell":"wz",
@@ -1368,7 +1368,7 @@
         "cityCode":"WUZ"
     },
     {
-        "airtportName":"乌兰浩特机场",
+        "airportName":"乌兰浩特机场",
         "airportCode":"HLH",
         "airportSpell":"wulanhaote",
         "airportShortSpell":"wlht",
@@ -1376,7 +1376,7 @@
         "cityCode":"HLH"
     },
     {
-        "airtportName":"万州机场",
+        "airportName":"万州机场",
         "airportCode":"WXN",
         "airportSpell":"wanzhou",
         "airportShortSpell":"wz",
@@ -1384,7 +1384,7 @@
         "cityCode":"WXN"
     },
     {
-        "airtportName":"文山机场",
+        "airportName":"文山机场",
         "airportCode":"WNH",
         "airportSpell":"wenshan",
         "airportShortSpell":"ws",
@@ -1392,7 +1392,7 @@
         "cityCode":"WNH"
     },
     {
-        "airtportName":"武夷山机场",
+        "airportName":"武夷山机场",
         "airportCode":"WUS",
         "airportSpell":"wuyishan",
         "airportShortSpell":"wys",
@@ -1400,7 +1400,7 @@
         "cityCode":"WUS"
     },
     {
-        "airtportName":"咸阳国际机场",
+        "airportName":"咸阳国际机场",
         "airportCode":"XIY",
         "airportSpell":"xian",
         "airportShortSpell":"xa",
@@ -1408,7 +1408,7 @@
         "cityCode":"SIA"
     },
     {
-        "airtportName":"西宁曹家堡机场",
+        "airportName":"西宁曹家堡机场",
         "airportCode":"XNN",
         "airportSpell":"xining",
         "airportShortSpell":"xn",
@@ -1416,7 +1416,7 @@
         "cityCode":"XNN"
     },
     {
-        "airtportName":"高崎国际机场",
+        "airportName":"高崎国际机场",
         "airportCode":"XMN",
         "airportSpell":"xiamen",
         "airportShortSpell":"xm",
@@ -1424,7 +1424,7 @@
         "cityCode":"XMN"
     },
     {
-        "airtportName":"刘集机场",
+        "airportName":"刘集机场",
         "airportCode":"XFN",
         "airportSpell":"xiangyang",
         "airportShortSpell":"xy",
@@ -1432,7 +1432,7 @@
         "cityCode":"XFN"
     },
     {
-        "airtportName":"西昌机场",
+        "airportName":"西昌机场",
         "airportCode":"XIC",
         "airportSpell":"xichang",
         "airportShortSpell":"xc",
@@ -1440,7 +1440,7 @@
         "cityCode":"XIC"
     },
     {
-        "airtportName":"徐州观音机场",
+        "airportName":"徐州观音机场",
         "airportCode":"XUZ",
         "airportSpell":"xuzhou",
         "airportShortSpell":"xz",
@@ -1448,7 +1448,7 @@
         "cityCode":"XUZ"
     },
     {
-        "airtportName":"锡林浩特机场",
+        "airportName":"锡林浩特机场",
         "airportCode":"XIL",
         "airportSpell":"xilinhaote",
         "airportShortSpell":"xlht",
@@ -1456,7 +1456,7 @@
         "cityCode":"XIL"
     },
     {
-        "airtportName":"景洪嘎洒机场",
+        "airportName":"景洪嘎洒机场",
         "airportCode":"JHG",
         "airportSpell":"xishuangbanna",
         "airportShortSpell":"xsbn",
@@ -1464,7 +1464,7 @@
         "cityCode":"JHG"
     },
     {
-        "airtportName":"夏河甘南机场",
+        "airportName":"夏河甘南机场",
         "airportCode":"GXH",
         "airportSpell":"xiahe",
         "airportShortSpell":"xh",
@@ -1472,7 +1472,7 @@
         "cityCode":"GXH"
     },
     {
-        "airtportName":"兴义机场",
+        "airportName":"兴义机场",
         "airportCode":"ACX",
         "airportSpell":"xingyi",
         "airportShortSpell":"xy",
@@ -1480,7 +1480,7 @@
         "cityCode":"ACX"
     },
     {
-        "airtportName":"宜昌三峡机场",
+        "airportName":"宜昌三峡机场",
         "airportCode":"YIH",
         "airportSpell":"yichang",
         "airportShortSpell":"yc",
@@ -1488,7 +1488,7 @@
         "cityCode":"YIH"
     },
     {
-        "airtportName":"宜宾菜坝机场",
+        "airportName":"宜宾菜坝机场",
         "airportCode":"YBP",
         "airportSpell":"yibin",
         "airportShortSpell":"yb",
@@ -1496,7 +1496,7 @@
         "cityCode":"YBP"
     },
     {
-        "airtportName":"伊春机场",
+        "airportName":"伊春机场",
         "airportCode":"LDS",
         "airportSpell":"yichun",
         "airportShortSpell":"yc",
@@ -1504,7 +1504,7 @@
         "cityCode":"LDS"
     },
     {
-        "airtportName":"玉树机场",
+        "airportName":"玉树机场",
         "airportCode":"YUS",
         "airportSpell":"yushu",
         "airportShortSpell":"ys",
@@ -1512,7 +1512,7 @@
         "cityCode":"YUS"
     },
     {
-        "airtportName":"二十里铺机场",
+        "airportName":"二十里铺机场",
         "airportCode":"ENY",
         "airportSpell":"yanan",
         "airportShortSpell":"ya",
@@ -1520,7 +1520,7 @@
         "cityCode":"ENY"
     },
     {
-        "airtportName":"榆林榆阳机场",
+        "airportName":"榆林榆阳机场",
         "airportCode":"UYN",
         "airportSpell":"yulin",
         "airportShortSpell":"yl",
@@ -1528,7 +1528,7 @@
         "cityCode":"UYN"
     },
     {
-        "airtportName":"银川河东机场",
+        "airportName":"银川河东机场",
         "airportCode":"INC",
         "airportSpell":"yinchuan",
         "airportShortSpell":"yc",
@@ -1536,7 +1536,7 @@
         "cityCode":"INC"
     },
     {
-        "airtportName":"永州零陵机场",
+        "airportName":"永州零陵机场",
         "airportCode":"LLF",
         "airportSpell":"yongzhou",
         "airportShortSpell":"yz",
@@ -1544,7 +1544,7 @@
         "cityCode":"LLF"
     },
     {
-        "airtportName":"盐城机场",
+        "airportName":"盐城机场",
         "airportCode":"YNZ",
         "airportSpell":"yancheng",
         "airportShortSpell":"yc",
@@ -1552,7 +1552,7 @@
         "cityCode":"YNZ"
     },
     {
-        "airtportName":"泰州机场",
+        "airportName":"泰州机场",
         "airportCode":"YTY",
         "airportSpell":"yangzhou",
         "airportShortSpell":"yz",
@@ -1560,7 +1560,7 @@
         "cityCode":"YTY"
     },
     {
-        "airtportName":"宜春",
+        "airportName":"宜春",
         "airportCode":"YIC",
         "airportSpell":"yichun",
         "airportShortSpell":"yc",
@@ -1568,7 +1568,7 @@
         "cityCode":"YIC"
     },
     {
-        "airtportName":"蓬莱国际机场",
+        "airportName":"蓬莱国际机场",
         "airportCode":"YNT",
         "airportSpell":"yantai",
         "airportShortSpell":"yt",
@@ -1576,7 +1576,7 @@
         "cityCode":"YNT"
     },
     {
-        "airtportName":"运城机场",
+        "airportName":"运城机场",
         "airportCode":"YCU",
         "airportSpell":"yuncheng",
         "airportShortSpell":"yc",
@@ -1584,7 +1584,7 @@
         "cityCode":"YCU"
     },
     {
-        "airtportName":"伊宁机场",
+        "airportName":"伊宁机场",
         "airportCode":"YIN",
         "airportSpell":"yining",
         "airportShortSpell":"yn",
@@ -1592,7 +1592,7 @@
         "cityCode":"YIN"
     },
     {
-        "airtportName":"义乌机场",
+        "airportName":"义乌机场",
         "airportCode":"YIW",
         "airportSpell":"yiwu",
         "airportShortSpell":"yw",
@@ -1600,7 +1600,7 @@
         "cityCode":"YIW"
     },
     {
-        "airtportName":"朝阳川机场",
+        "airportName":"朝阳川机场",
         "airportCode":"YNJ",
         "airportSpell":"yanji",
         "airportShortSpell":"yj",
@@ -1608,7 +1608,7 @@
         "cityCode":"YNJ"
     },
     {
-        "airtportName":"张掖机场",
+        "airportName":"张掖机场",
         "airportCode":"YZY",
         "airportSpell":"zhangye",
         "airportShortSpell":"zy",
@@ -1616,7 +1616,7 @@
         "cityCode":"YZY"
     },
     {
-        "airtportName":"湛江机场",
+        "airportName":"湛江机场",
         "airportCode":"ZHA",
         "airportSpell":"zhanjiang",
         "airportShortSpell":"zj",
@@ -1624,7 +1624,7 @@
         "cityCode":"ZHA"
     },
     {
-        "airtportName":"珠海金湾机场",
+        "airportName":"珠海金湾机场",
         "airportCode":"ZUH",
         "airportSpell":"zhuhai",
         "airportShortSpell":"zh",
@@ -1632,7 +1632,7 @@
         "cityCode":"ZUH"
     },
     {
-        "airtportName":"遵义机场",
+        "airportName":"遵义机场",
         "airportCode":"ZYI",
         "airportSpell":"zunyi",
         "airportShortSpell":"zy",
@@ -1640,7 +1640,7 @@
         "cityCode":"ZYI"
     },
     {
-        "airtportName":"张家口宁远机场",
+        "airportName":"张家口宁远机场",
         "airportCode":"ZQZ",
         "airportSpell":"zhangjiakou",
         "airportShortSpell":"zjk",
@@ -1648,7 +1648,7 @@
         "cityCode":"ZQZ"
     },
     {
-        "airtportName":"郑州新郑机场",
+        "airportName":"郑州新郑机场",
         "airportCode":"CGO",
         "airportSpell":"zhengzhou",
         "airportShortSpell":"zz",
@@ -1656,7 +1656,7 @@
         "cityCode":"CGO"
     },
     {
-        "airtportName":"怀化机场",
+        "airportName":"怀化机场",
         "airportCode":"HJJ",
         "airportSpell":"zhijiang",
         "airportShortSpell":"zj",
@@ -1664,7 +1664,7 @@
         "cityCode":"HJJ"
     },
     {
-        "airtportName":"张家界荷花机场",
+        "airportName":"张家界荷花机场",
         "airportCode":"DYG",
         "airportSpell":"zhangjiajie",
         "airportShortSpell":"zjj",
@@ -1672,7 +1672,7 @@
         "cityCode":"DYG"
     },
     {
-        "airtportName":"舟山普陀山机场",
+        "airportName":"舟山普陀山机场",
         "airportCode":"HSN",
         "airportSpell":"zhoushan",
         "airportShortSpell":"zs",
@@ -1680,7 +1680,7 @@
         "cityCode":"HSN"
     },
     {
-        "airtportName":"香山机场",
+        "airportName":"香山机场",
         "airportCode":"ZHY",
         "airportSpell":"zhongwei",
         "airportShortSpell":"zw",
@@ -1688,7 +1688,7 @@
         "cityCode":"ZHY"
     },
     {
-        "airtportName":"昭通机场",
+        "airportName":"昭通机场",
         "airportCode":"ZAT",
         "airportSpell":"zhaotong",
         "airportShortSpell":"zt",

@@ -33,10 +33,10 @@ class Dict {
     }
     
     const PASSENGER_TYPE_ADULT = 1;
-    const PASSENGER_TYPE_CHILD = 1;
-    const PASSENGER_TYPE_BABY = 1;
-    const PASSENGER_TYPE_STUDENT = 1;
-    const PASSENGER_TYPE_DISABLE = 1;
+    const PASSENGER_TYPE_CHILD = 2;
+    const PASSENGER_TYPE_BABY = 3;
+    const PASSENGER_TYPE_STUDENT = 4;
+    const PASSENGER_TYPE_DISABLE = 5;
     public static $passengerTypes = array(
         self::PASSENGER_TYPE_ADULT => array(
             'name' => '成人票',
@@ -113,5 +113,5 @@ class Dict {
         return isset(self::$cardTypes[$cardType]);
     }
     
-    const INVOICE_PRICE = 20;
+    const INVOICE_PRICE = 2000;
 }
