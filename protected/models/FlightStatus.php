@@ -12,11 +12,13 @@ class FlightStatus {
     const BOOK_FAIL_RFDING = 10; //个人票使用
     const BOOK_FAIL_RFDED = 11; //个人票使用
     const APPLY_RSN = 12;
-    const APPLY_RSD_FAIL = 13;
-    const APPLY_RSD_SUCC = 14;
-    const APPLY_RFD = 15;
-    const APPLY_RFD_FAIL = 16;
-    const APPLY_RFD_SUCC = 17;
+    const APPLY_RSNING = 13;
+    const APPLY_RSD_FAIL = 14;
+    const APPLY_RSD_SUCC = 15;
+    const APPLY_RFD = 16;
+    const APPLY_RFDING = 17;
+    const APPLY_RFD_FAIL = 18;
+    const APPLY_RFD_SUCC = 19;
     
     public static $flightStatus = array(
         self::WAIT_CHECK => array(
@@ -62,7 +64,27 @@ class FlightStatus {
         self::APPLY_RFD => array(
             'des' => array('user' => '已申请退票'),
             'str' => 'ApplyRfd',
-            'admin'
+            'adminHdStatus' => array(self::APPLY_RFD_FAIL)
         ),
     );
+    
+    public static function getUserDes($status) {
+        return self::$flightStatus[$status]['des']['user'];
+    }
+    
+    public static function getAdminDes($status) {
+        return isset(self::$flightStatus[$status]['des']['admin']) ? self::$flightStatus[$status]['des']['admin'] : self::getUserDes($status);
+    }
+    
+    public static function getUserStatus($status) {
+        return isset(self::$flightStatus[$status]['userStatus']) ? self::$flightStatus[$status]['userStatus'] : array();
+    }
+    
+    public static function getAdminHdStatus($status) {
+        return isset(self::$flightStatus[$status]['adminHdStatus']) ? self::$flightStatus[$status]['adminHdStatus'] : array();
+    }
+    
+    public static function getAdminOpStatus($status) {
+        return isset(self::$flightStatus[$status]['adminOpStatus']) ? self::$flightStatus[$status]['adminOpStatus'] : array();
+    }
 }

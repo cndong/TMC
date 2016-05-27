@@ -59,7 +59,7 @@ class UserController extends ApiController {
         }
         
         if (!F::isCorrect($res = $smsCode->verify($params['code']))) {
-            $this->errAjax(RC::RC_SMS_CODE_NOT_CORRECT);
+            $this->onAjax($res);
         }
         
         $user = User::model()->findByAttributes(array('mobile' => $params['mobile'], 'deleted' => User::DELETED_F));
