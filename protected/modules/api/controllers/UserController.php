@@ -270,7 +270,7 @@ class UserController extends ApiController {
                 mkdir(Yii::getPathOfAlias('webroot').$path);
             }
             $oldfileName = explode(".", $uploadedFile->name);
-            $fileName = md5($userID.$oldfileName).'.'.end($oldfileName);
+            $fileName = md5($userID.$uploadedFile->name).'.'.end($oldfileName);
             $fullPath = $path.'/'.$fileName;
             if($uploadedFile->saveAs(Yii::getPathOfAlias('webroot').$fullPath)){
                 $upload['fileName'] = $fileName;

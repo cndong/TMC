@@ -12,7 +12,7 @@ class User extends QActiveRecord {
     public function rules() {
         return array(
             array('mobile, name, companyID, departmentID, password, isReviewer', 'required'),
-            array('companyID, departmentID, isReviewer, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('deviceType, companyID, departmentID, isReviewer, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
             array('mobile', 'length', 'max' => 11),
             array('name', 'length', 'max' => 50),
             array('password', 'length', 'max' => 32),
@@ -151,8 +151,17 @@ class User extends QActiveRecord {
         return F::corReturn();
     }
     
-    public function setDeviceToken($deviceToken) {
+    public function setDevice($deviceToken, $deviceType) {
         $this->deviceToken = $deviceToken;
+        switch ($deviceType) {
+            case 'ios':
+               $this->deviceType = 1;
+                break;
+            
+           case 'android':
+               $this->deviceType = 2;
+                break;
+        }
         if (!$this->save()) {
             return F::errReturn(RC::RC_USER_SET_DEVICETOKEN_ERROR);
         }

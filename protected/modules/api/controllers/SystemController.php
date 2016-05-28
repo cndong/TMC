@@ -10,7 +10,7 @@ class SystemController extends ApiController {
         }
        
         if(isset($_POST['deviceToken'])){
-            $this->onAjax($user->setDeviceToken($_POST['deviceToken']));
+            $this->onAjax($user->setDeviceToken($_POST['deviceToken'], $_POST['deviceType']));
         }else $this->corAjax();
     }
 }
