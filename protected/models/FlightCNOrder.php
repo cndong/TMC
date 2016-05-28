@@ -396,21 +396,25 @@ class FlightCNOrder extends QActiveRecord {
         $criteria = new CDbCriteria();
         $criteria->with = array_keys(self::model()->relations());
         $criteria->order = 't.id DESC';
-        foreach (array('orderID', 'userID', 'departmentID', 'companyID') as $type) {
-            if (!empty($rtn['params'][$type])) {
-                $criteria->compare('t.' . $type, $params[$type]);
+        if (!empty($params['orderID'])) {
+            $criteria->compare('t.id', $params['orderID']);
+        } else {
+            foreach (array('userID', 'departmentID', 'companyID') as $type) {
+                if (!empty($rtn['params'][$k])) {
+                    $criteria->compare('t.' . $type, $params[$type]);
+                }
             }
+            if (!empty($params['status'])) {
+                if (!is_array($params['status'])) {
+                    $params['status'] = array($params['status']);
+                }
+                if (F::checkParams($params, array('status' => ParamsFormat::F_ORDER_STATUS_ARRAY))) {
+                    $rtn['params']['status'] = $params['status'];
+                    $criteria->addInCondition('t.status', $rtn['params']['status']);
+                }
+            }
+            $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
         }
-        if (!empty($params['status'])) {
-            if (!is_array($params['status'])) {
-                $params['status'] = array($params['status']);
-            }
-            if (F::checkParams($params, array('status' => ParamsFormat::F_ORDER_STATUS_ARRAY))) {
-                $rtn['params']['status'] = $params['status'];
-                $criteria->addInCondition('t.status', $rtn['params']['status']);
-            }
-        }
-        $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
         $rtn['criteria'] = $criteria;
         if ($isGetCriteria) {
             return $rtn;
@@ -425,5 +429,76 @@ class FlightCNOrder extends QActiveRecord {
         $rtn['data'] = $orders;
         
         return $rtn;
+    }
+    
+    public function changeStatus($status, $params = array(), $condition = '', $conditionParams = array()) {
+        if (!FlightStatus::isOrderStatus($status)) {
+            return F::errReturn(RC::RC_STATUS_NOT_EXISTS);
+        }
+
+        $isDriverStatus = OrderStatus::isDriverStatus($this->status, $status);
+        $isAdminStatus = OrderStatus::isAdminStatus($this->status, $status);
+        if (!$isAdminStatus && !$isDriverStatus) {
+            return F::errReturn(RC::RC_O_STATUS_NOT_A_D);
+        }
+        
+        $toStatusConfig = OrderStatus::$orderStatus[$status];
+        $trans = Yii::app()->db->beginTransaction();
+        try {
+            $res = F::$return;
+            $beforeMethodName = '_cS2' . $toStatusConfig['str'] . 'Before';
+            $methodName = '_cS2' . $toStatusConfig['str'];
+            $afterMethodName = '_cS2' . $toStatusConfig['str'] . 'After';
+            
+            $params['status'] = $status;
+            $tmp = array('params' => array('status' => $status), 'condition' => '', 'conditionParams' => array());
+            if (method_exists($this, $beforeMethodName)) {
+                if (F::isCorrect($res = $this->$beforeMethodName($params, $condition, $conditionParams))) {
+                    $tmp = CMap::mergeArray($tmp, $res['data']);
+                }
+            }
+
+            if (F::isCorrect($res)) {
+                $func = method_exists($this, $methodName) ? $methodName : '_changeStatus';
+                if (F::isCorrect($res = $this->$func($tmp['params'], $condition, $conditionParams)) && method_exists($this, $afterMethodName)) {
+                    $res = $this->$afterMethodName();
+                }
+            }
+            
+            $func = F::isCorrect($res) ? 'commit' : 'rollback';
+            $trans->$func();
+        } catch (Exception $e) {
+            Q::log($e->getMessage(), 'dberror.changeStatus');
+            
+            $trans->rollback();
+            $res = F::errReturn(RC::RC_DB_ERROR);
+        }
+        
+        $this->_setCollectParams($status, array(), False);
+        
+        Log::add(Log::TYPE_ORDER, $this->id, array('status' => $this->status, 'isSucc' => F::isCorrect($res), 'params' => $params, 'res'=>$res));
+        
+        return $res;
+    }
+    
+    private function _changeStatus($sets, $condition, $conditionParams) {
+        $newSets = $sets;
+        $sets = array();
+        foreach ($newSets as $k => $v) {
+            if ($this->hasAttribute($k)) {
+                $sets[$k] = $v;
+            }
+        }
+    
+        $condition .= empty($condition) ? '' : ' AND';
+        $condition .= ' status=:status';
+        $conditionParams[':status'] = $this->status;
+        if (!Order::model()->updateByPk($this->id, $sets, $condition, $conditionParams)) {
+            return F::errReturn(RC::RC_O_STATUS_CHANGE_ERROR);
+        }
+    
+        $this->setAttributes($sets);
+    
+        return F::corReturn();
     }
 }

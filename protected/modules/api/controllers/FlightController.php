@@ -159,8 +159,6 @@ class FlightController extends ApiController {
         }
         
         $this->corAjax(array('reviewOrderList' => $rtn));
-        
-        
     }
     
     public function actionOrderDetail() {
@@ -189,5 +187,9 @@ class FlightController extends ApiController {
         if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $user->id) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
+        
+        $status = $params['status'] ? FlightStatus::CHECK_SUCC : FlightStatus::CHECK_FAIL;
+        
+        $this->onAjax($order->changeStatus(FlightStatus::$status));
     }
 }
