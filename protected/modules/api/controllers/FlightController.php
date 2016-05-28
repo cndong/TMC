@@ -166,7 +166,7 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $res = FlightCNOrder::search($_GET);
+        $res = FlightCNOrder::search($_GET, False, True, True);
         if (empty($res['data'])) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }

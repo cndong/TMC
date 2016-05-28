@@ -384,7 +384,7 @@ class FlightCNOrder extends QActiveRecord {
         return $rtn;
     }
     
-    public static function search($params, $isGetCriteria = False, $isInit = True) {
+    public static function search($params, $isGetCriteria = False, $isInit = True, $isWithPassengers = False) {
         $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
     
         $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
@@ -423,7 +423,7 @@ class FlightCNOrder extends QActiveRecord {
         $orders = F::arrayAddField(self::model()->findAll($criteria), 'id');
         foreach ($orders as $orderID => $order) {
             if ($isInit) {
-                $orders[$orderID] = self::initWithSegments($order);
+                $orders[$orderID] = self::initWithSegments($order, $isWithPassengers);
             }
         }
         $rtn['data'] = $orders;
