@@ -182,7 +182,7 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         $order = current($res['data']);
-        $order = array_merge($order, $this->_getFlags($order));
+        $order = array_merge($order, $this->_getFlags($order['status']));
         $order['status'] = FlightStatus::getUserDes($order['status']);
         
         $this->corAjax($order);
@@ -203,6 +203,6 @@ class FlightController extends ApiController {
         
         $status = $params['status'] ? FlightStatus::CHECK_SUCC : FlightStatus::CHECK_FAIL;
         
-        $this->onAjax($order->changeStatus(FlightStatus::$status));
+        $this->onAjax($order->changeStatus($status));
     }
 }

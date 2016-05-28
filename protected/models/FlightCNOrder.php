@@ -1,5 +1,7 @@
 <?php
 class FlightCNOrder extends QActiveRecord {
+    private static $_collectParams = array();
+    
     public static function model($className=__CLASS__){
         return parent::model($className);
     }
