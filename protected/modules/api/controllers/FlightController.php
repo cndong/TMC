@@ -142,7 +142,7 @@ class FlightController extends ApiController {
         foreach ($res['data'] as $order) {
             $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
             $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
-            $tmp['status'] = FlightStatus::getUserDes($order->status);
+            $tmp['status'] = FlightStatus::getUserDes($order['status']);
             $rtn[] = $tmp;
         }
         
@@ -164,7 +164,7 @@ class FlightController extends ApiController {
             foreach ($res['data'] as $order) {
                 $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
                 $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
-                $tmp['status'] = FlightStatus::getUserDes($order->status);
+                $tmp['status'] = FlightStatus::getUserDes($order['status']);
                 $rtn[] = $tmp;
             }
         }
