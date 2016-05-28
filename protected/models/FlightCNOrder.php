@@ -390,7 +390,7 @@ class FlightCNOrder extends QActiveRecord {
         $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
         $rtn['params'] = F::checkParams($params, array(
             'orderID' => '!' . ParamsFormat::INTNZ . '--0', 'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0',
-            'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE
+            'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE,
         ));
     
         $criteria = new CDbCriteria();
@@ -408,10 +408,14 @@ class FlightCNOrder extends QActiveRecord {
                 if (!is_array($params['status'])) {
                     $params['status'] = array($params['status']);
                 }
-                if (F::checkParams($params, array('status' => ParamsFormat::F_ORDER_STATUS_ARRAY))) {
+                if (F::checkParams($params, array('status' => ParamsFormat::F_STATUS_ARRAY))) {
                     $rtn['params']['status'] = $params['status'];
                     $criteria->addInCondition('t.status', $rtn['params']['status']);
                 }
+            }
+            if (isset($params['isPrivate'])) {
+                $rtn['params']['isPrivate'] = intval($params['isPrivate']);
+                $criteria->compare('t.isPrivate', $rtn['params']);
             }
             $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
         }
@@ -431,18 +435,31 @@ class FlightCNOrder extends QActiveRecord {
         return $rtn;
     }
     
+    private function _setCollectParams($status, $params, $isMerge = True) {
+        $this->_collectParams[$status] = $isMerge ? CMap::mergeArray($this->_collectParams, $params) : $params;
+    }
+    
+    private function _getCollectParams($status) {
+        return isset($this->_collectParams[$status]) ? $this->_collectParams[$status] : array();
+    }
+    
     public function changeStatus($status, $params = array(), $condition = '', $conditionParams = array()) {
-        if (!FlightStatus::isOrderStatus($status)) {
+        if (!FlightStatus::isFlightStatus($status)) {
             return F::errReturn(RC::RC_STATUS_NOT_EXISTS);
         }
 
-        $isDriverStatus = OrderStatus::isDriverStatus($this->status, $status);
-        $isAdminStatus = OrderStatus::isAdminStatus($this->status, $status);
-        if (!$isAdminStatus && !$isDriverStatus) {
-            return F::errReturn(RC::RC_O_STATUS_NOT_A_D);
+        $isUserOp = FlightStatus::isUserOp($this->status, $status);
+        $isAdminHd = FlightStatus::isAdminHd($this->status, $status);
+        $isAdminOp = FlightStatus::isAdminOp($this->status, $status);
+        if (!($isUserOp || $isAdminHd || $isAdminOp)) {
+            return F::errReturn(RC::RC_STATUS_NOT_OP);
         }
         
-        $toStatusConfig = OrderStatus::$orderStatus[$status];
+        if (($isAdminHd || $isAdminOp) && empty($params['operaterID'])) {
+            return F::errReturn(RC::RC_STATUS_NO_OPERATER);
+        }
+        
+        $toStatusConfig = FlightStatus::$flightStatus[$status];
         $trans = Yii::app()->db->beginTransaction();
         try {
             $res = F::$return;
@@ -451,7 +468,8 @@ class FlightCNOrder extends QActiveRecord {
             $afterMethodName = '_cS2' . $toStatusConfig['str'] . 'After';
             
             $params['status'] = $status;
-            $tmp = array('params' => array('status' => $status), 'condition' => '', 'conditionParams' => array());
+            $tmp = $isAdminHd || $isAdminOp ? array('status' => $status, 'operaterID' => $params['operaterID']) : array('status' => $status);
+            $tmp = array('params' => $tmp, 'condition' => '', 'conditionParams' => array());
             if (method_exists($this, $beforeMethodName)) {
                 if (F::isCorrect($res = $this->$beforeMethodName($params, $condition, $conditionParams))) {
                     $tmp = CMap::mergeArray($tmp, $res['data']);
@@ -476,8 +494,6 @@ class FlightCNOrder extends QActiveRecord {
         
         $this->_setCollectParams($status, array(), False);
         
-        Log::add(Log::TYPE_ORDER, $this->id, array('status' => $this->status, 'isSucc' => F::isCorrect($res), 'params' => $params, 'res'=>$res));
-        
         return $res;
     }
     
@@ -489,12 +505,18 @@ class FlightCNOrder extends QActiveRecord {
                 $sets[$k] = $v;
             }
         }
+        
+        if (FlightStatus::isAdminOp($this->status, $sets['status'])) {
+            $condition .= empty($condition) ? '' : ' AND';
+            $condition .= ' operaterID=:operaterID';
+            $conditionParams[':operaterID'] = $sets['operaterID'];
+        }
     
         $condition .= empty($condition) ? '' : ' AND';
         $condition .= ' status=:status';
         $conditionParams[':status'] = $this->status;
-        if (!Order::model()->updateByPk($this->id, $sets, $condition, $conditionParams)) {
-            return F::errReturn(RC::RC_O_STATUS_CHANGE_ERROR);
+        if (!self::model()->updateByPk($this->id, $sets, $condition, $conditionParams)) {
+            return F::errReturn(RC::RC_STATUS_CHANGE_ERROR);
         }
     
         $this->setAttributes($sets);

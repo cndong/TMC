@@ -120,6 +120,16 @@ class FlightController extends ApiController {
         $this->corAjax(array('orderID' => $res['data']->id));
     }
     
+    private function _getFlags($status) {
+        return array(
+            'isReview' => $status == FlightStatus::WAIT_CHECK,
+            'isCancel' => in_array($status, array(FlightStatus::WAIT_CHECK, FlightStatus::CHECK_SUCC, FlightStatus::WAIT_PAY)),
+            'isResign' => $status == FlightStatus::BOOK_SUCC,
+            'isPay' => $status == FlightStatus::WAIT_PAY,
+            'isRefund' => in_array($status, array(FlightStatus::BOOK_SUCC, FlightStatus::RSN_SUCC))
+        );
+    }
+    
     public function actionOrderList() {
         $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
         if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
@@ -130,8 +140,9 @@ class FlightController extends ApiController {
         
         $res = FlightCNOrder::search($params);
         foreach ($res['data'] as $order) {
-            $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'status', 'ctime'));
+            $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
             $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
+            $tmp['status'] = FlightStatus::getUserDes($order->status);
             $rtn[] = $tmp;
         }
         
@@ -151,9 +162,9 @@ class FlightController extends ApiController {
         if ($user->isReviewer) {
             $res = FlightCNOrder::search(array('departmentID' => $user->departmentID, 'status' => FlightStatus::$flightStatusGroup['waitCheck']));
             foreach ($res['data'] as $order) {
-                $tmp = F::arrayGetByKeys($order, array('id', 'contacterName', 'contacterMobile', 'orderPrice', 'isRound', 'ctime'));
+                $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
                 $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
-                
+                $tmp['status'] = FlightStatus::getUserDes($order->status);
                 $rtn[] = $tmp;
             }
         }
@@ -171,6 +182,8 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         $order = current($res['data']);
+        $order = array_merge($order, $this->_getFlags($order));
+        $order['status'] = FlightStatus::getUserDes($order['status']);
         
         $this->corAjax($order);
     }

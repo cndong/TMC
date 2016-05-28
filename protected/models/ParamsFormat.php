@@ -42,8 +42,8 @@ class ParamsFormat {
     const F_FLIGHT_NO = '/^[A-Z0-9]{5,6}$/';
     const F_CABIN_CODE = '/^[A-Z]\d?$/';
     const F_CABIN_CLASS = '/^[A-Z]$/';
-    const F_ORDER_STATUS = 'array("FlightStatus", "isOrderStatus")';
-    const F_ORDER_STATUS_ARRAY = 'array("FlightStatus", "isOrderStatusArray")';
+    const F_STATUS = 'array("FlightStatus", "isFlightStatus")';
+    const F_STATUS_ARRAY = 'array("FlightStatus", "isFlightStatusArray")';
     const PASSENGER_TYPE = 'array("Dict", "isPassengerType")';
     const CARD_TYPE = 'array("Dict", "isCardType")';
     const SEX = 'array("Dict", "isSex")';
