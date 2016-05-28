@@ -205,4 +205,20 @@ class FlightController extends ApiController {
         
         $this->onAjax($order->changeStatus($status));
     }
+    
+    public function actionCancel() {
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        
+        if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $user->id) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+        
+        $this->onAjax($order->changeStatus(FlightStatus::CANCELED));
+    }
 }

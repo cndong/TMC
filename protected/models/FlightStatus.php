@@ -5,7 +5,7 @@ class FlightStatus {
     const CHECK_SUCC = 3;
     const WAIT_PAY = 4; //个人票使用
     const PAYED = 5; //个人票使用
-    const CANCELD = 6;
+    const CANCELED = 6;
     const BOOKING = 7;
     const BOOK_FAIL = 8;
     const BOOK_SUCC = 9;
@@ -29,7 +29,7 @@ class FlightStatus {
         self::WAIT_CHECK => array(
             'des' => array('user' => '待审批'),
             'str' => 'WaitCheck',
-            'userStatus' => array(self::CHECK_FAIL, self::CHECK_SUCC, self::CANCELD)
+            'userStatus' => array(self::CHECK_FAIL, self::CHECK_SUCC, self::CANCELED)
         ),
         self::CHECK_FAIL => array(
             'des' => array('user' => '审批失败'),
@@ -38,7 +38,7 @@ class FlightStatus {
         self::CHECK_SUCC => array(
             'des' => array('user' => '已审批'),
             'str' => 'CheckSucc',
-            'userStatus' => array(self::CANCELD),
+            'userStatus' => array(self::CANCELED),
             'adminHdStatus' => array(self::BOOKING),
         ),
         self::WAIT_PAY => array(
@@ -50,6 +50,10 @@ class FlightStatus {
             'des' => array('user' => '已支付'),
             'str' => 'Payed',
             'adminHdStatus' => array(self::BOOKING)
+        ),
+        self::CANCELED => array(
+            'des' => array('user' => '已取消'),
+            'str' => 'Canceled'
         ),
         self::BOOKING => array(
             'des' => array('user' => '正在出票'),
