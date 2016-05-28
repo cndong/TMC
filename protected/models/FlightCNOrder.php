@@ -341,6 +341,9 @@ class FlightCNOrder extends QActiveRecord {
         $rtn = $order->attributes;
         unset($rtn['segments']);
         
+        $rtn['contacterName'] = $order->contacter->name;
+        $rtn['contacterMobile'] = $order->contacter->mobile;
+        
         $cities = DataAirport::getCNCities();
         $airports = DataAirport::getCNAiports();
         foreach ($order->segments as $segment) {
@@ -381,25 +384,33 @@ class FlightCNOrder extends QActiveRecord {
         return $rtn;
     }
     
-    public static function search($params, $isGetCriteria = False) {
+    public static function search($params, $isGetCriteria = False, $isInit = True) {
         $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
     
         $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
-        $rtn['params'] = $params = F::checkParams($params, array(
-            'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0',
+        $rtn['params'] = F::checkParams($params, array(
+            'orderID' => '!' . ParamsFormat::INTNZ . '--0', 'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0',
             'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE
         ));
     
         $criteria = new CDbCriteria();
         $criteria->with = array_keys(self::model()->relations());
         $criteria->order = 't.id DESC';
-        foreach (array('userID', 'departmentID', 'companyID') as $id) {
-            if (!empty($params[$id])) {
-                $criteria->compare('t.' . $id, $params[$id]);
+        foreach (array('orderID', 'userID', 'departmentID', 'companyID') as $type) {
+            if (!empty($rtn['params'][$type])) {
+                $criteria->compare('t.' . $type, $params[$type]);
             }
         }
-        $criteria->addBetweenCondition('t.ctime', strtotime($params['beginDate']), strtotime($params['endDate'] . ' 23:59:59'));
-    
+        if (!empty($params['status'])) {
+            if (!is_array($params['status'])) {
+                $params['status'] = array($params['status']);
+            }
+            if (F::checkParams($params, array('status' => ParamsFormat::F_ORDER_STATUS_ARRAY))) {
+                $rtn['params']['status'] = $params['status'];
+                $criteria->addInCondition('t.status', $rtn['params']['status']);
+            }
+        }
+        $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
         $rtn['criteria'] = $criteria;
         if ($isGetCriteria) {
             return $rtn;
@@ -407,7 +418,9 @@ class FlightCNOrder extends QActiveRecord {
     
         $orders = F::arrayAddField(self::model()->findAll($criteria), 'id');
         foreach ($orders as $orderID => $order) {
-            $orders[$orderID] = self::initWithSegments($order);
+            if ($isInit) {
+                $orders[$orderID] = self::initWithSegments($order);
+            }
         }
         $rtn['data'] = $orders;
         

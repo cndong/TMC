@@ -34,7 +34,7 @@
             </td>
             <td class="text-center"><?php echo $data->contacter->name, '<br />', $data->contacter->mobile; ?></td>
             <td class="text-center"><?php echo $data->orderPrice / 100; ?></td>
-            <td class="text-center"><?php echo "{$data->user->name}({$data->userID})<br />{$data->department->name}({$data->departmentID})<br />{$data->company->name}($data->companyID)"; ?></td>
+            <td class="text-center"><?php echo "{$data->user->name}<br />{$data->department->name}<br />{$data->company->name}"; ?></td>
             <td class="text-center"><?php echo FlightStatus::getAdminDes($data->status); ?></td>
             <td class="text-center"><?php echo empty($data->operaterID) ? '无' : $data->operater->nickname; ?></td>
             <td class="text-center">

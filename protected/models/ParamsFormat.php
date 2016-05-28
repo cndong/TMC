@@ -34,17 +34,6 @@ class ParamsFormat {
     const CARD_NO_ID = '/^\d{6}(19|20)\d2[01][0-3]\d{4}[\d|x|X]$/';
     const ORDER_ID_U = '/^[A-Z0-9]{15}$/';
     const M_ORDER_ID = '/^\w{5,32}$/';
-    const T_TRAIN_NO = '/^[A-Z]?\d{1,4}$/';
-    const T_STATION_CODE = '/^[A-Z]{3}$/';
-    const T_SEAT_TYPE = 'array("DictTrain", "isSeatType")';
-    const T_PASSENGER_TYPE = 'array("DictTrain", "isPassengerType")';
-    const T_CARD_TYPE = 'array("DictTrain", "isCardType")';
-    const T_CARD_REAL_TYPE = 'array("DictTrain", "isRealCardType")';
-    const T_JOURNEY_TYPE = 'array("DictTrain", "isJourneyType")';
-    const T_JOURNEY_REAL_TYPE = 'array("DictTrain", "isRealJourneyType")';
-    const T_INSURE_TYPE = 'array("DictTrain", "isInsureType")';
-    const T_TICKET_NO = '/^E[A-Z0-9]{9}$/';
-    const T_ORDER_STATUS_ARRAY = 'array("TrainStatus", "isOrderStatusArray")';
     const SORT_DIRECTION = 'array("ParamsFormat", "isSortDirection")';
     const F_CN_CITY_CODE = 'array("DictFlight", "isCNCityCode")';
     const F_CN_AIRPORT_CODE = 'array("DictFlight", "isCNAirportCode")';
@@ -53,6 +42,8 @@ class ParamsFormat {
     const F_FLIGHT_NO = '/^[A-Z0-9]{5,6}$/';
     const F_CABIN_CODE = '/^[A-Z]\d?$/';
     const F_CABIN_CLASS = '/^[A-Z]$/';
+    const F_ORDER_STATUS = 'array("FlightStatus", "isOrderStatus")';
+    const F_ORDER_STATUS_ARRAY = 'array("FlightStatus", "isOrderStatusArray")';
     const PASSENGER_TYPE = 'array("Dict", "isPassengerType")';
     const CARD_TYPE = 'array("Dict", "isCardType")';
     const SEX = 'array("Dict", "isSex")';

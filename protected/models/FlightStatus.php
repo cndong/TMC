@@ -12,13 +12,16 @@ class FlightStatus {
     const BOOK_FAIL_RFDING = 10; //个人票使用
     const BOOK_FAIL_RFDED = 11; //个人票使用
     const APPLY_RSN = 12;
-    const APPLY_RSNING = 13;
-    const APPLY_RSD_FAIL = 14;
-    const APPLY_RSD_SUCC = 15;
-    const APPLY_RFD = 16;
-    const APPLY_RFDING = 17;
-    const APPLY_RFD_FAIL = 18;
-    const APPLY_RFD_SUCC = 19;
+    const RSNING = 13;
+    const RSN_FAIL = 14;
+    const RSN_NED_PAY = 15; //个人票使用
+    const RSN_PAYED = 16; //个人票使用
+    const RSN_SUCC = 17; //因公票此步计算差额 新票为此状态
+    const RESED = 18; //原票改为已改签状态
+    const APPLY_RFD = 19;
+    const APPLY_RFDING = 20;
+    const APPLY_RFD_FAIL = 21;
+    const APPLY_RFD_SUCC = 22;
     
     public static $flightStatus = array(
         self::WAIT_CHECK => array(
@@ -67,6 +70,24 @@ class FlightStatus {
             'adminHdStatus' => array(self::APPLY_RFD_FAIL)
         ),
     );
+
+    public static $flightStatusGroup = array(
+        'waitCheck' => array(self::WAIT_CHECK)
+    );
+    
+    public static function isOrderStatus($status) {
+        return isset(self::$flightStatus[$status]);
+    }
+    
+    public static function isOrderStatusArray($statusArray) {
+        foreach ($statusArray as $status) {
+            if (!self::isOrderStatus($status)) {
+                return False;
+            }
+        }
+        
+        return True;
+    }
     
     public static function getUserDes($status) {
         return self::$flightStatus[$status]['des']['user'];

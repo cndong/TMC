@@ -138,18 +138,43 @@ class FlightController extends ApiController {
         $this->corAjax(array('orderList' => $rtn));
     }
     
+    public function actionReviewOrderList() {
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($user = User::model()->findByPk($_GET['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        
+        $rtn = array();
+        if ($user->isReviewer) {
+            $res = FlightCNOrder::search(array('departmentID' => $user->departmentID, 'status' => FlightStatus::$flightStatusGroup['waitCheck']));
+            foreach ($res['data'] as $order) {
+                $tmp = F::arrayGetByKeys($order, array('id', 'contacterName', 'contacterMobile', 'orderPrice', 'isRound', 'ctime'));
+                $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
+                
+                $rtn[] = $tmp;
+            }
+        }
+        
+        $this->corAjax(array('reviewOrderList' => $rtn));
+        
+        
+    }
+    
     public function actionOrderDetail() {
         if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $params['userID']) {
+        $res = FlightCNOrder::search($_GET);
+        if (empty($res['data'])) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
+        $order = current($res['data']);
         
-        $rtn = FlightCNOrder::initWithSegments($order, True);
-        
-        $this->corAjax($rtn);
+        $this->corAjax($order);
     }
     
     public function actionReview() {
