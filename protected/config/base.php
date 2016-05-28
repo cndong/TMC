@@ -32,6 +32,7 @@ return array(
                 'Flight/<action:.+>/*' => 'api/Flight/<action>',
                 'Train/<action:.+>/*' => 'api/Train/<action>',
                 'Bus/<action:.+>/*' => 'api/Bus/<action>',
+                'System/<action:.+>/*' => 'api/System/<action>',
                 //'Provider/<action:.+>/*' => 'api/Provider/<action>',
             )
         ),
