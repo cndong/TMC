@@ -258,7 +258,10 @@ class UserController extends ApiController {
             $this->errAjax(RC::RC_USER_UPLOAD_ERROR);
         }
         
-        $this->onAjax($user->setAvatar($upload['fileName']));
+        $return = $user->setAvatar($upload['fileName']);
+        if(F::isCorrect($return)) $return['data'] = array('avatarUrl'=>"http://{$_SERVER['HTTP_HOST']}/avatar/{$upload['fileName']}");
+        
+        $this->onAjax($return);
     }
     
     private function _uploadAvatar($userID){
