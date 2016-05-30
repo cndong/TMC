@@ -203,7 +203,7 @@ class FlightController extends ApiController {
         
         $status = $params['status'] ? FlightStatus::CHECK_SUCC : FlightStatus::CHECK_FAIL;
         
-        $this->onAjax($order->changeStatus($status));
+        $this->onAjax($order->changeStatus($status, array('reviewerID' => $user)));
     }
     
     public function actionCancel() {

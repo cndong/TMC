@@ -56,6 +56,7 @@ class RC {
     const RC_STATUS_NO_OPERATER = 100234;
     const RC_STATUS_CHANGE_ERROR = 100235;
     const RC_REASON_ERROR = 100236;
+    const RC_HAVE_NO_REVIEW_PRIVILEGE = 100237;
 
     const RC_P_ERROR = 100301;
     

@@ -32,11 +32,11 @@ class FlightStatus {
             'userStatus' => array(self::CHECK_FAIL, self::CHECK_SUCC, self::CANCELED)
         ),
         self::CHECK_FAIL => array(
-            'des' => array('user' => '审批失败'),
-            'str' => 'CheckFail',
+            'des' => array('user' => '未通过'),
+            'str' => 'CheckFail'
         ),
         self::CHECK_SUCC => array(
-            'des' => array('user' => '已审批'),
+            'des' => array('user' => '已通过'),
             'str' => 'CheckSucc',
             'userStatus' => array(self::CANCELED),
             'adminHdStatus' => array(self::BOOKING),
@@ -73,6 +73,7 @@ class FlightStatus {
         self::BOOK_FAIL_RFDING => array(
             'des' => array('user' => '订票失败，正在退款'), //需要加个check判断是否是私人的 然后退款
             'str' => 'BookFailRfding',
+            'check' => 'isPrivate',
             'adminOpStatus' => array(self::BOOK_FAIL_RFDED),
         ),
         self::BOOK_FAIL_RFDED => array(
@@ -197,5 +198,9 @@ class FlightStatus {
     
     public static function getAdminOpStatus($status) {
         return isset(self::$flightStatus[$status]['adminOpStatus']) ? self::$flightStatus[$status]['adminOpStatus'] : array();
+    }
+    
+    public static function getCheckFunc($status) {
+        return isset(self::$flightStatus[$status]['check']) ? self::$flightStatus[$status]['check'] : False;
     }
 }

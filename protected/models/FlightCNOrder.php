@@ -13,12 +13,12 @@ class FlightCNOrder extends QActiveRecord {
     public function rules() {
         return array(
             array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerIDs, passengerNum, orderPrice, ticketPrice, airportTaxPrice, oilTaxPrice', 'required'),
-            array('merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerNum, invoicePrice, invoiceAddressID, invoicePostID, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('merchantID, userID, departmentID, companyID, contacterID, reviewerID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerNum, invoicePrice, invoiceAddressID, invoicePostID, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
             array('orderPrice, payPrice, ticketPrice, airportTaxPrice, oilTaxPrice, insurePrice, invoicePostPrice', 'numerical'),
             array('passengerIDs', 'length', 'max' => 60),
             array('invoiceTradeNo, tradeNo', 'length', 'max' => 32),
             array('reason', 'length', 'max' => 500),
-            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerIDs, passengerNum, orderPrice, payPrice, ticketPrice, airportTaxPrice, oilTaxPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostPrice, invoicePostID, invoiceTradeNo, tradeNo, reason, operaterID, status, ctime, utime', 'safe', 'on'=>'search'),
+            array('id, merchantID, userID, departmentID, companyID, contacterID, reviewerID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerIDs, passengerNum, orderPrice, payPrice, ticketPrice, airportTaxPrice, oilTaxPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostPrice, invoicePostID, invoiceTradeNo, tradeNo, reason, operaterID, status, ctime, utime', 'safe', 'on'=>'search'),
         );
     }
     
@@ -32,6 +32,10 @@ class FlightCNOrder extends QActiveRecord {
             'segments' => array(self::HAS_MANY, 'FlightCNSegment', 'orderID'),
             'operater' => array(self::BELONGS_TO, 'BossAdmin', 'operaterID')
         );
+    }
+    
+    public function isPrivate() {
+        return $this->isPrivate;
     }
     
     public function getPassengers() {
@@ -530,5 +534,24 @@ class FlightCNOrder extends QActiveRecord {
         $this->setAttributes($sets);
     
         return F::corReturn();
+    }
+    
+    private function _cS2CheckFailBefore($params) {
+        if (empty($params['userID'])) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $rtn = array();
+        if (!($params['userID'] instanceof User)) {
+            if (!($params['userID'] = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+                return F::errReturn(RC::RC_USER_NOT_EXISTS);
+            }
+        }
+        
+        if (!$params['userID']->isReviewer || $this->departmentID != $params['userID']->departmentID) {
+            return F::errReturn(RC::RC_HAVE_NO_REVIEW_PRIVILEGE);
+        }
+        
+        return F::corReturn(array('params' => array('reviewerID' => $params['userID']->id)));
     }
 }
