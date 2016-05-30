@@ -539,22 +539,22 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _checkBefore($params) {
-        if (empty($params['userID'])) {
+        if (empty($params['reviewerID'])) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
         $rtn = array();
-        if (!($params['userID'] instanceof User)) {
-            if (!($params['userID'] = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+        if (!($params['reviewerID'] instanceof User)) {
+            if (!($params['reviewerID'] = User::model()->findByPk($params['reviewerID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
                 return F::errReturn(RC::RC_USER_NOT_EXISTS);
             }
         }
         
-        if (!$params['userID']->isReviewer || $this->departmentID != $params['userID']->departmentID) {
+        if (!$params['reviewerID']->isReviewer || $this->departmentID != $params['reviewerID']->departmentID) {
             return F::errReturn(RC::RC_HAVE_NO_REVIEW_PRIVILEGE);
         }
         
-        return F::corReturn(array('params' => array('reviewerID' => $params['userID']->id)));
+        return F::corReturn(array('params' => array('reviewerID' => $params['reviewerID']->id)));
     }
     
     private function _cS2CheckFailBefore($params) {
