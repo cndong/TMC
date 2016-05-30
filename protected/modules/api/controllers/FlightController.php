@@ -221,4 +221,12 @@ class FlightController extends ApiController {
         
         $this->onAjax($order->changeStatus(FlightStatus::CANCELED));
     }
+    
+    public function actionResign() {
+        $this->corAjax();
+    }
+    
+    public function actionRefund() {
+        $this->corAjax();
+    }
 }

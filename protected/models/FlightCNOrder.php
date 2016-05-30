@@ -17,7 +17,8 @@ class FlightCNOrder extends QActiveRecord {
             array('orderPrice, payPrice, ticketPrice, airportTaxPrice, oilTaxPrice, insurePrice, invoicePostPrice', 'numerical'),
             array('passengerIDs', 'length', 'max' => 60),
             array('invoiceTradeNo, tradeNo', 'length', 'max' => 32),
-            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerIDs, passengerNum, orderPrice, payPrice, ticketPrice, airportTaxPrice, oilTaxPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostPrice, invoicePostID, invoiceTradeNo, tradeNo, operaterID, status, ctime, utime', 'safe', 'on'=>'search'),
+            array('reason', 'length', 'max' => 500),
+            array('id, merchantID, userID, departmentID, companyID, contacterID, isPrivate, isInsured, isInvoice, isRound, segmentNum, passengerIDs, passengerNum, orderPrice, payPrice, ticketPrice, airportTaxPrice, oilTaxPrice, insurePrice, invoicePrice, invoiceAddressID, invoicePostPrice, invoicePostID, invoiceTradeNo, tradeNo, reason, operaterID, status, ctime, utime', 'safe', 'on'=>'search'),
         );
     }
     
@@ -84,6 +85,11 @@ class FlightCNOrder extends QActiveRecord {
         }
         $params['departmentID'] = $params['isPrivate'] ? 0 : $user->departmentID;
         $params['companyID'] = $params['isPrivate'] ? 0 : $user->companyID;
+        if (!$params['isPrivate'] && empty($params['reason'])) {
+            return F::errReturn(RC::RC_REASON_ERROR);
+        } else {
+            $params['reason'] = '';
+        }
     
         //检测联系人
         $isUseID = isset($params['contacter']['contacterID']);
@@ -295,7 +301,7 @@ class FlightCNOrder extends QActiveRecord {
                 }
             }
     
-            $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'segmentNum', 'passengerNum'));
+            $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'segmentNum', 'passengerNum', 'reason'));
             $attributes = array_merge($attributes, $params['price']);
             $attributes['contacterID'] = $params['contacter']['contacterID'];
             $attributes['invoiceAddressID'] = $params['invoiceAddress']['addressID'];
