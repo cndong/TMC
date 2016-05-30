@@ -484,7 +484,9 @@ class FlightCNOrder extends QActiveRecord {
             $tmp = array('params' => $tmp, 'condition' => '', 'conditionParams' => array());
             if (method_exists($this, $beforeMethodName)) {
                 if (F::isCorrect($res = $this->$beforeMethodName($params, $condition, $conditionParams))) {
-                    $tmp = CMap::mergeArray($tmp, $res['data']);
+                    if (!empty($res['data']) && is_array($res['data'])) {
+                        $tmp = CMap::mergeArray($tmp, $res['data']);
+                    }
                 }
             }
 
@@ -536,7 +538,7 @@ class FlightCNOrder extends QActiveRecord {
         return F::corReturn();
     }
     
-    private function _cS2CheckFailBefore($params) {
+    private function _checkBefore($params) {
         if (empty($params['userID'])) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
@@ -553,5 +555,29 @@ class FlightCNOrder extends QActiveRecord {
         }
         
         return F::corReturn(array('params' => array('reviewerID' => $params['userID']->id)));
+    }
+    
+    private function _cS2CheckFailBefore($params) {
+        return $this->_checkBefore($params);
+    }
+    
+    private function _cS2CheckSuccBefore($params) {
+        return $this->_checkBefore($params);
+    }
+    
+    private function _cS2PayedBefore($params) {
+        if (!F::checkParams($params, array('payPrice' => ParamsFormat::INTNZ))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        return F::corReturn(array('params' => array('payPrice' => $params['payPrice'])));
+    }
+    
+    private function _cS2BookFailBefore() {
+        return $this->isPrivate ? FlightStatus::BOOK_FAIL_WAIT_RFD : FlightStatus::BOOK_FAIL;
+    }
+    
+    private function _cS2BookSuccBefore() {
+        //填写PNR 价格等
     }
 }

@@ -7,23 +7,24 @@ class FlightStatus {
     const PAYED = 5; //个人票使用
     const CANCELED = 6;
     const BOOKING = 7;
-    const BOOK_FAIL = 8;
+    const BOOK_FAIL = 8; //如果为个人票，则直接跳为BOOK_FAIL_WAIT_RFD
     const BOOK_SUCC = 9;
-    const BOOK_FAIL_RFDING = 10; //个人票使用
-    const BOOK_FAIL_RFDED = 11; //个人票使用
-    const APPLY_RSN = 12;
-    const RSNING = 13;
-    const RSN_FAIL = 14;
-    const RSN_NED_PAY = 15; //个人票使用
-    const RSN_PAYED = 16; //个人票使用
-    const RSN_SUCC = 17; //因公票此步计算差额 新票为此状态
-    const RESED = 18; //原票改为已改签状态
-    const APPLY_RFD = 19;
-    const RFDING = 20;
-    const RFD_FAIL = 21;
+    const BOOK_FAIL_WAIT_RFD = 10; //个人票使用
+    const BOOK_FAIL_RFDING = 11; //个人票使用
+    const BOOK_FAIL_RFDED = 12; //个人票使用
+    const APPLY_RSN = 13;
+    const RSNING = 14;
+    const RSN_FAIL = 15;
+    const RSN_NED_PAY = 16; //个人票使用
+    const RSN_PAYED = 17; //个人票使用
+    const RSN_SUCC = 18; //因公票此步计算差额 新票为此状态
+    const RESED = 19; //原票改为已改签状态
+    const APPLY_RFD = 20;
+    const RFDING = 21;
+    const RFD_FAIL = 22;
     const RFD_SUCC = 22;
-    const RFD_ADM_RFDING = 23;
-    const RFD_ADM_RFDED = 24;
+    const RFD_ADM_RFDING = 24;
+    const RFD_ADM_RFDED = 25;
     
     public static $flightStatus = array(
         self::WAIT_CHECK => array(
@@ -44,7 +45,7 @@ class FlightStatus {
         self::WAIT_PAY => array(
             'des' => array('user' => '待支付'),
             'str' => 'WaitPay',
-            'userStatus' => array(self::PAYED)
+            'userStatus' => array(self::CANCELED, self::PAYED)
         ),
         self::PAYED => array(
             'des' => array('user' => '已支付'),
@@ -63,22 +64,28 @@ class FlightStatus {
         self::BOOK_FAIL => array(
             'des' => array('user' => '出票失败'),
             'str' => 'BookFail',
-            'adminHdStatus' => array(self::BOOK_FAIL_RFDING)
+            'btn' => '出票失败'
         ),
         self::BOOK_SUCC => array(
             'des' => array('user' => '出票成功'),
             'str' => 'BookSucc',
-            'userStatus' => array(self::APPLY_RSN, self::APPLY_RFD)
+            'userStatus' => array(self::APPLY_RSN, self::APPLY_RFD),
+            'btn' => '出票成功'
+        ),
+        self::BOOK_FAIL_WAIT_RFD => array(
+            'des' => array('user' => '出票失败，等待退款'),
+            'str' => 'BookFailWaitRfd',
+            'adminHdStatus' => array(self::BOOK_FAIL_RFDING)
         ),
         self::BOOK_FAIL_RFDING => array(
             'des' => array('user' => '订票失败，正在退款'), //需要加个check判断是否是私人的 然后退款
             'str' => 'BookFailRfding',
-            'check' => 'isPrivate',
             'adminOpStatus' => array(self::BOOK_FAIL_RFDED),
         ),
         self::BOOK_FAIL_RFDED => array(
             'des' => array('user' => '订票失败，已退款'),
-            'str' => 'BookFailRfded'
+            'str' => 'BookFailRfded',
+            'btn' => '退款成功'
         ),
         self::APPLY_RSN => array(
             'des' => array('user' => '已申请改签'),

@@ -197,7 +197,7 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_USER_NOT_EXISTS);
         }
         
-        if (!($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->userID != $user->id) {
+        if (!($order = FlightCNOrder::model()->findByPk($params['orderID']))) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
