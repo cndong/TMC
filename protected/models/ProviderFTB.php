@@ -68,6 +68,7 @@ class ProviderFTB extends ProviderF {
                 'airlineCode' => $cabin['airline'],
                 'cabin' => $cabin['cabin'],
                 'cabinClass' => $cabinClass,
+                'cabinClassName' => $cabin['name']
             );
             $cabinClassesRtn[$cabinClass] = DictFlight::$cabinClasses[$cabinClass]['name'];
         }
@@ -82,7 +83,7 @@ class ProviderFTB extends ProviderF {
         $rtn['airportMap'] = json_decode($data['airport_info_map'], True);
         $rtn['cityMap'] = json_decode($data['city_info_map'], True);
         $rtn['craftMap'] = json_decode($data['flight_type_info_map'], True);
-        list($_, $rtn['cabinClassMap']) = $this->_initCabins(json_decode($data['cabin_info_map'], True));
+        list($realCabinClasses, $rtn['cabinClassMap']) = $this->_initCabins(json_decode($data['cabin_info_map'], True));
         
         $flights = $this->_initFlights(json_decode($data['flight_info_map'], True));
         $rtn['flights'] = &$flights;
@@ -112,6 +113,7 @@ class ProviderFTB extends ProviderF {
                 $flights[$flightKey]['cabins'][$flightSegment['cabin']] = array(
                     'cabin' => $flightSegment['cabin'],
                     'cabinClass' => self::$cabinClasses[$flightSegment['cabin_class']]['code'],
+                    'cabinClassName' => $realCabinClasses[$flights[$flightKey]['airlineCode'] . '-' . $flightSegment['cabin']]['cabinClassName'],
                     'cabinNum' => $flightSegment['cabin_num'],
                     'discount' => floatval(sprintf('%.1f', $flightSegment['price'] * 10 / $flightSegment['basic_cabin_price'])),
                     'adultPrice' => $flightSegment['price'],

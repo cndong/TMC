@@ -9,14 +9,15 @@ class FlightCNSegment extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('orderID, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax', 'required'),
+            array('orderID, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, cabinClassName, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax', 'required'),
             array('orderID, isBack, craftType, departTime, arriveTime, ctime, utime', 'numerical', 'integerOnly' => True),
             array('adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax', 'numerical'),
             array('flightNo', 'length', 'max' => 6),
             array('airlineCode, cabin', 'length', 'max' => 2),
             array('craftCode, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode', 'length', 'max' => 3),
             array('cabinClass', 'length', 'max' => 1),
-            array('id, orderID, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, ctime, utime', 'safe', 'on' => 'search'),
+            array('cabinClassName', 'length', 'max' => 50),
+            array('id, orderID, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, cabinClassName, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
 }
