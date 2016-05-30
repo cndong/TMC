@@ -162,7 +162,7 @@ class ProviderFTB extends ProviderF {
     }
     
     public function pGetCNFlightDetail($params) {
-        if (F::isCorrect($res = $this->pGetCNFlightList($params))) {
+        if (!F::isCorrect($res = $this->pGetCNFlightList($params))) {
             return $res;
         }
         $outboundData = $res['data'];
