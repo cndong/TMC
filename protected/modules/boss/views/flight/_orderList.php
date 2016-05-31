@@ -16,7 +16,7 @@
             <th class="text-center" width="10%">用户信息</th>
             <th class="text-center" width="10%">状态</th>
             <th class="text-center" width="10%">客服</th>
-            <th class="text-center" width="10%">操作</th>
+            <th class="text-center" width="15%">操作</th>
         </tr>
     </thead>
     <tbody>

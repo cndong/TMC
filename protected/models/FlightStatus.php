@@ -132,12 +132,14 @@ class FlightStatus {
         ),
         self::RFD_FAIL => array(
             'des' => array('user' => '退票失败'),
-            'str' => 'RfdFail'
+            'str' => 'RfdFail',
+            'btn' => '退票失败'
         ),
         self::RFD_SUCC => array(
-            'des' => array('user' => '等待退款'),
+            'des' => array('user' => '退票成功'),
             'str' => 'RfdSucc',
-            'adminHdStatus' => array(self::RFD_ADM_RFDING)
+            'adminHdStatus' => array(self::RFD_ADM_RFDING),
+            'btn' => '退票成功'
         ),
         self::RFD_ADM_RFDING => array(
             'des' => array('user' => '正在退款'),
@@ -146,7 +148,8 @@ class FlightStatus {
         ),
         self::RFD_ADM_RFDED => array(
             'des' => array('user' => '已退款'),
-            'str' => 'RfdAdmRfded'
+            'str' => 'RfdAdmRfded',
+            'btn' => '退款成功'
         ),
     );
 
