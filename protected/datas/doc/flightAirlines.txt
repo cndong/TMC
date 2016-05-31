@@ -12,12 +12,12 @@
     "2B": {
         "code": "441",
         "twoCode": "2B",
-        "name": "俄罗斯AK航空公司"
+        "name": "俄罗斯AK航空"
     },
     "2D": {
         "code": "994",
         "twoCode": "2D",
-        "name": "美国动力航空公司"
+        "name": "美国动力航空"
     },
     "2I": {
         "code": "156",
@@ -37,17 +37,17 @@
     "2L": {
         "code": "102",
         "twoCode": "2L",
-        "name": "瑞士赫尔维提克航空公司"
+        "name": "瑞士赫尔维提克航空"
     },
     "2M": {
         "code": "009",
         "twoCode": "2M",
-        "name": "摩尔多瓦航空公司"
+        "name": "摩尔多瓦航空"
     },
     "2N": {
         "code": "121",
         "twoCode": "2N",
-        "name": "瑞典Nextjet航空公司"
+        "name": "瑞典Nextjet航空"
     },
     "2P": {
         "code": "211",
@@ -57,22 +57,22 @@
     "2U": {
         "code": "383",
         "twoCode": "2U",
-        "name": "亚特拉斯航空全球控股公司"
+        "name": "亚特拉斯航空全球控股"
     },
     "2Z": {
         "code": "678",
         "twoCode": "2Z",
-        "name": "巴西Passaredo航空公司"
+        "name": "巴西Passaredo航空"
     },
     "3G": {
         "code": "213",
         "twoCode": "3G",
-        "name": "冈比亚bird航空公司"
+        "name": "冈比亚bird航空"
     },
     "3J": {
         "code": "535",
         "twoCode": "3J",
-        "name": "索马里jubba航空公司"
+        "name": "索马里jubba航空"
     },
     "3K": {
         "code": "375",
@@ -97,12 +97,12 @@
     "3S": {
         "code": "875",
         "twoCode": "3S",
-        "name": "安的列斯航空公司"
+        "name": "安的列斯航空"
     },
     "3U": {
         "code": "876",
         "twoCode": "3U",
-        "name": "四川航空股份有限公司"
+        "name": "四川航空"
     },
     "3W": {
         "code": "529",
@@ -122,17 +122,17 @@
     "4H": {
         "code": "584",
         "twoCode": "4H",
-        "name": "孟加拉联合航空有限公司"
+        "name": "孟加拉联合航空"
     },
     "4L": {
         "code": "764",
         "twoCode": "4L",
-        "name": "哈萨克斯坦航空公司"
+        "name": "哈萨克斯坦航空"
     },
     "4M": {
         "code": "469",
         "twoCode": "4M",
-        "name": "阿根廷LAN航空公司"
+        "name": "阿根廷LAN航空"
     },
     "4O": {
         "code": "837",
@@ -157,7 +157,7 @@
     "5H": {
         "code": "540",
         "twoCode": "5H",
-        "name": "肯尼亚FLY540航空公司"
+        "name": "肯尼亚FLY540航空"
     },
     "5J": {
         "code": "203",
@@ -182,12 +182,12 @@
     "5Q": {
         "code": "567",
         "twoCode": "5Q",
-        "name": "乌拉圭BQB航空公司"
+        "name": "乌拉圭BQB航空"
     },
     "5U": {
         "code": "097",
         "twoCode": "5U",
-        "name": "危地马拉TAG航空公司"
+        "name": "危地马拉TAG航空"
     },
     "5Y": {
         "code": "998",
@@ -197,12 +197,12 @@
     "5Z": {
         "code": "225",
         "twoCode": "5Z",
-        "name": "南非CemAir航空公司"
+        "name": "南非CemAir航空"
     },
     "6A": {
         "code": "095",
         "twoCode": "6A",
-        "name": "阿维亚克萨航空公司"
+        "name": "阿维亚克萨航空"
     },
     "6E": {
         "code": "312",
@@ -217,17 +217,17 @@
     "6J": {
         "code": "000",
         "twoCode": "6J",
-        "name": "日本天籁亚洲航空公司"
+        "name": "日本天籁亚洲航空"
     },
     "6U": {
         "code": "000",
         "twoCode": "6U",
-        "name": "乌克兰航空公司"
+        "name": "乌克兰航空"
     },
     "7B": {
         "code": "499",
         "twoCode": "7B",
-        "name": "俄罗斯克拉斯诺亚尔斯克航空公司"
+        "name": "俄罗斯克拉斯诺亚尔斯克航空"
     },
     "7C": {
         "code": "806",
@@ -242,12 +242,12 @@
     "7E": {
         "code": "095",
         "twoCode": "7E",
-        "name": "德国Sylt航空公司"
+        "name": "德国Sylt航空"
     },
     "7F": {
         "code": "245",
         "twoCode": "7F",
-        "name": "第一航空公司"
+        "name": "第一航空"
     },
     "7G": {
         "code": "Arr",
@@ -257,7 +257,7 @@
     "7I": {
         "code": "958",
         "twoCode": "7I",
-        "name": "Insel航空公司"
+        "name": "Insel航空"
     },
     "7J": {
         "code": "502",
@@ -267,12 +267,12 @@
     "7M": {
         "code": "010",
         "twoCode": "7M",
-        "name": "墨西哥Mayair航空公司"
+        "name": "墨西哥Mayair航空"
     },
     "7P": {
         "code": "000",
         "twoCode": "7P",
-        "name": "印尼巴达维亚航空公司"
+        "name": "印尼巴达维亚航空"
     },
     "7Q": {
         "code": "110",
@@ -282,27 +282,27 @@
     "7R": {
         "code": "362",
         "twoCode": "7R",
-        "name": "俄罗斯RusLine航空公司"
+        "name": "俄罗斯RusLine航空"
     },
     "7V": {
         "code": "090",
         "twoCode": "7V",
-        "name": "南非联邦航空公司"
+        "name": "南非联邦航空"
     },
     "7W": {
         "code": "461",
         "twoCode": "7W",
-        "name": "乌克兰Windrose航空公司"
+        "name": "乌克兰Windrose航空"
     },
     "8C": {
         "code": "883",
         "twoCode": "8C",
-        "name": "东星航空有限公司"
+        "name": "东星航空"
     },
     "8G": {
         "code": "000",
         "twoCode": "8G",
-        "name": "安琪尔航空公司"
+        "name": "安琪尔航空"
     },
     "8I": {
         "code": "778",
@@ -312,7 +312,7 @@
     "8L": {
         "code": "859",
         "twoCode": "8L",
-        "name": "云南祥鹏航空有限责任公司"
+        "name": "云南祥鹏航空责任"
     },
     "8M": {
         "code": "599",
@@ -332,7 +332,7 @@
     "8R": {
         "code": "300",
         "twoCode": "8R",
-        "name": "阿根廷SOL航空公司"
+        "name": "阿根廷SOL航空"
     },
     "8U": {
         "code": "546",
@@ -347,17 +347,17 @@
     "9K": {
         "code": "306",
         "twoCode": "9K",
-        "name": "美国Cape航空公司"
+        "name": "美国Cape航空"
     },
     "9N": {
         "code": "789",
         "twoCode": "9N",
-        "name": "伯利兹热带航空公司"
+        "name": "伯利兹热带航空"
     },
     "9Q": {
         "code": "543",
         "twoCode": "9Q",
-        "name": "泰国金狮航空公司"
+        "name": "泰国金狮航空"
     },
     "9R": {
         "code": "019",
@@ -377,17 +377,17 @@
     "9W": {
         "code": "589",
         "twoCode": "9W",
-        "name": "印度捷特航空公司"
+        "name": "印度捷特航空"
     },
     "9Y": {
         "code": "671",
         "twoCode": "9Y",
-        "name": "哈萨克斯坦航空公司"
+        "name": "哈萨克斯坦航空"
     },
     "A2": {
         "code": "273",
         "twoCode": "A2",
-        "name": "希腊Astra航空公司"
+        "name": "希腊Astra航空"
     },
     "A3": {
         "code": "390",
@@ -397,17 +397,17 @@
     "A4": {
         "code": "702",
         "twoCode": "A4",
-        "name": "Aerocon航空公司"
+        "name": "Aerocon航空"
     },
     "A5": {
         "code": "163",
         "twoCode": "A5",
-        "name": "法国HOP航空公司"
+        "name": "法国HOP航空"
     },
     "A7": {
         "code": "352",
         "twoCode": "A7",
-        "name": "西班牙红风筝航空公司"
+        "name": "西班牙红风筝航空"
     },
     "A9": {
         "code": "606",
@@ -417,22 +417,22 @@
     "AA": {
         "code": "001",
         "twoCode": "AA",
-        "name": "美国航空公司"
+        "name": "美国航空"
     },
     "AB": {
         "code": "745",
         "twoCode": "AB",
-        "name": "柏林航空公司"
+        "name": "柏林航空"
     },
     "AC": {
         "code": "014",
         "twoCode": "AC",
-        "name": "加拿大航空公司"
+        "name": "加拿大航空"
     },
     "AD": {
         "code": "577",
         "twoCode": "AD",
-        "name": "巴西蔚蓝航空公司"
+        "name": "巴西蔚蓝航空"
     },
     "AE": {
         "code": "803",
@@ -442,17 +442,17 @@
     "AF": {
         "code": "057",
         "twoCode": "AF",
-        "name": "法国航空公司"
+        "name": "法国航空"
     },
     "AH": {
         "code": "124",
         "twoCode": "AH",
-        "name": "阿尔及利亚航空公司"
+        "name": "阿尔及利亚航空"
     },
     "AI": {
         "code": "098",
         "twoCode": "AI",
-        "name": "印度航空公司"
+        "name": "印度航空"
     },
     "AK": {
         "code": "807",
@@ -462,17 +462,17 @@
     "AM": {
         "code": "139",
         "twoCode": "AM",
-        "name": "墨西哥航空公司"
+        "name": "墨西哥航空"
     },
     "AN": {
         "code": "090",
         "twoCode": "AN",
-        "name": "澳大利亚安赛特航空公司"
+        "name": "澳大利亚安赛特航空"
     },
     "AO": {
         "code": "000",
         "twoCode": "AO",
-        "name": "澳亚航空公司"
+        "name": "澳亚航空"
     },
     "AP": {
         "code": "867",
@@ -482,17 +482,17 @@
     "AQ": {
         "code": "902",
         "twoCode": "AQ",
-        "name": "九元航空有限公司"
+        "name": "九元航空"
     },
     "AR": {
         "code": "044",
         "twoCode": "AR",
-        "name": "阿根廷航空公司"
+        "name": "阿根廷航空"
     },
     "AS": {
         "code": "027",
         "twoCode": "AS",
-        "name": "阿拉斯加航空公司"
+        "name": "阿拉斯加航空"
     },
     "AT": {
         "code": "147",
@@ -507,17 +507,17 @@
     "AW": {
         "code": "364",
         "twoCode": "AW",
-        "name": "加纳非洲世界航空公司"
+        "name": "加纳非洲世界航空"
     },
     "AY": {
         "code": "105",
         "twoCode": "AY",
-        "name": "芬兰航空公司"
+        "name": "芬兰航空"
     },
     "AZ": {
         "code": "055",
         "twoCode": "AZ",
-        "name": "意大利航空公司"
+        "name": "意大利航空"
     },
     "B0": {
         "code": "002",
@@ -532,7 +532,7 @@
     "B3": {
         "code": "786",
         "twoCode": "B3",
-        "name": "不丹航空公司"
+        "name": "不丹航空"
     },
     "B5": {
         "code": "305",
@@ -547,12 +547,12 @@
     "B7": {
         "code": "525",
         "twoCode": "B7",
-        "name": "立荣航空公司"
+        "name": "立荣航空"
     },
     "BA": {
         "code": "125",
         "twoCode": "BA",
-        "name": "英国航空公司"
+        "name": "英国航空"
     },
     "BB": {
         "code": "376",
@@ -567,7 +567,7 @@
     "BD": {
         "code": "688",
         "twoCode": "BD",
-        "name": "柬埔寨巴戎航空公司"
+        "name": "柬埔寨巴戎航空"
     },
     "BE": {
         "code": "267",
@@ -577,17 +577,17 @@
     "BG": {
         "code": "997",
         "twoCode": "BG",
-        "name": "孟加拉航空公司"
+        "name": "孟加拉航空"
     },
     "BH": {
         "code": "993",
         "twoCode": "BH",
-        "name": "鹰空航空公司"
+        "name": "鹰空航空"
     },
     "BI": {
         "code": "672",
         "twoCode": "BI",
-        "name": "汶莱皇家航空公司"
+        "name": "汶莱皇家航空"
     },
     "BJ": {
         "code": "796",
@@ -597,12 +597,12 @@
     "BK": {
         "code": "866",
         "twoCode": "BK",
-        "name": "奥凯航空有限公司"
+        "name": "奥凯航空"
     },
     "BL": {
         "code": "041",
         "twoCode": "BL",
-        "name": "太平洋航空有限公司"
+        "name": "太平洋航空"
     },
     "BM": {
         "code": "480",
@@ -617,12 +617,12 @@
     "BR": {
         "code": "695",
         "twoCode": "BR",
-        "name": "台湾长荣航公司"
+        "name": "台湾长荣航"
     },
     "BT": {
         "code": "657",
         "twoCode": "BT",
-        "name": "波罗地海联合航空公司"
+        "name": "波罗地海联合航空"
     },
     "BV": {
         "code": "004",
@@ -632,7 +632,7 @@
     "BW": {
         "code": "106",
         "twoCode": "BW",
-        "name": "加勒比航空公司"
+        "name": "加勒比航空"
     },
     "BX": {
         "code": "982",
@@ -642,17 +642,17 @@
     "BY": {
         "code": "754",
         "twoCode": "BY",
-        "name": "英国汤姆森航空公司"
+        "name": "英国汤姆森航空"
     },
     "C2": {
         "code": "304",
         "twoCode": "C2",
-        "name": "赤道几内亚Ceiba航空公司"
+        "name": "赤道几内亚Ceiba航空"
     },
     "CA": {
         "code": "999",
         "twoCode": "CA",
-        "name": "中国国际航空股份有限公司"
+        "name": "中国国际航空"
     },
     "CB": {
         "code": "456",
@@ -662,7 +662,7 @@
     "CC": {
         "code": "100",
         "twoCode": "CC",
-        "name": "塞舌尔Viva航空公司"
+        "name": "塞舌尔Viva航空"
     },
     "CE": {
         "code": "980",
@@ -677,12 +677,12 @@
     "CG": {
         "code": "626",
         "twoCode": "CG",
-        "name": "巴布亚新几内亚航空公司"
+        "name": "巴布亚新几内亚航空"
     },
     "CI": {
         "code": "297",
         "twoCode": "CI",
-        "name": "中华航空公司"
+        "name": "中华航空"
     },
     "CM": {
         "code": "230",
@@ -697,12 +697,12 @@
     "CO": {
         "code": "005",
         "twoCode": "CO",
-        "name": "美国大陆航空公司"
+        "name": "美国大陆航空"
     },
     "CP": {
         "code": "003",
         "twoCode": "CP",
-        "name": "加拿大国际航空公司"
+        "name": "加拿大国际航空"
     },
     "CT": {
         "code": "000",
@@ -717,7 +717,7 @@
     "CX": {
         "code": "160",
         "twoCode": "CX",
-        "name": "国泰航空公司"
+        "name": "国泰航空"
     },
     "CY": {
         "code": "048",
@@ -727,17 +727,17 @@
     "CZ": {
         "code": "784",
         "twoCode": "CZ",
-        "name": "中国南方航空股份有限公司"
+        "name": "中国南方航空"
     },
     "D2": {
         "code": "103",
         "twoCode": "D2",
-        "name": "俄罗斯Severstal航空公司"
+        "name": "俄罗斯Severstal航空"
     },
     "D3": {
         "code": "991",
         "twoCode": "D3",
-        "name": "吉布提航空公司"
+        "name": "吉布提航空"
     },
     "D7": {
         "code": "807",
@@ -752,7 +752,7 @@
     "DC": {
         "code": "215",
         "twoCode": "DC",
-        "name": "瑞典Braathens Regional航空公司"
+        "name": "瑞典Braathens Regional航空"
     },
     "DD": {
         "code": "000",
@@ -772,27 +772,27 @@
     "DI": {
         "code": "000",
         "twoCode": "DI",
-        "name": "德国DBA航空公司"
+        "name": "德国DBA航空"
     },
     "DL": {
         "code": "006",
         "twoCode": "DL",
-        "name": "美国达美航空公司"
+        "name": "美国达美航空"
     },
     "DM": {
         "code": "200",
         "twoCode": "DM",
-        "name": "泰国廉价航空公司"
+        "name": "泰国廉价航空"
     },
     "DN": {
         "code": "440",
         "twoCode": "DN",
-        "name": "塞内加尔航空公司"
+        "name": "塞内加尔航空"
     },
     "DR": {
         "code": "299",
         "twoCode": "DR",
-        "name": "瑞丽航空有限公司"
+        "name": "瑞丽航空"
     },
     "DS": {
         "code": "042",
@@ -802,7 +802,7 @@
     "DT": {
         "code": "118",
         "twoCode": "DT",
-        "name": "安哥拉航空公司"
+        "name": "安哥拉航空"
     },
     "DU": {
         "code": "000",
@@ -812,7 +812,7 @@
     "DV": {
         "code": "655",
         "twoCode": "DV",
-        "name": "Scat航空公司"
+        "name": "Scat航空"
     },
     "DX": {
         "code": "243",
@@ -827,27 +827,27 @@
     "DZ": {
         "code": "893",
         "twoCode": "DZ",
-        "name": "东海航空公司"
+        "name": "东海航空"
     },
     "E3": {
         "code": "052",
         "twoCode": "E3",
-        "name": "泰国新时代航空公司"
+        "name": "泰国新时代航空"
     },
     "E4": {
         "code": "052",
         "twoCode": "E4",
-        "name": "亚洲国际航空公司"
+        "name": "亚洲国际航空"
     },
     "E5": {
         "code": "000",
         "twoCode": "E5",
-        "name": "萨马拉航空公司"
+        "name": "萨马拉航空"
     },
     "E8": {
         "code": "789",
         "twoCode": "E8",
-        "name": "厄立特里亚航空公司"
+        "name": "厄立特里亚航空"
     },
     "EB": {
         "code": "460",
@@ -862,7 +862,7 @@
     "EG": {
         "code": "688",
         "twoCode": "EG",
-        "name": "日本亚细亚航空公司"
+        "name": "日本亚细亚航空"
     },
     "EI": {
         "code": "053",
@@ -872,7 +872,7 @@
     "EK": {
         "code": "176",
         "twoCode": "EK",
-        "name": "阿联酋国际航空公司"
+        "name": "阿联酋国际航空"
     },
     "EL": {
         "code": "241",
@@ -892,12 +892,12 @@
     "ET": {
         "code": "071",
         "twoCode": "ET",
-        "name": "埃塞俄比亚航空公司"
+        "name": "埃塞俄比亚航空"
     },
     "EU": {
         "code": "811",
         "twoCode": "EU",
-        "name": "成都航空有限公司"
+        "name": "成都航空"
     },
     "EW": {
         "code": "104",
@@ -912,17 +912,17 @@
     "EZ": {
         "code": "947",
         "twoCode": "EZ",
-        "name": "美国长青国际航空公司"
+        "name": "美国长青国际航空"
     },
     "F2": {
         "code": "093",
         "twoCode": "F2",
-        "name": "肯尼亚Safarilink航空公司"
+        "name": "肯尼亚Safarilink航空"
     },
     "F6": {
         "code": "000",
         "twoCode": "F6",
-        "name": "中国航空股份有限公司"
+        "name": "中国航空"
     },
     "F7": {
         "code": "033",
@@ -947,27 +947,27 @@
     "FE": {
         "code": "436",
         "twoCode": "FE",
-        "name": "远东航空股份有限公司"
+        "name": "远东航空"
     },
     "FG": {
         "code": "255",
         "twoCode": "FG",
-        "name": "阿富汗阿里亚纳航空公司"
+        "name": "阿富汗阿里亚纳航空"
     },
     "FH": {
         "code": "000",
         "twoCode": "FH",
-        "name": "西班牙富图拉航空公司"
+        "name": "西班牙富图拉航空"
     },
     "FI": {
         "code": "108",
         "twoCode": "FI",
-        "name": "冰岛航空公司"
+        "name": "冰岛航空"
     },
     "FJ": {
         "code": "260",
         "twoCode": "FJ",
-        "name": "斐济航空有限公司"
+        "name": "斐济航空"
     },
     "FL": {
         "code": "332",
@@ -977,7 +977,7 @@
     "FM": {
         "code": "781",
         "twoCode": "FM",
-        "name": "上海航空有限公司"
+        "name": "上海航空"
     },
     "FN": {
         "code": "013",
@@ -992,7 +992,7 @@
     "FS": {
         "code": "393",
         "twoCode": "FS",
-        "name": "突尼斯Syphax航空公司"
+        "name": "突尼斯Syphax航空"
     },
     "FT": {
         "code": "000",
@@ -1002,12 +1002,12 @@
     "FU": {
         "code": "666",
         "twoCode": "FU",
-        "name": "福州航空责任有限公司"
+        "name": "福州航空责任"
     },
     "FV": {
         "code": "195",
         "twoCode": "FV",
-        "name": "俄罗斯普尔科沃航空公司"
+        "name": "俄罗斯普尔科沃航空"
     },
     "FY": {
         "code": "918",
@@ -1037,7 +1037,7 @@
     "G5": {
         "code": "987",
         "twoCode": "G5",
-        "name": "华夏航空有限公司"
+        "name": "华夏航空"
     },
     "G8": {
         "code": "816",
@@ -1052,12 +1052,12 @@
     "GA": {
         "code": "126",
         "twoCode": "GA",
-        "name": "印度尼西亚鹰航公司"
+        "name": "印度尼西亚鹰航"
     },
     "GE": {
         "code": "170",
         "twoCode": "GE",
-        "name": "台湾复兴航空公司"
+        "name": "台湾复兴航空"
     },
     "GF": {
         "code": "072",
@@ -1082,12 +1082,12 @@
     "GL": {
         "code": "631",
         "twoCode": "GL",
-        "name": "格陵兰航空公司"
+        "name": "格陵兰航空"
     },
     "GQ": {
         "code": "046",
         "twoCode": "GQ",
-        "name": "希腊Sky Express航空公司"
+        "name": "希腊Sky Express航空"
     },
     "GR": {
         "code": "924",
@@ -1097,12 +1097,12 @@
     "GS": {
         "code": "826",
         "twoCode": "GS",
-        "name": "天津航空有限责任公司"
+        "name": "天津航空责任"
     },
     "GW": {
         "code": "094",
         "twoCode": "GW",
-        "name": "希腊天空航空公司"
+        "name": "希腊天空航空"
     },
     "GY": {
         "code": "000",
@@ -1122,22 +1122,22 @@
     "H8": {
         "code": "560",
         "twoCode": "H8",
-        "name": "俄罗斯远东(阿巴罗夫斯克)航空公司"
+        "name": "俄罗斯远东(阿巴罗夫斯克)航空"
     },
     "HA": {
         "code": "173",
         "twoCode": "HA",
-        "name": "夏威夷航空公司"
+        "name": "夏威夷航空"
     },
     "HD": {
         "code": "000",
         "twoCode": "HD",
-        "name": "日本北海道国际航空公司"
+        "name": "日本北海道国际航空"
     },
     "HF": {
         "code": "483",
         "twoCode": "HF",
-        "name": "科特迪瓦航空公司"
+        "name": "科特迪瓦航空"
     },
     "HG": {
         "code": "026",
@@ -1152,7 +1152,7 @@
     "HO": {
         "code": "018",
         "twoCode": "HO",
-        "name": "上海吉祥航空股份有限公司"
+        "name": "上海吉祥航空"
     },
     "HQ": {
         "code": "583",
@@ -1167,7 +1167,7 @@
     "HU": {
         "code": "880",
         "twoCode": "HU",
-        "name": "海南航空股份有限公司"
+        "name": "海南航空"
     },
     "HV": {
         "code": "979",
@@ -1177,22 +1177,22 @@
     "HX": {
         "code": "851",
         "twoCode": "HX",
-        "name": "香港航空公司"
+        "name": "香港航空"
     },
     "HY": {
         "code": "250",
         "twoCode": "HY",
-        "name": "乌兹别克斯坦航空公司"
+        "name": "乌兹别克斯坦航空"
     },
     "HZ": {
         "code": "598",
         "twoCode": "HZ",
-        "name": "萨哈林航空公司"
+        "name": "萨哈林航空"
     },
     "I4": {
         "code": "000",
         "twoCode": "I4",
-        "name": "艾菲航空有限公司"
+        "name": "艾菲航空"
     },
     "I5": {
         "code": "807",
@@ -1207,12 +1207,12 @@
     "IB": {
         "code": "075",
         "twoCode": "IB",
-        "name": "西班牙航空公司"
+        "name": "西班牙航空"
     },
     "IC": {
         "code": "058",
         "twoCode": "IC",
-        "name": "印度航空公司"
+        "name": "印度航空"
     },
     "IE": {
         "code": "193",
@@ -1237,12 +1237,12 @@
     "IO": {
         "code": "154",
         "twoCode": "IO",
-        "name": "伊尔航空有限公司"
+        "name": "伊尔航空"
     },
     "IR": {
         "code": "096",
         "twoCode": "IR",
-        "name": "伊朗航空公司"
+        "name": "伊朗航空"
     },
     "IT": {
         "code": "008",
@@ -1272,22 +1272,22 @@
     "J2": {
         "code": "771",
         "twoCode": "J2",
-        "name": "阿塞拜疆航空公司"
+        "name": "阿塞拜疆航空"
     },
     "J3": {
         "code": "325",
         "twoCode": "J3",
-        "name": "加拿大西北航空有限公司"
+        "name": "加拿大西北航空"
     },
     "J5": {
         "code": "085",
         "twoCode": "J5",
-        "name": "阿拉斯加海上飞机服务航空公司"
+        "name": "阿拉斯加海上飞机服务航空"
     },
     "J8": {
         "code": "801",
         "twoCode": "J8",
-        "name": "马来西亚Berjaya航空公司"
+        "name": "马来西亚Berjaya航空"
     },
     "J9": {
         "code": "486",
@@ -1302,7 +1302,7 @@
     "JD": {
         "code": "898",
         "twoCode": "JD",
-        "name": "北京首都航空有限公司"
+        "name": "北京首都航空"
     },
     "JE": {
         "code": "023",
@@ -1322,12 +1322,12 @@
     "JK": {
         "code": "680",
         "twoCode": "JK",
-        "name": "斯潘航空公司"
+        "name": "斯潘航空"
     },
     "JL": {
         "code": "131",
         "twoCode": "JL",
-        "name": "日本航空公司"
+        "name": "日本航空"
     },
     "JM": {
         "code": "000",
@@ -1352,12 +1352,12 @@
     "JR": {
         "code": "929",
         "twoCode": "JR",
-        "name": "幸福航空有限责任公司"
+        "name": "幸福航空责任"
     },
     "JS": {
         "code": "120",
         "twoCode": "JS",
-        "name": "朝鲜航空公司"
+        "name": "朝鲜航空"
     },
     "JT": {
         "code": "990",
@@ -1377,7 +1377,7 @@
     "K2": {
         "code": "078",
         "twoCode": "K2",
-        "name": "波兰Eurolot航空公司"
+        "name": "波兰Eurolot航空"
     },
     "K5": {
         "code": "609",
@@ -1387,32 +1387,32 @@
     "K6": {
         "code": "188",
         "twoCode": "K6",
-        "name": "吴哥航空公司"
+        "name": "吴哥航空"
     },
     "KA": {
         "code": "160",
         "twoCode": "KA",
-        "name": "港龙航空公司"
+        "name": "港龙航空"
     },
     "KB": {
         "code": "787",
         "twoCode": "KB",
-        "name": "德鲁克航空公司"
+        "name": "德鲁克航空"
     },
     "KC": {
         "code": "465",
         "twoCode": "KC",
-        "name": "哈萨克斯坦阿斯塔纳航空公司"
+        "name": "哈萨克斯坦阿斯塔纳航空"
     },
     "KE": {
         "code": "180",
         "twoCode": "KE",
-        "name": "大韩航空公司"
+        "name": "大韩航空"
     },
     "KF": {
         "code": "142",
         "twoCode": "KF",
-        "name": "蓝天航空公司"
+        "name": "蓝天航空"
     },
     "KH": {
         "code": "060",
@@ -1427,7 +1427,7 @@
     "KL": {
         "code": "074",
         "twoCode": "KL",
-        "name": "荷兰皇家航空公司"
+        "name": "荷兰皇家航空"
     },
     "KM": {
         "code": "643",
@@ -1437,27 +1437,27 @@
     "KN": {
         "code": "822",
         "twoCode": "KN",
-        "name": "中国联合航空有限公司"
+        "name": "中国联合航空"
     },
     "KO": {
         "code": "341",
         "twoCode": "KO",
-        "name": "乌克兰Khors航空公司"
+        "name": "乌克兰Khors航空"
     },
     "KP": {
         "code": "032",
         "twoCode": "KP",
-        "name": "多哥Asky航空公司"
+        "name": "多哥Asky航空"
     },
     "KQ": {
         "code": "706",
         "twoCode": "KQ",
-        "name": "肯尼亚航空公司"
+        "name": "肯尼亚航空"
     },
     "KR": {
         "code": "265",
         "twoCode": "KR",
-        "name": "比什凯克航空公司"
+        "name": "比什凯克航空"
     },
     "KS": {
         "code": "339",
@@ -1472,12 +1472,12 @@
     "KX": {
         "code": "378",
         "twoCode": "KX",
-        "name": "开曼航空公司"
+        "name": "开曼航空"
     },
     "KY": {
         "code": "833",
         "twoCode": "KY",
-        "name": "昆明航空有限公司"
+        "name": "昆明航空"
     },
     "L9": {
         "code": "812",
@@ -1497,12 +1497,12 @@
     "LC": {
         "code": "753",
         "twoCode": "LC",
-        "name": "刚果ECAIR航空公司"
+        "name": "刚果ECAIR航空"
     },
     "LD": {
         "code": "000",
         "twoCode": "LD",
-        "name": "香港华民航空有限公司"
+        "name": "香港华民航空"
     },
     "LG": {
         "code": "149",
@@ -1512,7 +1512,7 @@
     "LH": {
         "code": "220",
         "twoCode": "LH",
-        "name": "德国汉莎航空公司"
+        "name": "德国汉莎航空"
     },
     "LI": {
         "code": "140",
@@ -1532,7 +1532,7 @@
     "LM": {
         "code": "682",
         "twoCode": "LM",
-        "name": "安蒂利安斯航空公司"
+        "name": "安蒂利安斯航空"
     },
     "LN": {
         "code": "148",
@@ -1542,7 +1542,7 @@
     "LO": {
         "code": "080",
         "twoCode": "LO",
-        "name": "波兰航空公司"
+        "name": "波兰航空"
     },
     "LP": {
         "code": "015",
@@ -1562,7 +1562,7 @@
     "LT": {
         "code": "431",
         "twoCode": "LT",
-        "name": "立陶宛航空公司"
+        "name": "立陶宛航空"
     },
     "LV": {
         "code": "400",
@@ -1577,17 +1577,17 @@
     "LX": {
         "code": "724",
         "twoCode": "LX",
-        "name": "瑞士国际航空公司"
+        "name": "瑞士国际航空"
     },
     "LY": {
         "code": "114",
         "twoCode": "LY",
-        "name": "以色列航空公司"
+        "name": "以色列航空"
     },
     "M0": {
         "code": "991",
         "twoCode": "M0",
-        "name": "蒙古国航空公司"
+        "name": "蒙古国航空"
     },
     "M5": {
         "code": "763",
@@ -1602,7 +1602,7 @@
     "MA": {
         "code": "182",
         "twoCode": "MA",
-        "name": "匈牙利航空公司"
+        "name": "匈牙利航空"
     },
     "MD": {
         "code": "258",
@@ -1612,27 +1612,27 @@
     "ME": {
         "code": "076",
         "twoCode": "ME",
-        "name": "中东航空公司"
+        "name": "中东航空"
     },
     "MF": {
         "code": "731",
         "twoCode": "MF",
-        "name": "厦门航空有限公司"
+        "name": "厦门航空"
     },
     "MH": {
         "code": "232",
         "twoCode": "MH",
-        "name": "马来西亚航空公司"
+        "name": "马来西亚航空"
     },
     "MI": {
         "code": "629",
         "twoCode": "MI",
-        "name": "新加坡胜安航空公司"
+        "name": "新加坡胜安航空"
     },
     "MK": {
         "code": "239",
         "twoCode": "MK",
-        "name": "毛里求斯航空公司"
+        "name": "毛里求斯航空"
     },
     "ML": {
         "code": "853",
@@ -1647,17 +1647,17 @@
     "MN": {
         "code": "161",
         "twoCode": "MN",
-        "name": "南非kulula航空公司"
+        "name": "南非kulula航空"
     },
     "MO": {
         "code": "622",
         "twoCode": "MO",
-        "name": "静空航空公司"
+        "name": "静空航空"
     },
     "MP": {
         "code": "129",
         "twoCode": "MP",
-        "name": "荷兰马丁航空公司"
+        "name": "荷兰马丁航空"
     },
     "MR": {
         "code": "861",
@@ -1667,7 +1667,7 @@
     "MS": {
         "code": "077",
         "twoCode": "MS",
-        "name": "埃及航空公司"
+        "name": "埃及航空"
     },
     "MT": {
         "code": "727",
@@ -1677,7 +1677,7 @@
     "MU": {
         "code": "781",
         "twoCode": "MU",
-        "name": "中国东方航空股份有限公司"
+        "name": "中国东方航空"
     },
     "MW": {
         "code": "415",
@@ -1687,17 +1687,17 @@
     "MX": {
         "code": "132",
         "twoCode": "MX",
-        "name": "墨西哥航空公司"
+        "name": "墨西哥航空"
     },
     "MY": {
         "code": "391",
         "twoCode": "MY",
-        "name": "伯利兹Maya航空公司"
+        "name": "伯利兹Maya航空"
     },
     "MZ": {
         "code": "621",
         "twoCode": "MZ",
-        "name": "美派蒂航空公司"
+        "name": "美派蒂航空"
     },
     "NA": {
         "code": "455",
@@ -1707,12 +1707,12 @@
     "NB": {
         "code": "737",
         "twoCode": "NB",
-        "name": "丹麦斯特林航空公司"
+        "name": "丹麦斯特林航空"
     },
     "NE": {
         "code": "000",
         "twoCode": "NE",
-        "name": "斯洛伐克欧空航空公司"
+        "name": "斯洛伐克欧空航空"
     },
     "NF": {
         "code": "218",
@@ -1747,47 +1747,47 @@
     "NN": {
         "code": "823",
         "twoCode": "NN",
-        "name": "维姆航空公司"
+        "name": "维姆航空"
     },
     "NO": {
         "code": "703",
         "twoCode": "NO",
-        "name": "意大利勒奥斯航空公司"
+        "name": "意大利勒奥斯航空"
     },
     "NS": {
         "code": "836",
         "twoCode": "NS",
-        "name": "河北航空有限公司"
+        "name": "河北航空"
     },
     "NT": {
         "code": "474",
         "twoCode": "NT",
-        "name": "西班牙Binter Canarias航空公司"
+        "name": "西班牙Binter Canarias航空"
     },
     "NU": {
         "code": "353",
         "twoCode": "NU",
-        "name": "日本跨洋航空公司"
+        "name": "日本跨洋航空"
     },
     "NW": {
         "code": "012",
         "twoCode": "NW",
-        "name": "美国西北航空公司"
+        "name": "美国西北航空"
     },
     "NX": {
         "code": "675",
         "twoCode": "NX",
-        "name": "澳门航空公司"
+        "name": "澳门航空"
     },
     "NZ": {
         "code": "086",
         "twoCode": "NZ",
-        "name": "新西兰航空公司"
+        "name": "新西兰航空"
     },
     "O4": {
         "code": "916",
         "twoCode": "O4",
-        "name": "加纳Antrak航空公司"
+        "name": "加纳Antrak航空"
     },
     "O6": {
         "code": "247",
@@ -1807,7 +1807,7 @@
     "OB": {
         "code": "930",
         "twoCode": "OB",
-        "name": "玻利维亚航空公司"
+        "name": "玻利维亚航空"
     },
     "OD": {
         "code": "816",
@@ -1822,22 +1822,22 @@
     "OM": {
         "code": "289",
         "twoCode": "OM",
-        "name": "蒙古航空公司"
+        "name": "蒙古航空"
     },
     "OQ": {
         "code": "878",
         "twoCode": "OQ",
-        "name": "重庆航空有限责任公司"
+        "name": "重庆航空责任"
     },
     "OR": {
         "code": "178",
         "twoCode": "OR",
-        "name": "荷兰ArkeFly航空公司"
+        "name": "荷兰ArkeFly航空"
     },
     "OS": {
         "code": "257",
         "twoCode": "OS",
-        "name": "奥地利航空公司"
+        "name": "奥地利航空"
     },
     "OU": {
         "code": "831",
@@ -1852,7 +1852,7 @@
     "OX": {
         "code": "578",
         "twoCode": "OX",
-        "name": "泰国东方航空公司 "
+        "name": "泰国东方航空 "
     },
     "OY": {
         "code": "650",
@@ -1862,12 +1862,12 @@
     "OZ": {
         "code": "988",
         "twoCode": "OZ",
-        "name": "韩亚航空公司"
+        "name": "韩亚航空"
     },
     "P0": {
         "code": "659",
         "twoCode": "P0",
-        "name": "赞比亚Proflight航空公司"
+        "name": "赞比亚Proflight航空"
     },
     "P2": {
         "code": "059",
@@ -1877,17 +1877,17 @@
     "P6": {
         "code": "092",
         "twoCode": "P6",
-        "name": "加拿大Pascan航空公司"
+        "name": "加拿大Pascan航空"
     },
     "P7": {
         "code": "389",
         "twoCode": "P7",
-        "name": "俄罗斯天空航空公司"
+        "name": "俄罗斯天空航空"
     },
     "P9": {
         "code": "602",
         "twoCode": "P9",
-        "name": "秘鲁Peruvian航空公司"
+        "name": "秘鲁Peruvian航空"
     },
     "PC": {
         "code": "624",
@@ -1902,12 +1902,12 @@
     "PG": {
         "code": "829",
         "twoCode": "PG",
-        "name": "曼谷航空公司"
+        "name": "曼谷航空"
     },
     "PH": {
         "code": "000",
         "twoCode": "PH",
-        "name": "波利尼西亚航空公司"
+        "name": "波利尼西亚航空"
     },
     "PK": {
         "code": "214",
@@ -1917,12 +1917,12 @@
     "PN": {
         "code": "847",
         "twoCode": "PN",
-        "name": "西部航空有限责任公司"
+        "name": "西部航空责任"
     },
     "PO": {
         "code": "403",
         "twoCode": "PO",
-        "name": "极地航空公司"
+        "name": "极地航空"
     },
     "PQ": {
         "code": "807",
@@ -1932,7 +1932,7 @@
     "PR": {
         "code": "079",
         "twoCode": "PR",
-        "name": "菲律宾航空公司"
+        "name": "菲律宾航空"
     },
     "PS": {
         "code": "566",
@@ -1942,12 +1942,12 @@
     "PW": {
         "code": "031",
         "twoCode": "PW",
-        "name": "坦桑尼亚Precision航空公司"
+        "name": "坦桑尼亚Precision航空"
     },
     "PX": {
         "code": "656",
         "twoCode": "PX",
-        "name": "新几内亚航空公司"
+        "name": "新几内亚航空"
     },
     "PY": {
         "code": "192",
@@ -1957,17 +1957,17 @@
     "PZ": {
         "code": "692",
         "twoCode": "PZ",
-        "name": "巴拉圭TAM航空公司"
+        "name": "巴拉圭TAM航空"
     },
     "Q2": {
         "code": "986",
         "twoCode": "Q2",
-        "name": "马尔代夫国家航空公司"
+        "name": "马尔代夫国家航空"
     },
     "Q9": {
         "code": "010",
         "twoCode": "Q9",
-        "name": "加拿大Liaison航空公司"
+        "name": "加拿大Liaison航空"
     },
     "QC": {
         "code": "040",
@@ -1977,7 +1977,7 @@
     "QF": {
         "code": "081",
         "twoCode": "QF",
-        "name": "澳洲航空公司"
+        "name": "澳洲航空"
     },
     "QG": {
         "code": "104",
@@ -1987,12 +1987,12 @@
     "QH": {
         "code": "138",
         "twoCode": "QH",
-        "name": "吉尔吉斯斯坦航空公司"
+        "name": "吉尔吉斯斯坦航空"
     },
     "QI": {
         "code": "647",
         "twoCode": "QI",
-        "name": "丹麦Cimber航空公司"
+        "name": "丹麦Cimber航空"
     },
     "QK": {
         "code": "983",
@@ -2002,7 +2002,7 @@
     "QR": {
         "code": "157",
         "twoCode": "QR",
-        "name": "卡塔尔航空公司"
+        "name": "卡塔尔航空"
     },
     "QS": {
         "code": "039",
@@ -2012,7 +2012,7 @@
     "QU": {
         "code": "761",
         "twoCode": "QU",
-        "name": "乌克兰Utair航空公司"
+        "name": "乌克兰Utair航空"
     },
     "QV": {
         "code": "627",
@@ -2022,7 +2022,7 @@
     "QW": {
         "code": "912",
         "twoCode": "QW",
-        "name": "青岛航空股份有限公司"
+        "name": "青岛航空"
     },
     "QX": {
         "code": "481",
@@ -2037,22 +2037,22 @@
     "R2": {
         "code": "291",
         "twoCode": "R2",
-        "name": "俄罗斯Orenair航空公司"
+        "name": "俄罗斯Orenair航空"
     },
     "R3": {
         "code": "849",
         "twoCode": "R3",
-        "name": "俄罗斯雅库特航空公司"
+        "name": "俄罗斯雅库特航空"
     },
     "R7": {
         "code": "717",
         "twoCode": "R7",
-        "name": "委内瑞拉Aserca航空公司"
+        "name": "委内瑞拉Aserca航空"
     },
     "RA": {
         "code": "285",
         "twoCode": "RA",
-        "name": "尼泊尔皇家航空公司"
+        "name": "尼泊尔皇家航空"
     },
     "RB": {
         "code": "70",
@@ -2067,7 +2067,7 @@
     "RE": {
         "code": "809",
         "twoCode": "RE",
-        "name": "爱尔兰安然航空公司"
+        "name": "爱尔兰安然航空"
     },
     "RG": {
         "code": "482",
@@ -2102,7 +2102,7 @@
     "S3": {
         "code": "249",
         "twoCode": "S3",
-        "name": "委内瑞拉SBA航空公司"
+        "name": "委内瑞拉SBA航空"
     },
     "S4": {
         "code": "331",
@@ -2112,22 +2112,22 @@
     "S7": {
         "code": "421",
         "twoCode": "S7",
-        "name": "俄罗斯西伯利亚航空公司"
+        "name": "俄罗斯西伯利亚航空"
     },
     "SA": {
         "code": "083",
         "twoCode": "SA",
-        "name": "南非航空公司"
+        "name": "南非航空"
     },
     "SB": {
         "code": "063",
         "twoCode": "SB",
-        "name": "Aircalin航空公司"
+        "name": "Aircalin航空"
     },
     "SC": {
         "code": "324",
         "twoCode": "SC",
-        "name": "山东航空股份有限公司"
+        "name": "山东航空"
     },
     "SE": {
         "code": "473",
@@ -2147,12 +2147,12 @@
     "SJ": {
         "code": "977",
         "twoCode": "SJ",
-        "name": "三佛齐航空公司"
+        "name": "三佛齐航空"
     },
     "SK": {
         "code": "117",
         "twoCode": "SK",
-        "name": "北欧航空公司"
+        "name": "北欧航空"
     },
     "SL": {
         "code": "310",
@@ -2162,42 +2162,42 @@
     "SM": {
         "code": "381",
         "twoCode": "SM",
-        "name": "开罗航空公司"
+        "name": "开罗航空"
     },
     "SN": {
         "code": "82",
         "twoCode": "SN",
-        "name": "比利时航空公司"
+        "name": "比利时航空"
     },
     "SP": {
         "code": "737",
         "twoCode": "SP",
-        "name": "葡萄牙SATA航空公司"
+        "name": "葡萄牙SATA航空"
     },
     "SQ": {
         "code": "618",
         "twoCode": "SQ",
-        "name": "新加坡航空公司"
+        "name": "新加坡航空"
     },
     "SR": {
         "code": "085",
         "twoCode": "SR",
-        "name": "瑞士航空公司"
+        "name": "瑞士航空"
     },
     "SS": {
         "code": "923",
         "twoCode": "SS",
-        "name": "法国Corsair航空公司"
+        "name": "法国Corsair航空"
     },
     "ST": {
         "code": "246",
         "twoCode": "ST",
-        "name": "日耳曼尼亚航空公司"
+        "name": "日耳曼尼亚航空"
     },
     "SU": {
         "code": "555",
         "twoCode": "SU",
-        "name": "俄罗斯航空公司"
+        "name": "俄罗斯航空"
     },
     "SV": {
         "code": "065",
@@ -2222,12 +2222,12 @@
     "SZ": {
         "code": "413",
         "twoCode": "SZ",
-        "name": "Somon航空公司"
+        "name": "Somon航空"
     },
     "T3": {
         "code": "467",
         "twoCode": "T3",
-        "name": "英国东方航空公司"
+        "name": "英国东方航空"
     },
     "T4": {
         "code": "69",
@@ -2237,12 +2237,12 @@
     "T5": {
         "code": "542",
         "twoCode": "T5",
-        "name": "土库曼斯坦航空公司"
+        "name": "土库曼斯坦航空"
     },
     "T7": {
         "code": "294",
         "twoCode": "T7",
-        "name": "法国Twin Jet航空公司"
+        "name": "法国Twin Jet航空"
     },
     "TA": {
         "code": "202",
@@ -2267,22 +2267,22 @@
     "TG": {
         "code": "217",
         "twoCode": "TG",
-        "name": "泰国国际航空公司"
+        "name": "泰国国际航空"
     },
     "TH": {
         "code": "000",
         "twoCode": "TH",
-        "name": "金鹏航空公司"
+        "name": "金鹏航空"
     },
     "TJ": {
         "code": "012",
         "twoCode": "TJ",
-        "name": "美国Tradewind航空公司"
+        "name": "美国Tradewind航空"
     },
     "TK": {
         "code": "235",
         "twoCode": "TK",
-        "name": "土耳其航空公司"
+        "name": "土耳其航空"
     },
     "TL": {
         "code": "935",
@@ -2297,7 +2297,7 @@
     "TN": {
         "code": "244",
         "twoCode": "TN",
-        "name": "大溪地航空公司"
+        "name": "大溪地航空"
     },
     "TO": {
         "code": "038",
@@ -2307,7 +2307,7 @@
     "TP": {
         "code": "047",
         "twoCode": "TP",
-        "name": "葡萄牙航空公司"
+        "name": "葡萄牙航空"
     },
     "TR": {
         "code": "388",
@@ -2332,7 +2332,7 @@
     "TV": {
         "code": "088",
         "twoCode": "TV",
-        "name": "西藏航空有限公司"
+        "name": "西藏航空"
     },
     "TW": {
         "code": "722",
@@ -2347,7 +2347,7 @@
     "TY": {
         "code": "190",
         "twoCode": "TY",
-        "name": "西班牙Iberworld航空公司"
+        "name": "西班牙Iberworld航空"
     },
     "TZ": {
         "code": "668",
@@ -2362,7 +2362,7 @@
     "U6": {
         "code": "262",
         "twoCode": "U6",
-        "name": "乌拉尔航空公司"
+        "name": "乌拉尔航空"
     },
     "U7": {
         "code": "043",
@@ -2377,37 +2377,37 @@
     "UA": {
         "code": "016",
         "twoCode": "UA",
-        "name": "美国联合航空公司"
+        "name": "美国联合航空"
     },
     "UB": {
         "code": "209",
         "twoCode": "UB",
-        "name": "缅甸航空公司"
+        "name": "缅甸航空"
     },
     "UI": {
         "code": "087",
         "twoCode": "UI",
-        "name": "坦桑尼亚Auric航空公司"
+        "name": "坦桑尼亚Auric航空"
     },
     "UL": {
         "code": "603",
         "twoCode": "UL",
-        "name": "斯里兰卡航空公司"
+        "name": "斯里兰卡航空"
     },
     "UM": {
         "code": "168",
         "twoCode": "UM",
-        "name": "津巴布韦航空公司"
+        "name": "津巴布韦航空"
     },
     "UN": {
         "code": "670",
         "twoCode": "UN",
-        "name": "俄罗斯联邦洲际航空公司"
+        "name": "俄罗斯联邦洲际航空"
     },
     "UO": {
         "code": "128",
         "twoCode": "UO",
-        "name": "香港快运航空公司"
+        "name": "香港快运航空"
     },
     "UP": {
         "code": "111",
@@ -2417,12 +2417,12 @@
     "UQ": {
         "code": "886",
         "twoCode": "UQ",
-        "name": "乌鲁木齐航空有限责任公司"
+        "name": "乌鲁木齐航空责任"
     },
     "US": {
         "code": "037",
         "twoCode": "US",
-        "name": "美国合众国航空公司"
+        "name": "美国合众国航空"
     },
     "UT": {
         "code": "298",
@@ -2432,32 +2432,32 @@
     "UU": {
         "code": "760",
         "twoCode": "UU",
-        "name": "留尼旺Austral航空公司"
+        "name": "留尼旺Austral航空"
     },
     "UX": {
         "code": "996",
         "twoCode": "UX",
-        "name": "欧罗巴航空公司"
+        "name": "欧罗巴航空"
     },
     "V0": {
         "code": "308",
         "twoCode": "V0",
-        "name": "ConViasa航空公司"
+        "name": "ConViasa航空"
     },
     "V2": {
         "code": "552",
         "twoCode": "V2",
-        "name": "人民快运航空公司"
+        "name": "人民快运航空"
     },
     "V3": {
         "code": "021",
         "twoCode": "V3",
-        "name": "罗马尼亚Carpatair航空公司"
+        "name": "罗马尼亚Carpatair航空"
     },
     "V4": {
         "code": "946",
         "twoCode": "V4",
-        "name": "Vieques航空公司"
+        "name": "Vieques航空"
     },
     "V7": {
         "code": "712",
@@ -2477,17 +2477,17 @@
     "VB": {
         "code": "062",
         "twoCode": "VB",
-        "name": "墨西哥Vivaaerobus航空公司"
+        "name": "墨西哥Vivaaerobus航空"
     },
     "VC": {
         "code": "099",
         "twoCode": "VC",
-        "name": "美国Via航空公司"
+        "name": "美国Via航空"
     },
     "VD": {
         "code": "981",
         "twoCode": "VD",
-        "name": "河南航空有限公司"
+        "name": "河南航空"
     },
     "VF": {
         "code": "041",
@@ -2502,12 +2502,12 @@
     "VH": {
         "code": "152",
         "twoCode": "VH",
-        "name": "委内瑞拉Aeropostal航空公司"
+        "name": "委内瑞拉Aeropostal航空"
     },
     "VI": {
         "code": "000",
         "twoCode": "VI",
-        "name": "俄罗斯伏尔加第聂伯航空公司"
+        "name": "俄罗斯伏尔加第聂伯航空"
     },
     "VJ": {
         "code": "025",
@@ -2517,12 +2517,12 @@
     "VL": {
         "code": "429",
         "twoCode": "VL",
-        "name": "尼日利亚Medview航空公司"
+        "name": "尼日利亚Medview航空"
     },
     "VN": {
         "code": "738",
         "twoCode": "VN",
-        "name": "越南航空公司"
+        "name": "越南航空"
     },
     "VO": {
         "code": "734",
@@ -2532,12 +2532,12 @@
     "VP": {
         "code": "343",
         "twoCode": "VP",
-        "name": "圣保罗航空公司"
+        "name": "圣保罗航空"
     },
     "VQ": {
         "code": "904",
         "twoCode": "VQ",
-        "name": "Vintage航空公司"
+        "name": "Vintage航空"
     },
     "VR": {
         "code": "696",
@@ -2547,12 +2547,12 @@
     "VS": {
         "code": "932",
         "twoCode": "VS",
-        "name": "维珍航空公司"
+        "name": "维珍航空"
     },
     "VT": {
         "code": "135",
         "twoCode": "VT",
-        "name": "塔希提航空公司"
+        "name": "塔希提航空"
     },
     "VV": {
         "code": "870",
@@ -2562,7 +2562,7 @@
     "VW": {
         "code": "942",
         "twoCode": "VW",
-        "name": "墨西哥Aeromar航空公司"
+        "name": "墨西哥Aeromar航空"
     },
     "VX": {
         "code": "984",
@@ -2577,7 +2577,7 @@
     "W3": {
         "code": "725",
         "twoCode": "W3",
-        "name": "尼日利亚Arik航空公司"
+        "name": "尼日利亚Arik航空"
     },
     "W4": {
         "code": "107",
@@ -2597,32 +2597,32 @@
     "WB": {
         "code": "459",
         "twoCode": "WB",
-        "name": "卢旺达航空公司"
+        "name": "卢旺达航空"
     },
     "WE": {
         "code": "909",
         "twoCode": "WE",
-        "name": "泰国微笑航空有限公司"
+        "name": "泰国微笑航空"
     },
     "WF": {
         "code": "701",
         "twoCode": "WF",
-        "name": "威德罗航空公司"
+        "name": "威德罗航空"
     },
     "WG": {
         "code": "000",
         "twoCode": "WG",
-        "name": "威金斯航空公司"
+        "name": "威金斯航空"
     },
     "WM": {
         "code": "295",
         "twoCode": "WM",
-        "name": "Winair航空公司"
+        "name": "Winair航空"
     },
     "WN": {
         "code": "526",
         "twoCode": "WN",
-        "name": "美国西南航空公司"
+        "name": "美国西南航空"
     },
     "WP": {
         "code": "347",
@@ -2642,7 +2642,7 @@
     "WV": {
         "code": "084",
         "twoCode": "WV",
-        "name": "葡萄牙Aero VIP航空公司"
+        "name": "葡萄牙Aero VIP航空"
     },
     "WW": {
         "code": "021",
@@ -2667,7 +2667,7 @@
     "X7": {
         "code": "088",
         "twoCode": "X7",
-        "name": "美国Exec航空公司"
+        "name": "美国Exec航空"
     },
     "XC": {
         "code": "395",
@@ -2677,7 +2677,7 @@
     "XF": {
         "code": "277",
         "twoCode": "XF",
-        "name": "符拉迪沃斯托克航空公司"
+        "name": "符拉迪沃斯托克航空"
     },
     "XJ": {
         "code": "807",
@@ -2697,7 +2697,7 @@
     "XQ": {
         "code": "564",
         "twoCode": "XQ",
-        "name": "土耳其SunExpress航空公司"
+        "name": "土耳其SunExpress航空"
     },
     "XT": {
         "code": "807",
@@ -2707,7 +2707,7 @@
     "XW": {
         "code": "478",
         "twoCode": "XW",
-        "name": "泰国酷鸟航空公司"
+        "name": "泰国酷鸟航空"
     },
     "XY": {
         "code": "593",
@@ -2717,7 +2717,7 @@
     "Y2": {
         "code": "000",
         "twoCode": "Y2",
-        "name": "英国全球跨越航空公司（Flyglobespan）"
+        "name": "英国全球跨越航空（Flyglobespan）"
     },
     "Y4": {
         "code": "036",
@@ -2727,7 +2727,7 @@
     "Y7": {
         "code": "476",
         "twoCode": "Y7",
-        "name": "俄罗斯JSC航空公司"
+        "name": "俄罗斯JSC航空"
     },
     "YB": {
         "code": "028",
@@ -2742,37 +2742,37 @@
     "YI": {
         "code": "852",
         "twoCode": "YI",
-        "name": "云南英安航空有限公司"
+        "name": "云南英安航空"
     },
     "YK": {
         "code": "511",
         "twoCode": "YK",
-        "name": "Avia航空公司"
+        "name": "Avia航空"
     },
     "YM": {
         "code": "409",
         "twoCode": "YM",
-        "name": "黑山航空公司"
+        "name": "黑山航空"
     },
     "YO": {
         "code": "747",
         "twoCode": "YO",
-        "name": "摩纳哥直升机航空公司"
+        "name": "摩纳哥直升机航空"
     },
     "YP": {
         "code": "000",
         "twoCode": "YP",
-        "name": "劳埃德航空公司"
+        "name": "劳埃德航空"
     },
     "YQ": {
         "code": "342",
         "twoCode": "YQ",
-        "name": "俄罗斯Polet航空公司"
+        "name": "俄罗斯Polet航空"
     },
     "YX": {
         "code": "453",
         "twoCode": "YX",
-        "name": "共和航空公司"
+        "name": "共和航空"
     },
     "Z2": {
         "code": "807",
@@ -2782,7 +2782,7 @@
     "Z4": {
         "code": "541",
         "twoCode": "Z4",
-        "name": "加拿大活力航空公司"
+        "name": "加拿大活力航空"
     },
     "Z6": {
         "code": "181",
@@ -2792,17 +2792,17 @@
     "Z7": {
         "code": "091",
         "twoCode": "Z7",
-        "name": "津巴布韦非洲航空公司"
+        "name": "津巴布韦非洲航空"
     },
     "Z8": {
         "code": "464",
         "twoCode": "Z8",
-        "name": "玻利维亚Amaszonas航空公司"
+        "name": "玻利维亚Amaszonas航空"
     },
     "ZA": {
         "code": "969",
         "twoCode": "ZA",
-        "name": "柬埔寨天空吴哥航空公司"
+        "name": "柬埔寨天空吴哥航空"
     },
     "ZB": {
         "code": "974",
@@ -2817,12 +2817,12 @@
     "ZG": {
         "code": "024",
         "twoCode": "ZG",
-        "name": "格罗兹尼航空公司"
+        "name": "格罗兹尼航空"
     },
     "ZH": {
         "code": "479",
         "twoCode": "ZH",
-        "name": "深圳航空有限责任公司"
+        "name": "深圳航空"
     },
     "ZI": {
         "code": "439",
@@ -2832,12 +2832,12 @@
     "ZJ": {
         "code": "707",
         "twoCode": "ZJ",
-        "name": "赞比西航空公司"
+        "name": "赞比西航空"
     },
     "ZK": {
         "code": "846",
         "twoCode": "ZK",
-        "name": "美国大湖航空公司"
+        "name": "美国大湖航空"
     },
     "ZL": {
         "code": "899",
@@ -2857,6 +2857,6 @@
     "GX": {
         "code": "872",
         "twoCode": "GX",
-        "name": "广西北部湾航空有限责任公司"
+        "name": "广西北部湾航空责任"
     }
 }
