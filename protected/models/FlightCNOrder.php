@@ -231,7 +231,7 @@ class FlightCNOrder extends QActiveRecord {
                     return F::errReturn(RC::RC_F_INFO_CHANGED);
                 }
     
-                if ((!is_numeric($realCabin['cabinNum']) && $realCabin['cabinNum'] != 'A') || (intval($realCabin['cabinNum']) < count($params['passengers']))) {
+                if ((!is_numeric($realCabin['cabinNum']) && $realCabin['cabinNum'] != 'A') || (is_numeric($realCabin['cabinNum']) && intval($realCabin['cabinNum']) < count($params['passengers']))) {
                     return F::errReturn(RC::RC_F_CABIN_NUM_ERROR);
                 }
     
