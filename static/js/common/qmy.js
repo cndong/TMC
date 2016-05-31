@@ -41,7 +41,6 @@
 
 _$.extend({
 	formats: {
-		"PNR": /^[A-Z0-9]{6}$/,
 		"INT": /^\d+$/,
 		"INTNZ": /^[1-9]\d*$/,
 		"FLOAT": /^\d+(\.\d+)?$/,
@@ -55,8 +54,6 @@ _$.extend({
     	"DATE_HM": /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/,
     	"DATETIME": /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,
     	"MOBILE": /^1[3578]\d{9}$/,
-    	"M_ORDER_ID": /^[a-zA-Z0-9]{10,32}$/,
-    	"OID": /^\d{15}$/,
     	"CAR_NO": /^[\u4e00-\u9fa5][A-Za-z][A-Za-z0-9]{5}$/,
     	"CARD_NO": /^\d{6}(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[1-2][0-9]|3[01])\d{3}[\d|x|X]$/,
 	},
@@ -74,6 +71,12 @@ _$.extend({
 	},
 	isObject: function(value) {
 		return _$.getType(value) == "object";
+	},
+	isRegExp: function(value) {
+		return value instanceof RegExp;
+	},
+	isDate: function(value) {
+		return value instanceof Date;
 	},
 	testFormat: function(type, value) {
 		var re = _$.formats[type];
@@ -134,7 +137,7 @@ _$.extend({
 	},
 	mergeParams: function(paramsOne, paramsTwo) {
 		for (var k in paramsTwo) {
-			if (typeof(paramsTwo[k]) == typeof({})) {
+			if ((_$.isObject(paramsTwo[k]) || _$.isArray(paramsTwo[k])) && !_$.isRegExp(paramsTwo[k]) &&　!_$.isDate(paramsTwo[k])) {
 				if (typeof(paramsOne[k]) != typeof({})) {
 					paramsOne[k] = {};
 				}
@@ -172,6 +175,17 @@ _$.extend({
 		for (var index in arr) {
 			rtn.push(arr[index]);
 		}
+		return rtn;
+	},
+	arrayRemoveKeys: function(params, keys) {
+		var rtn = {};
+		for (var index in params) {
+			if (_$.inArray(index, keys)) {
+				continue;
+			}
+			rtn[index] = params[index];
+		}
+		
 		return rtn;
 	},
 	count: function(arr) {
@@ -264,5 +278,86 @@ _$.extend({
 		}
 		
 		return str.substr(0, 1).toUpperCase() + str.substring(1);
-	}
+	},
+	repeatStr: function(str, repeatNum) {
+		var rtn = '';
+		for (var i = 0; i < repeatNum; i++) {
+			rtn += str;
+		}
+		
+		return rtn;
+	},
+	createTips: function(msg) {
+		if (!_$.isString(msg)) {
+			msg = msg["_errMsg"];
+		}
+		layer.tips(msg, ".layui-layer-btn0", {tipsMore: true, tips: 4});
+	},
+	open: function(type, config, obj) {
+		config = config || {};
+		config = _$.mergeParams({url: "", prefix: ""}, config);
+		var funcName = config["prefix"] + type;
+		
+		var funcs = {
+			"htmlFunc": funcName + "Html",//必须
+			"paramsFunc": funcName + "Params",
+			"titleFunc": funcName + "Title",
+			"showFunc": funcName + "Show",
+			"clickFunc": funcName + "Click",
+			"overFunc": funcName + "Over",
+			"configFunc": funcName + "Config",
+			"layerConfigFunc": funcName + "LayerConfig",
+		}
+		
+		for (var funcType in funcs) {
+			if (typeof(config[funcType]) != "undefined" && typeof(_$[funcs[funcType]]) == "undefined") {
+				_$[funcs[funcType]] = config[funcType];
+			}
+		}
+		
+		if (typeof(_$[funcs["configFunc"]]) != "undefined") {
+			config = _$.mergeParams(config, _$[funcs["configFunc"]]());
+		}
+		
+		if (typeof(_$[funcs["clickFunc"]]) == "undefined" && !config["url"]) {
+			_$.createTips("请求地址配置错误");
+			return false;
+		}
+		
+		var defaultClickFunc = function() {
+			var field = funcName + "_";
+			var params = typeof(_$[funcs["paramsFunc"]]) == "undefined" ? _$.collectParams("*[name^='" + field + "']", field, _$.createTips) : _$[funcs["paramsFunc"]](obj);
+			if (params) {
+				$.post(config["url"], params, function(data) {
+					if (!data.rc) {
+						if (typeof(_$[funcs["overFunc"]]) == "undefined") {
+							layer.msg("操作成功");
+							//_$.reload();
+						} else {
+							_$[funcs["overFunc"]](obj);
+						}
+					} else {
+						_$.createTips(data.msg);
+					}
+				}, "json");
+			}
+		}
+		
+		var defaultLayerConfig = {
+			title: typeof(_$[funcs["titleFunc"]]) == "undefined" ? "提示" : _$[funcs["titleFunc"]],
+			area: "500px",
+			content: _$[funcs["htmlFunc"]](obj),
+			btn: ["确定", "取消"],
+			yes: typeof(_$[funcs["clickFunc"]]) == "undefined" ? defaultClickFunc : _$[funcs["clickFunc"]]
+		}
+		
+		if (typeof(_$[funcs["layerConfigFunc"]]) != "undefined") {
+			defaultLayerConfig = _$.mergeParams(defaultLayerConfig, _$[funcs["layerConfigFunc"]]());
+		}
+		layer.open(defaultLayerConfig);
+		
+		if (typeof(_$[funcs["showFunc"]]) != "undefined") {
+			_$[funcs["showFunc"]](obj);
+		}
+	},
 });

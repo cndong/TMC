@@ -30,6 +30,7 @@ class FlightCNOrder extends QActiveRecord {
             'contacter' => array(self::BELONGS_TO, 'UserContacter', 'contacterID'),
             'address' => array(self::BELONGS_TO, 'UserAddress', 'invoiceAddressID'),
             'segments' => array(self::HAS_MANY, 'FlightCNSegment', 'orderID'),
+            'tickets' => array(self::HAS_MANY, 'FlightCNTicket', 'orderID'),
             'operater' => array(self::BELONGS_TO, 'BossAdmin', 'operaterID')
         );
     }
@@ -54,7 +55,7 @@ class FlightCNOrder extends QActiveRecord {
     public static function classifyPassengers($passengers) {
         $rtn = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
         foreach ($passengers as $passenger) {
-            $passenger = F::arrayGetByKeys($passenger, array('name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
+            $passenger = F::arrayGetByKeys($passenger, array('id', 'name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
             $rtn[$passenger['type']][UserPassenger::getPassengerKey($passenger)] = $passenger;
         }
     
@@ -351,7 +352,6 @@ class FlightCNOrder extends QActiveRecord {
     
     public static function initWithSegments($order, $isWithPassengers = False) {
         $rtn = $order->attributes;
-        unset($rtn['segments']);
         
         $rtn['contacterName'] = $order->contacter->name;
         $rtn['contacterMobile'] = $order->contacter->mobile;
@@ -371,6 +371,12 @@ class FlightCNOrder extends QActiveRecord {
             $segment['arriveCity'] = $cities[$segment['arriveCityCode']]['cityName'];
             $segment['departAirport'] = $airports[$segment['departAirportCode']]['airportName'];
             $segment['arriveAirport'] = $airports[$segment['arriveAirportCode']]['airportName'];
+            $segment['tickets'] = array();
+            foreach ($order->tickets as $ticket) {
+                if ($ticket->segmentID == $segment['id']) {
+                    $segment['tickets'][$ticket['id']] = $ticket->attributes;
+                }
+            }
             
             $rtn[$routeType]['segments'][] = $segment;
         }
@@ -577,7 +583,77 @@ class FlightCNOrder extends QActiveRecord {
         return $this->isPrivate ? FlightStatus::BOOK_FAIL_WAIT_RFD : FlightStatus::BOOK_FAIL;
     }
     
-    private function _cS2BookSuccBefore() {
-        //填写PNR 价格等
+    private function _getCS2BookSuccFormats() {
+        $rtn = array_merge(
+            array_fill_keys(array('adultBigPNR', 'adultSmallPNR', 'childBigPNR', 'childSmallPNR', 'babyBigPNR', 'babySmallPNR'), '!' . ParamsFormat::F_PNR . '--'),
+            array_fill_keys(array('adultTicketPrice', 'adultAirportTax', 'adultOilTax', 'childTicketPrice', 'childAirportTax', 'childOilTax', 'babyTicketPrice', 'babyAirportTax', 'babyOilTax'), '!' . ParamsFormat::FLOATNZ . '--0')
+        );
+        $rtn['ticketNo'] = ParamsFormat::ISARRAY;
+        
+        return $rtn;
+    }
+    
+    private function _cS2BookSuccBefore($params) {
+        $initOrder = self::initWithSegments($this, True);
+        $ticketAttributes = F::arrayGetByKeys($this, array('userID', 'departmentID', 'companyID'));
+        $ticketAttributes['orderID'] = $this->id;
+        
+        $routeTypes = $this->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
+        foreach ($routeTypes as $routeType) {
+            if (empty($params[$routeType]) || !is_array($params[$routeType])) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
+            $realRoute = $initOrder[$routeType];
+            $postRoute = $params[$routeType];
+            foreach ($realRoute['segments'] as $segment) {
+                if (empty($postRoute[$segment['id']]) || !($segmentParams = F::checkParams($postRoute[$segment['id']], $this->_getCS2BookSuccFormats()))) {
+                    return F::errReturn(RC::RC_VAR_ERROR);
+                }
+                
+                $ticketAttributes['segmentID'] = $segment['id'];
+                foreach ($initOrder['passengers'] as $passenger) {
+                    if (!F::checkParams($segmentParams['ticketNo'], array($passenger['id'] => ParamsFormat::F_TICKET_NO))) {
+                        return F::errReturn(RC::RC_VAR_ERROR);
+                    }
+                    
+                    $passengerTypeStr = DictFlight::$ticketTypes[$passenger['type']]['str']; 
+                    $ticketAttributes['ticketPrice'] = $segment[$passengerTypeStr . 'Price'];
+                    $ticketAttributes['airportTax'] = $segment[$passengerTypeStr . 'AirportTax'];
+                    $ticketAttributes['oilTax'] = $segment[$passengerTypeStr . 'OilTax'];
+                    $ticketAttributes['realTicketPrice'] = $segmentParams[$passengerTypeStr . 'TicketPrice'] * 100;
+                    $ticketAttributes['realAirportTax'] = $segmentParams[$passengerTypeStr . 'AirportTax'] * 100;
+                    $ticketAttributes['realOilTax'] = $segmentParams[$passengerTypeStr . 'OilTax'] * 100;
+                    $ticketAttributes['bigPNR'] = $segmentParams[$passengerTypeStr . 'BigPNR'];
+                    $ticketAttributes['smallPNR'] = $segmentParams[$passengerTypeStr . 'SmallPNR'];
+                    $ticketAttributes['passengerID'] = $passenger['id'];
+                    $ticketAttributes['ticketNo'] = $segmentParams['ticketNo'][$passenger['id']];
+                    $ticketAttributes['insurePrice'] = $this->insurePrice / $this->passengerNum;
+                    $ticketAttributes['payPrice'] = 0; 
+                    $ticketAttributes['tradeNo'] = '';
+                    $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('cabin', 'cabinClass', 'cabinClassName', 'departTime', 'arriveTime')));
+                    $ticketAttributes['status'] = FlightStatus::BOOK_SUCC;
+                    
+                    $ticket = new FlightCNTicket();
+                    $ticket->attributes = $ticketAttributes;
+                    if (!$ticket->save()) {
+                        Q::logModel($ticket);
+                        return F::errReturn(RC::RC_MODEL_CREATE_ERROR);
+                    }
+                }
+            }
+        }
+        
+        return F::corReturn(array());
+    }
+    
+    private function _cS2ApplyRsn($params) {
+        //需要重写
+        return F::corReturn(array('params' => array('status' => FlightStatus::RSN_SUCC)));
+    }
+    
+    private function _cS2ApplyRfd($params) {
+        //需要重写
+        return F::corReturn(array('params' => array('status' => FlightStatus::RFD_SUCC)));
     }
 }

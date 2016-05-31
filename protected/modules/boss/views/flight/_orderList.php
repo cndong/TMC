@@ -38,7 +38,28 @@
             <td class="text-center"><?php echo FlightStatus::getAdminDes($data->status); ?></td>
             <td class="text-center"><?php echo empty($data->operaterID) ? '无' : $data->operater->nickname; ?></td>
             <td class="text-center">
-                No
+                <div class="btn-group btn-group-sm">
+                <?php
+                    foreach (FlightStatus::getAdminHdStatus($data->status) as $toStatus) {
+                        if (($checkFunc = FlightStatus::getCheckFunc($toStatus)) && !$data->$checkFunc()) {
+                            continue;
+                        }
+                        $toStatusConfig = FlightStatus::$flightStatus[$toStatus];
+                        $btnColor = empty($toStatusConfig['btnColor']) ? 'info' : $toStatusConfig['btnColor'];
+                        $btn = empty($toStatusConfig['btn']) ? '接单' : $toStatusConfig['btn'];
+                        echo '<button class="c_change_status btn btn-' . $btnColor . '" data-is-handle="1" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $btn . '</button>';
+                    }
+                    
+                    foreach (FlightStatus::getAdminOpStatus($data->status) as $toStatus) {
+                    if (($checkFunc = FlightStatus::getCheckFunc($toStatus)) && !$data->$checkFunc()) {
+                            continue;
+                        }
+                        $toStatusConfig = FlightStatus::$flightStatus[$toStatus];
+                        $btnColor = empty($toStatusConfig['btnColor']) ? 'info' : $toStatusConfig['btnColor'];
+                        echo '<button class="c_change_status btn btn-' . $btnColor . ' mini" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $toStatusConfig['btn'] . '</button>';
+                    }
+                ?>
+                </div>
             </td>
         </tr>
 <?php if ($index + 1 == $widget->dataProvider->getItemCount()) { ?>
