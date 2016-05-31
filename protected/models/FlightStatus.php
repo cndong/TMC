@@ -113,7 +113,8 @@ class FlightStatus {
         ),
         self::RSN_SUCC => array(
             'des' => array('user' => '改签成功'),
-            'str' => 'RsnSucc'
+            'str' => 'RsnSucc',
+            'userStatus' => array(self::APPLY_RFD)
         ),
         self::RESED => array(
             'des' => array('user' => '已改签'),

@@ -647,12 +647,12 @@ class FlightCNOrder extends QActiveRecord {
         return F::corReturn(array());
     }
     
-    private function _cS2ApplyRsn($params) {
+    private function _cS2ApplyRsnBefore($params) {
         //需要重写
         return F::corReturn(array('params' => array('status' => FlightStatus::RSN_SUCC)));
     }
     
-    private function _cS2ApplyRfd($params) {
+    private function _cS2ApplyRfdBefore($params) {
         //需要重写
         return F::corReturn(array('params' => array('status' => FlightStatus::RFD_SUCC)));
     }
