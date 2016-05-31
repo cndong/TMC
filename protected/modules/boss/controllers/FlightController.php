@@ -55,7 +55,7 @@ class FlightController extends BossController {
             foreach ($orderInit[$routeType]['segments'] as $segment) {
                 $segmentPassengerHtml = '';
                 $segmentNum ++;
-                $marginClass = $segmentNum <= 1 ? ' row-form-margin' : '';
+                $marginClass = $segmentNum > 1 ? ' row-form-margin' : '';
                 $rtn .= "<div class='row'><div class='col-sm-12 text-center text-info'>{$segment['departCity']}-{$segment['arriveCity']}</div></div>";
                 foreach ($passengers as $ticketType => $subPassengers) {
                     if (count($subPassengers) <= 0) {
