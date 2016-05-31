@@ -359,6 +359,7 @@ class FlightCNOrder extends QActiveRecord {
         
         $cities = DataAirport::getCNCities();
         $airports = DataAirport::getCNAiports();
+        $airlines = DataAirline::getAirlines();
         foreach ($order->segments as $segment) {
             $routeType = $segment->isBack ? 'returnRoute' : 'departRoute';
             if (empty($rtn[$routeType])) {
@@ -372,6 +373,7 @@ class FlightCNOrder extends QActiveRecord {
             $segment['arriveCity'] = $cities[$segment['arriveCityCode']]['cityName'];
             $segment['departAirport'] = $airports[$segment['departAirportCode']]['airportName'];
             $segment['arriveAirport'] = $airports[$segment['arriveAirportCode']]['airportName'];
+            $segment['airline'] = isset($airlines[$segment['airlineCode']]['name']) ? $airlines[$segment['airlineCode']]['name'] : $segment['airlineCode'];
             $segment['tickets'] = array();
             foreach ($order->tickets as $ticket) {
                 if ($ticket->segmentID == $segment['id']) {

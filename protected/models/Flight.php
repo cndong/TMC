@@ -7,4 +7,8 @@ class Flight {
     public static function getCNAirportDataFile() {
         return Q::getDataDocFile('flightCNAirports.txt');
     }
+    
+    public static function getAirlineDataFile() {
+        return Q::getDataDocFile('flightAirlines.txt');
+    }
 }

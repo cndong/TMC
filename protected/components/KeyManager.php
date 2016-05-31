@@ -15,4 +15,8 @@ class KeyManager {
     public static function getFlightCNCitiesKey() {
         return 'FlightCities';
     }
+    
+    public static function getFlightAirlinesKey() {
+        return 'FlightAirlines';
+    }
 }
