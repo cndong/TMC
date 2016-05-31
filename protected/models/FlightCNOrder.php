@@ -236,6 +236,7 @@ class FlightCNOrder extends QActiveRecord {
                 }
     
                 $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
+                $modifySegment['cabinInfo']['cabiyClassName'] = $realCabin['cabinClassName'];
                 $modifySegment['craftType'] = DictFlight::CRAFT_LARGE;
                 $modifySegment['isBack'] = $routeType == 'returnRoute' ? Dict::STATUS_TRUE : Dict::STATUS_FALSE;
                 foreach ($realCarftMap as $craftTypeStr => $craftCodes) {
