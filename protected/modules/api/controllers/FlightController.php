@@ -184,6 +184,20 @@ class FlightController extends ApiController {
         $order = current($res['data']);
         $order = array_merge($order, $this->_getFlags($order['status']));
         $order['status'] = FlightStatus::getUserDes($order['status']);
+        foreach (array('departRoute', 'arriveRoute') as $routeType) {
+            if (empty($order[$routeType])) {
+                continue;
+            }
+            
+            foreach ($order[$routeType]['segments'] as &$segment) {
+                unset($segment['id']); unset($segment['orderID']); unset($segment['ctime']); unset($segment['utime']);
+                foreach ($segment['tickets'] as $k => $ticket) {
+                    $segment['tickets'][$k] = F::arrayGetByKeys($ticket, array('ticketNo', 'departTime'));
+                }
+                
+                $segment['tickets'] = array_values($segment['tickets']);
+            }
+        }
         
         $this->corAjax($order);
     }
