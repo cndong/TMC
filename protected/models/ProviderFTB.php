@@ -21,8 +21,8 @@ class ProviderFTB extends ProviderF {
         }
         $data = json_decode(json_encode(self::$_client->execute($req)), True);
         
-        //Q::log($req, 'tb');
-        //Q::log($data, 'tb');
+        Q::log($req, 'tb');
+        Q::log($data, 'tb');
         
         if (isset($data['code'])) {
             return F::errReturn(RC::RC_P_ERROR);
@@ -170,12 +170,14 @@ class ProviderFTB extends ProviderF {
         $outboundData = $res['data'];
         
         if (!F::isCorrect($res = $this->pGetCNFlightList($params, 'lowprice'))) {
-            return $res;
+            $res = F::corReturn(array());
+            //return $res;
         }
         $lowpriceData = $res['data'];
         
         if (!F::isCorrect($res = $this->pGetCNFlightList($params, 'gaoduan'))) {
-            return $res;
+            $res = F::corReturn(array());
+            //return $res;
         }
         
         return F::corReturn(F::mergeArrayInt($outboundData, $lowpriceData, $res['data']));
