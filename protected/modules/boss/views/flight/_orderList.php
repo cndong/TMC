@@ -10,7 +10,7 @@
         <tr>
             <th class="text-center" width="15%">订单信息</th>
             <th class="text-center" width="5%">往返</th>
-            <th class="text-center" width="20%">航程信息</th>
+            <th class="text-center" width="15%">航程信息</th>
             <th class="text-center" width="10%">联系人</th>
             <th class="text-center" width="5%">价格</th>
             <th class="text-center" width="10%">用户信息</th>
