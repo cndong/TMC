@@ -75,7 +75,8 @@ class FlightCNOrder extends QActiveRecord {
             'returnRoute' => '!' . ParamsFormat::ISARRAY . '--',//如果是往返票必须有此属性
             'passengers' => ParamsFormat::ISARRAY,
             'price' => ParamsFormat::ISARRAY,
-            'invoiceAddress' => '!' . ParamsFormat::ISARRAY . '--'
+            'invoiceAddress' => '!' . ParamsFormat::ISARRAY . '--',
+            'reason' => '!' . ParamsFormat::TEXTNZ . '--'
         );
     }
     
