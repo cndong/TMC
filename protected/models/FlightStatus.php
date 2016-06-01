@@ -14,17 +14,18 @@ class FlightStatus {
     const BOOK_FAIL_RFDED = 12; //个人票使用
     const APPLY_RSN = 13;
     const RSNING = 14;
-    const RSN_FAIL = 15;
-    const RSN_NED_PAY = 16; //个人票使用
-    const RSN_PAYED = 17; //个人票使用
-    const RSN_SUCC = 18; //因公票此步计算差额 新票为此状态
-    const RESED = 19; //原票改为已改签状态
-    const APPLY_RFD = 20;
-    const RFDING = 21;
-    const RFD_FAIL = 22;
-    const RFD_SUCC = 22;
-    const RFD_ADM_RFDING = 24;
-    const RFD_ADM_RFDED = 25;
+    const RSN_REFUSE = 15;
+    const RSN_AGREE = 16; //需要填写要改签的航班信息和要改签的乘客
+    const RSN_NED_PAY = 17; //个人票使用
+    const RSN_PAYED = 18; //个人票使用
+    const RSN_SUCC = 19; //因公票此步计算差额 新票为此状态
+    const RESED = 20; //原票改为已改签状态
+    const APPLY_RFD = 21;
+    const RFDING = 22;
+    const RFD_REFUSE = 23;
+    const RFD_AGREE = 24;
+    const RFD_ADM_RFDING = 25;
+    const RFD_ADM_RFDED = 26;
     
     public static $flightStatus = array(
         self::WAIT_CHECK => array(
@@ -95,15 +96,23 @@ class FlightStatus {
         self::RSNING => array(
             'des' => array('user' => '正在改签'),
             'str' => 'Rsning',
-            'adminOpStatus' => array(self::RSN_FAIL, self::RSN_NED_PAY, self::RSN_SUCC, self::RESED)
+            'adminOpStatus' => array(self::RSN_AGREE, self::RSN_REFUSE)
         ),
-        self::RSN_FAIL => array(
+        self::RSN_AGREE => array(//保存完改签信息后需要判断是否是私人并需要支付，是则改为RSN_NED_PAY状态
+            'des' => array('user' => '正在改签'),
+            'str' => 'RsnAgree',
+            'adminOpStatus' => array(self::RSN_SUCC, self::RESED),
+            'btn' => '同意改签'
+        ),
+        self::RSN_REFUSE => array(
             'des' => array('user' => '改签失败'),
-            'str' => 'RsnFail' //虚状态需要改为订票成功
+            'str' => 'RsnRefuse', //虚状态需要改为订票成功
+            'btn' => '拒绝改签'
         ),
-        self::RSN_NED_PAY => array( //需要加个check判断是否是私人的才显示
+        self::RSN_NED_PAY => array( //私人的才显示，把需支付金额加入要改签的票中
             'des' => array('user' => '改签需支付'),
             'str' => 'RsnNedPay',
+            'check' => 'isPrivate',
             'userStatus' => array(self::RSN_PAYED)
         ),
         self::RSN_PAYED => array(
@@ -112,7 +121,7 @@ class FlightStatus {
             'adminOpStatus' => array(self::RSN_SUCC)
         ),
         self::RSN_SUCC => array(
-            'des' => array('user' => '改签成功'),
+            'des' => array('user' => '改签成功'), //因公的需扣款
             'str' => 'RsnSucc',
             'userStatus' => array(self::APPLY_RFD)
         ),
@@ -128,18 +137,18 @@ class FlightStatus {
         self::RFDING => array(
             'des' => array('user' => '正在退票'),
             'str' => 'Rfding',
-            'adminOpStatus' => array(self::RFD_FAIL, self::RFD_SUCC)
+            'adminOpStatus' => array(self::RFD_REFUSE, self::RFD_AGREE)
         ),
-        self::RFD_FAIL => array(
+        self::RFD_REFUSE => array(
             'des' => array('user' => '退票失败'),
-            'str' => 'RfdFail',
-            'btn' => '退票失败'
+            'str' => 'RfdRefuse',
+            'btn' => '拒绝退票'
         ),
-        self::RFD_SUCC => array(
-            'des' => array('user' => '退票成功'),
-            'str' => 'RfdSucc',
+        self::RFD_AGREE => array(
+            'des' => array('user' => '退票成功，待退款'),
+            'str' => 'RfdAgree',
             'adminHdStatus' => array(self::RFD_ADM_RFDING),
-            'btn' => '退票成功'
+            'btn' => '同意退票'
         ),
         self::RFD_ADM_RFDING => array(
             'des' => array('user' => '正在退款'),
