@@ -8,7 +8,7 @@ class SMS {
     const SIGN_QMY = 1;
     const SIGN_BUS = 2;
     public static $signs = array(
-        self::SIGN_QMY => '【去买呀】',
+        self::SIGN_QMY => '【十分便民】',
         self::SIGN_BUS => '【松鼠巴士】'
     );
     
