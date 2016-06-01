@@ -9,8 +9,8 @@ return array(
         'db' => array(
             'connectionString' => 'mysql:host=qumaiyain.mysql.rds.aliyuncs.com;dbname=tmc;port=3303;',
             'enableProfiling' => False,
-            'username' => 'root',
-            'password' => '',
+            'username' => 'tmc',
+            'password' => 'tmc20160601',
         ),
     )
 );
