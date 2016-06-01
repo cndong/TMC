@@ -184,7 +184,7 @@ class FlightController extends ApiController {
         $order = current($res['data']);
         $order = array_merge($order, $this->_getFlags($order['status']));
         $order['status'] = FlightStatus::getUserDes($order['status']);
-        foreach (array('departRoute', 'arriveRoute') as $routeType) {
+        foreach (array('departRoute', 'returnRoute') as $routeType) {
             if (empty($order[$routeType])) {
                 continue;
             }
