@@ -5,6 +5,8 @@
 .gitignore
 /assets/*
 !/assets/*.html
+/avatar/*
+!/avatar/*.html
 /protected/runtime/*.log
 /protected/runtime/application.log.*
 env.php
