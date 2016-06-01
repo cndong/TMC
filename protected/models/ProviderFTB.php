@@ -52,6 +52,8 @@ class ProviderFTB extends ProviderF {
             $tmp['duration'] = $tmp['arriveTime'] - $tmp['departTime'];
             $tmp['childAirportTax'] = $tmp['babyAirportTax'] = 0;
             $tmp['adultOilTax'] = $tmp['childOilTax'] = $tmp['babyOilTax'] = 0;
+            $tmp['departTerm'] = $flight['depTerm'] == '--' ? '' : $flight['depTerm'];
+            $tmp['departTerm'] = $flight['arrTerm'] == '--' ? '' : $flight['arrTerm'];
             
             $rtn[$flightKey] = $tmp;
         }
