@@ -91,8 +91,10 @@ class FlightCNOrder extends QActiveRecord {
         }
         $params['departmentID'] = $params['isPrivate'] ? 0 : $user->departmentID;
         $params['companyID'] = $params['isPrivate'] ? 0 : $user->companyID;
-        if (!$params['isPrivate'] && empty($params['reason'])) {
-            return F::errReturn(RC::RC_REASON_ERROR);
+        if (!$params['isPrivate']) {
+            if (empty($params['reason'])) {
+                return F::errReturn(RC::RC_REASON_ERROR);
+            }
         } else {
             $params['reason'] = '';
         }
@@ -236,6 +238,8 @@ class FlightCNOrder extends QActiveRecord {
                 }
     
                 $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
+                $modifySegment['departTerm'] = $realSegment['departTerm'];
+                $modifySegment['arriveTerm'] = $realSegment['arriveTerm'];
                 $modifySegment['cabinInfo']['cabinClassName'] = $realCabin['cabinClassName'];
                 $modifySegment['craftType'] = DictFlight::CRAFT_LARGE;
                 $modifySegment['isBack'] = $routeType == 'returnRoute' ? Dict::STATUS_TRUE : Dict::STATUS_FALSE;
@@ -327,7 +331,7 @@ class FlightCNOrder extends QActiveRecord {
                 foreach ($params[$routeType]['segments'] as $segmentIndex => $segment) {
                     $record = F::arrayGetByKeys($segment, array(
                         'flightNo', 'departCityCode', 'arriveCityCode', 'departAirportCode', 'arriveAirportCode',
-                        'departTime', 'arriveTime', 'airlineCode', 'craftCode', 'craftType', 'adultAirportTax', 'adultOilTax',
+                        'departTime', 'arriveTime', 'departTerm', 'arriveTerm', 'airlineCode', 'craftCode', 'craftType', 'adultAirportTax', 'adultOilTax',
                         'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyOilTax', 'isBack'
                     ));
 
@@ -653,6 +657,10 @@ class FlightCNOrder extends QActiveRecord {
     private function _cS2ApplyRsnBefore($params) {
         //需要重写
         return F::corReturn(array('params' => array('status' => FlightStatus::RSN_SUCC)));
+    }
+    
+    private function _cS2RsnRefuseBefore($params) {
+        return F::corReturn(array('params' => array('status' => FlightStatus::BOOK_SUCC)));
     }
     
     private function _cS2ApplyRfdBefore($params) {

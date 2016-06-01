@@ -27,7 +27,7 @@ class DataAirport {
     
     public static function getCNAiports() {
         $cacheKey = KeyManager::getFlightCNAirportsKey();
-        if (!($data = Yii::app()->cache->get($cacheKey))) {
+        if (!($data = Yii::app()->cache->get($cacheKey)) || True) {
             $airports = json_decode(file_get_contents(Flight::getCNAirportDataFile()), True);
             
             $data = array();
@@ -39,6 +39,10 @@ class DataAirport {
         }
         
         return $data;
+    }
+    
+    public static function updateCNAirports() {
+        
     }
     
     public static function getINCities() {
