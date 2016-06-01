@@ -191,6 +191,8 @@ class FlightController extends ApiController {
             
             foreach ($order[$routeType]['segments'] as &$segment) {
                 unset($segment['id']); unset($segment['orderID']); unset($segment['ctime']); unset($segment['utime']);
+                $segment['departTerm'] = $segment['departTerm'] == '--' ? '' : $segment['departTerm'];
+                $segment['arriveTerm'] = $segment['arriveTerm'] == '--' ? '' : $segment['arriveTerm'];
                 foreach ($segment['tickets'] as $k => $ticket) {
                     $segment['tickets'][$k] = F::arrayGetByKeys($ticket, array('passengerID', 'ticketNo', 'departTime'));
                 }
