@@ -3,6 +3,7 @@ require_once implode(DIRECTORY_SEPARATOR, array(Yii::app()->basePath, 'extension
 
 //为保数据一致性和可维护性，只能被ProviderF调用
 class ProviderFTB extends ProviderF {
+    const REPEAT_NUM = 3;
     
     public static $cabinClasses = array(
         0 => array('name' => '头等舱', 'code' => DictFlight::CABIN_TD),
@@ -19,16 +20,19 @@ class ProviderFTB extends ProviderF {
             self::$_client->secretKey = QEnv::$providers[Dict::BUSINESS_FLIGHT][ProviderF::PROVIDER_TB]['secretKey'];
             self::$_client->format = 'json';
         }
-        $data = json_decode(json_encode(self::$_client->execute($req)), True);
-        
-        Q::log($req, 'tb');
-        Q::log($data, 'tb');
-        
-        if (isset($data['code'])) {
-            return F::errReturn(RC::RC_P_ERROR);
+        $num = 0;
+        while ($num++ < self::REPEAT_NUM) {
+            $data = json_decode(json_encode(self::$_client->execute($req)), True);
+            
+            Q::log($req, 'tb');
+            Q::log($data, 'tb');
+            
+            if (!isset($data['code'])) {
+                break;
+            }
         }
         
-        return F::corReturn($data['result']);
+        return isset($data['code']) ? F::errReturn(RC::RC_P_ERROR) : F::corReturn($data['result']);
     }
     
     private function _initFlights($flights) {
