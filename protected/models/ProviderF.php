@@ -75,7 +75,7 @@ class ProviderF extends Provider {
             'departDate' => ParamsFormat::DATE,
             'returnDate' => '!' . ParamsFormat::DATE . '--'
         );
-        if (!F::checkParams($params, $formats)) {
+        if (!($params = F::checkParams($params, $formats))) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
@@ -101,7 +101,7 @@ class ProviderF extends Provider {
             'departDate' => ParamsFormat::DATE,
             'flightNo' => ParamsFormat::F_FLIGHT_NO,
         );
-        if (!F::checkParams($params, $formats)) {
+        if (!($params = F::checkParams($params, $formats))) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         

@@ -20,19 +20,17 @@ class ProviderFTB extends ProviderF {
             self::$_client->secretKey = QEnv::$providers[Dict::BUSINESS_FLIGHT][ProviderF::PROVIDER_TB]['secretKey'];
             self::$_client->format = 'json';
         }
-        $num = 0;
-        while ($num++ < self::REPEAT_NUM) {
-            $data = json_decode(json_encode(self::$_client->execute($req)), True);
-            
-            Q::log($req, 'tb');
-            Q::log($data, 'tb');
-            
-            if (!isset($data['code'])) {
-                break;
-            }
+        
+        $data = json_decode(json_encode(self::$_client->execute($req)), True);
+        
+        Q::log($req, 'tb');
+        Q::log($data, 'tb');
+        
+        if (isset($data['code'])) {
+            return F::errReturn(RC::RC_P_ERROR);
         }
         
-        return isset($data['code']) ? F::errReturn(RC::RC_P_ERROR) : F::corReturn($data['result']);
+        return F::corReturn($data['result']);
     }
     
     private function _initFlights($flights) {
@@ -155,8 +153,16 @@ class ProviderFTB extends ProviderF {
         if (isset($params['flightNo'])) {
             $req->setFlightNo($params['flightNo']);
         }
+
+        $num = 0;
+        $maxNum = $searchType == 'outbound' ? self::REPEAT_NUM : 1;
+        while ($num++ < $maxNum) {
+            if (F::isCorrect($res = $this->request($req))) {
+                break;
+            }
+        }
         
-        if (!F::isCorrect($res = $this->request($req))) {
+        if (!F::isCorrect($res)) {
             return $res;
         }
         
