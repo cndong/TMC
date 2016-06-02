@@ -80,7 +80,6 @@ class ProviderFTB extends ProviderF {
     
     private function _initFlightList($data) {
         $rtn = array();
-        
         $rtn['airlineMap'] = json_decode($data['airline_info_map'], True);
         $rtn['airportMap'] = json_decode($data['airport_info_map'], True);
         $rtn['cityMap'] = json_decode($data['city_info_map'], True);
@@ -117,8 +116,8 @@ class ProviderFTB extends ProviderF {
                     'cabinClass' => self::$cabinClasses[$flightSegment['cabin_class']]['code'],
                     'cabinClassName' => $realCabinClasses[$flights[$flightKey]['airlineCode'] . '-' . $flightSegment['cabin']]['cabinClassName'],
                     'cabinNum' => $flightSegment['cabin_num'],
-                    'discount' => floatval(sprintf('%.1f', $flightSegment['price'] * 10 / $flightSegment['basic_cabin_price'])),
-                    'adultPrice' => $flightSegment['price'],
+                    'discount' => floatval(sprintf('%.1f', $flightSegment['ticket_price'] * 10 / $flightSegment['basic_cabin_price'])),
+                    'adultPrice' => $flightSegment['ticket_price'],
                     'childPrice' => $flightSegment['basic_cabin_price'] * DictFlight::RATE_CHILD,
                     'babyPrice' => $flightSegment['basic_cabin_price'] * DictFlight::RATE_BABY,
                     'standardPrice' => $flightSegment['basic_cabin_price'],
