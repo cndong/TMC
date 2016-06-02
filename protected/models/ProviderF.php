@@ -85,11 +85,11 @@ class ProviderF extends Provider {
                 return $res;
             }
             
-            $data = self::addPriceSortParams($res['data']);
-            $data = $isWithKey ? $data : self::removeKey($data);
-            
             Yii::app()->cache->set($cacheKey, $data, 300);
         }
+            
+        $data = self::addPriceSortParams($res['data']);
+        $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
     }
@@ -111,11 +111,11 @@ class ProviderF extends Provider {
                 return $res;
             }
             
-            $data = self::addPriceSortParams($res['data']);
-            $data = $isWithKey ? $data : self::removeKey($data);
-            
             Yii::app()->cache->set($cacheKey, $data, 300);
         }
+            
+        $data = self::addPriceSortParams($res['data']);
+        $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
     }
