@@ -84,11 +84,12 @@ class ProviderF extends Provider {
             if (!F::isCorrect($res = ProviderF::getProvider(self::PROVIDER_TB)->pGetCNFlightList($params))) {
                 return $res;
             }
-            
+
+            $data = $res['data'];
             Yii::app()->cache->set($cacheKey, $data, 300);
         }
             
-        $data = self::addPriceSortParams($res['data']);
+        $data = self::addPriceSortParams($data);
         $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
@@ -111,10 +112,11 @@ class ProviderF extends Provider {
                 return $res;
             }
             
+            $data = $res['data'];
             Yii::app()->cache->set($cacheKey, $data, 300);
         }
             
-        $data = self::addPriceSortParams($res['data']);
+        $data = self::addPriceSortParams($data);
         $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
