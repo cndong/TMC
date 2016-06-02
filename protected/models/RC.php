@@ -107,7 +107,7 @@ class RC {
             self::RC_REASON_ERROR => '出行目的错误',
             self::RC_HAVE_NO_REVIEW_PRIVILEGE => '没有审批权限',
             
-            self::RC_F_ROUTE_NOT_EXISTS => '航线不存在',
+            self::RC_F_ROUTE_NOT_EXISTS => '航线信息已发生变化，请重新查询！',
             self::RC_F_SEGMENT_ERROR => '航段不存在',
             self::RC_F_INFO_CHANGED => '航程信息已发生变化，请重新查询！',
             self::RC_F_NO_SUCH_CABIN => '此舱位已售空',
