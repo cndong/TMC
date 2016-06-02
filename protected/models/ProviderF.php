@@ -79,12 +79,17 @@ class ProviderF extends Provider {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
-        if (!F::isCorrect($res = ProviderF::getProvider(self::PROVIDER_TB)->pGetCNFlightList($params))) {
-            return $res;
+        $cacheKey = KeyManager::getFlightCNFlightListKey($params['departCityCode'], $params['arriveCityCode'], $params['departDate'], $params['returnDate']);
+        if ($isReload || !($data = Yii::app()->cache->get($cacheKey))) {
+            if (!F::isCorrect($res = ProviderF::getProvider(self::PROVIDER_TB)->pGetCNFlightList($params))) {
+                return $res;
+            }
+            
+            $data = self::addPriceSortParams($res['data']);
+            $data = $isWithKey ? $data : self::removeKey($data);
+            
+            Yii::app()->cache->set($cacheKey, $data, 300);
         }
-        
-        $data = self::addPriceSortParams($res['data']);
-        $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
     }
@@ -95,18 +100,22 @@ class ProviderF extends Provider {
             'arriveCityCode' => ParamsFormat::F_CN_CITY_CODE,
             'departDate' => ParamsFormat::DATE,
             'flightNo' => ParamsFormat::F_FLIGHT_NO,
-            'returnDate' => '!' . ParamsFormat::DATE . '--'
         );
         if (!F::checkParams($params, $formats)) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
-        if (!F::isCorrect($res = ProviderF::getProvider(self::PROVIDER_TB)->pGetCNFlightDetail($params, $isWithKey, $isReload))) {
-            return $res;
+        $cacheKey = KeyManager::getFlightCNFlightDetailKey($params['departCityCode'], $params['arriveCityCode'], $params['departDate'], $params['flightNo']);
+        if ($isReload || !($data = Yii::app()->cache->get($cacheKey))) {
+            if (!F::isCorrect($res = ProviderF::getProvider(self::PROVIDER_TB)->pGetCNFlightDetail($params, $isWithKey, $isReload))) {
+                return $res;
+            }
+            
+            $data = self::addPriceSortParams($res['data']);
+            $data = $isWithKey ? $data : self::removeKey($data);
+            
+            Yii::app()->cache->set($cacheKey, $data, 300);
         }
-        
-        $data = self::addPriceSortParams($res['data']);
-        $data = $isWithKey ? $data : self::removeKey($data);
         
         return F::corReturn($data);
     }

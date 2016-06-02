@@ -19,4 +19,12 @@ class KeyManager {
     public static function getFlightAirlinesKey() {
         return 'FlightAirlines';
     }
+    
+    public static function getFlightCNFlightListKey($departCityCode, $arriveCityCode, $departDate, $returnData = '') {
+        return 'FlightCNFlightList' . $departCityCode . $arriveCityCode . $departDate . $returnData;
+    }
+    
+    public static function getFlightCNFlightDetailKey($departCityCode, $arriveCityCode, $departDate, $flightNo) {
+        return 'FlightCNFlightList' . $departCityCode . $arriveCityCode . $departDate . $flightNo;
+    }
 }
