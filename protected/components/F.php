@@ -23,7 +23,7 @@ class F {
     }
     
     public static function isCorrect($res) {
-        return $res['rc'] == RC::RC_SUCCESS;
+        return $res['rc'] === RC::RC_SUCCESS;
     }
     
     public static function getCurlError($res) {
