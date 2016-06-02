@@ -83,8 +83,6 @@ class RC {
             self::RC_FORBIDDEN => '没有权限',
             self::RC_AUTH_ERROR => '验证失败',
             self::RC_NO_CHANGE => '数据没有变化',
-            self::RC_DB_ERROR => '保存数据失败',
-            self::RC_DB_TRANSACTION_ERROR => '保存数据事务失败',
             self::RC_VAR_ERROR => '参数错误',
             self::RC_LOGIN_FAILED => '用户名或密码错误',
             
@@ -94,6 +92,37 @@ class RC {
             self::RC_DEP_NOT_EXISTS => '部门不存在',
             self::RC_USER_HAD_EXISTS => '员工已存在',
             self::RC_USER_NOT_EXISTS => '员工不存在',
+            
+            self::RC_COM_HAD_EXISTS => '企业已存在',
+            self::RC_DEP_HAD_EXISTS => '部门已存在',
+            self::RC_USER_HAD_EXISTS => '用户已存在',
+            self::RC_CONTACTER_HAD_EXISTS => '联系人已存在',
+            self::RC_ADDRESS_HAD_EXISTS => '地址已存在',
+            self::RC_PASSENGER_NOT_EXISTS => '联系人不存在',
+            self::RC_USER_UPLOAD_ERROR => '上传错误',
+            self::RC_USER_UPLOAD_AVATER_ERROR => '头像上传错误',
+            self::RC_USER_NOT_REVIEWER => '没有权限',
+            self::RC_STATUS_NOT_OP => '您不是操作人，没有权限',
+            self::RC_STATUS_NO_OPERATER => '缺少操作人信息',
+            self::RC_REASON_ERROR => '出行目的错误',
+            self::RC_HAVE_NO_REVIEW_PRIVILEGE => '没有审批权限',
+            
+            self::RC_F_ROUTE_NOT_EXISTS => '航线不存在',
+            self::RC_F_SEGMENT_ERROR => '航段不存在',
+            self::RC_F_INFO_CHANGED => '航程信息已发生变化，请重新查询！',
+            self::RC_F_NO_SUCH_CABIN => '此舱位已售空',
+            self::RC_F_PRICE_ERROR => '价格错误',
+            self::RC_F_PASSENGER_NUM_ERROR => '乘客数量超出上限',
+            self::RC_F_CABIN_NUM_ERROR => '舱位数量不足',
+            
+            self::RC_SMS_LOG_NOT_EXISTS => '短信日志不存在',
+            self::RC_SMS_HAD_SENDED => '短信已发送',
+            self::RC_SMS_SEND_ERROR => '短信发送失败',
+            self::RC_SMS_LIMIT_ERROR => '短信发送超出上限',
+            self::RC_SMS_INTERVAL_ERROR => '短信发送技能正在冷却',
+            self::RC_SMS_CODE_HAD_SENDED => '验证码已发送',
+            self::RC_SMS_CODE_NOT_EXISTS => '验证码不存在',
+            self::RC_SMS_CODE_NOT_CORRECT => '验证码错误'
         );
     
         return isset($config[$status]) ? $config[$status] : '服务器异常，请稍后再试';
