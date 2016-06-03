@@ -11,9 +11,9 @@ class UserPassenger extends QActiveRecord {
         return array(
             array('userID, name, type', 'required'),
             array('userID, type, cardType, sex, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
-            array('name', 'length', 'max'=>50),
-            array('cardNo', 'length', 'max'=>25),
-            array('birthday', 'length', 'max'=>10),
+            array('name', 'length', 'max' => 50),
+            array('cardNo', 'length', 'max' => 25),
+            array('birthday', 'length', 'max' => 10),
             array('id, userID, name, type, cardType, cardNo, birthday, sex, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
@@ -58,7 +58,7 @@ class UserPassenger extends QActiveRecord {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
-        if (self::model()->findByAttributes(F::arrayGetByKeys($params, array('cardNo', 'name', 'type')), 'deleted=:deleted', array(':deleted' => self::DELETED_F))) {
+        if (self::model()->findByAttributes(F::arrayGetByKeys($params, array('userID', 'cardNo', 'name', 'type')), 'deleted=:deleted', array(':deleted' => self::DELETED_F))) {
             return F::errReturn(RC::RC_PASSENGER_HAD_EXISTS);
         }
         
