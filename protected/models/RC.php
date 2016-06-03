@@ -98,7 +98,7 @@ class RC {
             self::RC_USER_HAD_EXISTS => '用户已存在',
             self::RC_CONTACTER_HAD_EXISTS => '联系人已存在',
             self::RC_ADDRESS_HAD_EXISTS => '地址已存在',
-            self::RC_PASSENGER_NOT_EXISTS => '联系人不存在',
+            self::RC_PASSENGER_HAD_EXISTS => '乘客已存在',
             self::RC_USER_UPLOAD_ERROR => '上传错误',
             self::RC_USER_UPLOAD_AVATER_ERROR => '头像上传错误',
             self::RC_USER_NOT_REVIEWER => '没有权限',
@@ -125,6 +125,6 @@ class RC {
             self::RC_SMS_CODE_NOT_CORRECT => '验证码错误'
         );
     
-        return isset($config[$status]) ? $config[$status] : '服务器异常，请稍后再试';
+        return isset($config[$status]) ? $config[$status] : '服务器异常，请稍后再试(' . $status . ')';
     }
 }
