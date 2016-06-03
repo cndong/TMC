@@ -12,7 +12,6 @@ class ApiController extends QController {
     }
     
     private function _checkAuth($params) {
-        return false;
         if (!($params = F::checkParams($params, $this->_getCommonParamsFormat()))) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }

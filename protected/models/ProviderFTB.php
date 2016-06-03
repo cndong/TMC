@@ -3,7 +3,7 @@ require_once implode(DIRECTORY_SEPARATOR, array(Yii::app()->basePath, 'extension
 
 //为保数据一致性和可维护性，只能被ProviderF调用
 class ProviderFTB extends ProviderF {
-    const REPEAT_NUM = 3;
+    const REPEAT_NUM = 5;
     
     public static $cabinClasses = array(
         0 => array('name' => '头等舱', 'code' => DictFlight::CABIN_TD),
