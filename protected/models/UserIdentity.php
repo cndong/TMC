@@ -13,7 +13,7 @@ class UserIdentity extends CUserIdentity {
         $criteria = new CDbCriteria();
         $criteria->compare('mobile', $this->mobile);
         $user = User::model()->find($criteria);
-        if (!$user) {
+        if (!$user || $user->department->deleted || $user->company->deleted) {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
         } else if (!$user->validatePassword($this->password)) {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;

@@ -55,11 +55,7 @@ class Department extends QActiveRecord {
         $department = new Department();
         $department->attributes = $res['data'];
         if (!$department->save()) {
-            Q::log('----------------');
-            Q::log($department->getErrors(), 'dberror.createDepartment');
-            Q::log($params, 'dberror.createDepartment');
-            Q::log('----------------');
-            
+            Q::logModel($department);
             return F::errReturn(RC::RC_DEP_CREATE_ERROR);
         }
         

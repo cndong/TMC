@@ -237,6 +237,10 @@ class FlightCNOrder extends QActiveRecord {
                     return F::errReturn(RC::RC_F_CABIN_NUM_ERROR);
                 }
     
+                //只要有一个是强制表现的就所有航段都购买保险，若要分开则不判断此步并修改totalInsurePrice计算方式，按照($realCabin['isforceInsure'] || $params['isInsured'])计算
+                if ($realCabin['isForceInsure'] && !$params['isInsured']) {
+                    return F::errReturn(RC::RC_MUST_INSURE);
+                }
                 $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
                 $modifySegment['departTerm'] = $realSegment['departTerm'];
                 $modifySegment['arriveTerm'] = $realSegment['arriveTerm'];

@@ -15,7 +15,7 @@ $this->registerAwesomeCss();
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                <input class="form-control" placeholder="用户名" name="login_username" type="text" data-format="!ALNUMZ|ALNUMNZ" data-err="请填写用户名|用户名错误" autofocus />
+                                <input class="form-control" placeholder="手机/用户名" name="login_username" type="text" data-format="!ALNUMZ|ALNUMNZ" data-err="请填写用户名|用户名错误" autofocus />
                             </div>
                         </div>
                         <div class="form-group">

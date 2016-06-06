@@ -10,8 +10,8 @@ class SystemController extends BossController {
             }
             
             if (!$msg) {
-                $this->bossAdmin->password = BossAdmin::getHashPassword($_POST['password'], $this->bossAdmin->ctime);
-                if (!$this->bossAdmin->save()) {
+                $this->admin->password = BossAdmin::getHashPassword($_POST['password'], $this->admin->ctime);
+                if (!$this->admin->save()) {
                     $msg = '未知错误';
                 } else {
                     $isSucc = True;

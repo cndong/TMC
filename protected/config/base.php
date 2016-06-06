@@ -14,6 +14,7 @@ return array(
     'modules' => array(
         'api',
         'boss',
+        'admin',
         'gii' => array(
             'class' => 'system.gii.GiiModule',
             'password' => '123456',

@@ -28,7 +28,7 @@ class IndexController extends BossController {
     }
     
     public function actionIndex() {
-        $this->render('//index/index', array('menus' => $this->_getLeftHtml($this->bossAdmin->getMenus(), True)));
+        $this->render('//index/index', array('menus' => $this->_getLeftHtml($this->admin->getMenus(), True)));
     }
     
     private function _getLeftSearchHtml() {

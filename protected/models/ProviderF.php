@@ -50,7 +50,6 @@ class ProviderF extends Provider {
         }
         
         foreach ($data['routes'] as &$route) {
-            $route['routeInsurePrice'] = count($route['segments']) * DictFlight::INSURE_PRICE;
             foreach ($route['segments'] as &$segment) {
                 uasort($data['flights'][$segment['flightKey']]['cabins'], function($a, $b) {return $a['adultPrice'] > $b['adultPrice']; });
             }
@@ -66,6 +65,19 @@ class ProviderF extends Provider {
         }
         
         return $data;
+    }
+    
+    public static function getIsForceInsure($airlineCode, $flightNo, $cabin) {
+        $config = array('9C' => array('*' => array('*' => 0)));
+        if (isset($config[$airlineCode])) {
+            if (isset($config[$airlineCode][$flightNo])) {
+                return isset($config[$airlineCode][$flightNo][$cabin]) || isset($config[$airlineCode][$flightNo]['*']);
+            }
+            
+            return isset($config[$airlineCode]['*']);
+        }
+        
+        return isset($config['*']);
     }
     
     public static function getCNFlightList($params, $isWithKey = False, $isReload = False) {

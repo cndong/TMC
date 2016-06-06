@@ -22,7 +22,7 @@ class FlightController extends BossController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $_POST['operaterID'] = $this->bossAdmin->id;
+        $_POST['operaterID'] = $this->admin->id;
         
         $this->onAjax($order->changeStatus($_POST['status'], $_POST));
     }

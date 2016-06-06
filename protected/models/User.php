@@ -11,14 +11,15 @@ class User extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('mobile, name, companyID, departmentID, password, isReviewer', 'required'),
+            array('mobile, name, companyID, departmentID, password, isReviewer, roleIDs', 'required'),
             array('deviceType, companyID, departmentID, isReviewer, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
             array('mobile', 'length', 'max' => 11),
             array('name', 'length', 'max' => 50),
             array('password', 'length', 'max' => 32),
             array('avatar', 'length', 'max' => 37),
             array('deviceToken', 'length', 'max' => 64),
-            array('id, mobile, name, companyID, departmentID, password, isReviewer, deleted, ctime, utime', 'safe', 'on' => 'search'),
+            array('roleIDs', 'length', 'max' => 255),
+            array('id, mobile, name, companyID, departmentID, password, isReviewer, roleIDs, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -167,5 +168,46 @@ class User extends QActiveRecord {
         }
     
         return F::corReturn();
+    }
+    
+    public function getRoles() {
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('id', explode(',', $this->roleIDs));
+         
+        $roles = UserRole::model()->findAll($criteria);
+        $roles = F::arrayAddField($roles, 'id');
+        return $roles ? $roles : array();
+    }
+    
+    public function getMenus($isReload = True) {
+        $cacheKey = KeyManager::getAdminMenukKey($this->mobile);
+        if (!$isReload && ($menus = Yii::app()->cache->get($cacheKey))) {
+            return $menus;
+        }
+        
+        $rtn = array();
+        $roles = $this->getRoles();
+        foreach ($roles as $role) {
+            $rtn = F::mergeArrayInt($rtn, $role->getMenus());
+        }
+    
+        $this->sortMenus($rtn);
+        Yii::app()->cache->set($cacheKey, $rtn, 30 * 60);
+        return $rtn;
+    }
+    
+    public function sortMenusFunc($a, $b) {
+        return $a['sort'] > $b['sort'];
+    }
+    
+    public function sortMenus(&$menus) {
+        usort($menus, array($this, 'sortMenusFunc'));
+        foreach ($menus as &$menu) {
+            if (!empty($menu['subMenus'])) {
+                $menu['subMenus'] = $this->sortMenus($menu['subMenus']);
+            }
+        }
+         
+        return $menus;
     }
 }

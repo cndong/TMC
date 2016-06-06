@@ -8,6 +8,10 @@ class KeyManager {
         return 'BossMenu' . $username;
     }
     
+    public static function getAdminMenukKey($mobile) {
+        return 'AdminMenu' . $mobile;
+    }
+    
     public static function getFlightCNAirportsKey() {
         return 'FlightAirports';
     }

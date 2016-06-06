@@ -291,7 +291,12 @@ _$.extend({
 		if (!_$.isString(msg)) {
 			msg = msg["_errMsg"];
 		}
-		layer.tips(msg, ".layui-layer-btn0", {tipsMore: true, tips: 4});
+		
+		if ($(".layui-layer-btn0").length <= 0) {
+			layer.msg(msg);
+		} else {
+			layer.tips(msg, ".layui-layer-btn0", {tipsMore: true, tips: 4});
+		}
 	},
 	open: function(type, config, obj) {
 		config = config || {};

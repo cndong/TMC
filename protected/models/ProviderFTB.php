@@ -117,11 +117,13 @@ class ProviderFTB extends ProviderF {
                     'cabinClassName' => $realCabinClasses[$flights[$flightKey]['airlineCode'] . '-' . $flightSegment['cabin']]['cabinClassName'],
                     'cabinNum' => $flightSegment['cabin_num'],
                     'discount' => floatval(sprintf('%.1f', $flightSegment['ticket_price'] * 10 / $flightSegment['basic_cabin_price'])),
-                    'adultPrice' => $flightSegment['ticket_price'],
+                    'adultPrice' => min($flightSegment['ticket_price'], $flightSegment['price']),
                     'childPrice' => $flightSegment['basic_cabin_price'] * DictFlight::RATE_CHILD,
                     'babyPrice' => $flightSegment['basic_cabin_price'] * DictFlight::RATE_BABY,
                     'standardPrice' => $flightSegment['basic_cabin_price'],
-                    'rule' => self::getRule($flights[$flightKey]['airlineCode'], $flightSegment['cabin'], date('Y-m-d', $flights[$flightKey]['departTime']))
+                    'rule' => self::getRule($flights[$flightKey]['airlineCode'], $flightSegment['cabin'], date('Y-m-d', $flights[$flightKey]['departTime'])),
+                    'isForceInsure' => ProviderF::getIsForceInsure($flights[$flightKey]['airlineCode'], $flightSegment['flight_no'], $flightSegment['cabin']) ? Dict::STATUS_TRUE : Dict::STATUS_FALSE,
+                    'insurePrice' => DictFlight::INSURE_PRICE
                 );
                 
                 $route['segments'][] = array(

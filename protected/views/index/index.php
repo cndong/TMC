@@ -206,7 +206,7 @@
             </a>
             <ul class="dropdown-menu dropdown-user in">
                 <li>
-                    <a href="javascript:;" class="active"><i class="fa fa-user fa-fw"></i><?php echo $this->bossAdmin->nickname; ?></a>
+                    <a href="javascript:;" class="active"><i class="fa fa-user fa-fw"></i><?php echo isset($this->admin->nickname) ? $this->admin->nickname : $this->admin->name; ?></a>
                 </li>
                 <!--li>
                     <a href="javascript:;" class="active"><i class="fa fa-gear fa-fw"></i>用户中心</a>

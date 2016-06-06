@@ -19,7 +19,8 @@ class Company extends QActiveRecord {
     
     public function relations() {
         return array(
-            'departments' => array(self::HAS_MANY, 'Department', 'companyID')
+            'departments' => array(self::HAS_MANY, 'Department', 'companyID'),
+            'users' => array(self::HAS_MANY, 'User', 'companyID')
         );
     }
     
