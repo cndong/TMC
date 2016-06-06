@@ -178,7 +178,7 @@ class Push {
             $brocast->setPredefinedKeyValue("badge", 0);
             $brocast->setPredefinedKeyValue("sound", "chime");
             // Set 'production_mode' to 'true' if your app is under production mode
-            $brocast->setPredefinedKeyValue("production_mode", "false");
+            $brocast->setPredefinedKeyValue("production_mode", "true");
             // Set customized fields
         	foreach ($params as $key => $value) {
 			    $brocast->setCustomizedField($key, $value);
@@ -202,7 +202,7 @@ class Push {
             $unicast->setPredefinedKeyValue("badge", 0);
             $unicast->setPredefinedKeyValue("sound", "chime");
             // Set 'production_mode' to 'true' if your app is under production mode
-            $unicast->setPredefinedKeyValue("production_mode", "false");
+            $unicast->setPredefinedKeyValue("production_mode", "true");
             foreach ($params as $key => $value) {
                 $unicast->setCustomizedField($key, $value);
             }
@@ -224,7 +224,7 @@ class Push {
             $filecast->setPredefinedKeyValue("badge", 0);
             $filecast->setPredefinedKeyValue("sound", "chime");
             // Set 'production_mode' to 'true' if your app is under production mode
-            $filecast->setPredefinedKeyValue("production_mode", "false");
+            $filecast->setPredefinedKeyValue("production_mode", "true");
             print("Uploading file contents, please wait...\r\n");
             // Upload your device tokens, and use '\n' to split them if there are multiple tokens
             $filecast->uploadContents("aa"."\n"."bb");
@@ -268,7 +268,7 @@ class Push {
             $groupcast->setPredefinedKeyValue("badge", 0);
             $groupcast->setPredefinedKeyValue("sound", "chime");
             // Set 'production_mode' to 'true' if your app is under production mode
-            $groupcast->setPredefinedKeyValue("production_mode", "false");
+            $groupcast->setPredefinedKeyValue("production_mode", "true");
             print("Sending groupcast notification, please wait...\r\n");
             $groupcast->send();
             print("Sent SUCCESS\r\n");
@@ -294,7 +294,7 @@ class Push {
             $customizedcast->setPredefinedKeyValue("badge", 0);
             $customizedcast->setPredefinedKeyValue("sound", "chime");
             // Set 'production_mode' to 'true' if your app is under production mode
-            $customizedcast->setPredefinedKeyValue("production_mode", "false");
+            $customizedcast->setPredefinedKeyValue("production_mode", "true");
             print("Sending customizedcast notification, please wait...\r\n");
             $customizedcast->send();
             print("Sent SUCCESS\r\n");
@@ -519,7 +519,7 @@ class Demo {
 			$brocast->setPredefinedKeyValue("badge", 0);
 			$brocast->setPredefinedKeyValue("sound", "chime");
 			// Set 'production_mode' to 'true' if your app is under production mode
-			$brocast->setPredefinedKeyValue("production_mode", "false");
+			$brocast->setPredefinedKeyValue("production_mode", "true");
 			// Set customized fields
 			$brocast->setCustomizedField("test", "helloworld");
 			print("Sending broadcast notification, please wait...\r\n");
@@ -542,7 +542,7 @@ class Demo {
 			$unicast->setPredefinedKeyValue("badge", 0);
 			$unicast->setPredefinedKeyValue("sound", "chime");
 			// Set 'production_mode' to 'true' if your app is under production mode
-			$unicast->setPredefinedKeyValue("production_mode", "false");
+			$unicast->setPredefinedKeyValue("production_mode", "true");
 			// Set customized fields
 			$unicast->setCustomizedField("test", "helloworld");
 			print("Sending unicast notification, please wait...\r\n");
@@ -563,7 +563,7 @@ class Demo {
 			$filecast->setPredefinedKeyValue("badge", 0);
 			$filecast->setPredefinedKeyValue("sound", "chime");
 			// Set 'production_mode' to 'true' if your app is under production mode
-			$filecast->setPredefinedKeyValue("production_mode", "false");
+			$filecast->setPredefinedKeyValue("production_mode", "true");
 			print("Uploading file contents, please wait...\r\n");
 			// Upload your device tokens, and use '\n' to split them if there are multiple tokens
 			$filecast->uploadContents("aa"."\n"."bb");
@@ -607,7 +607,7 @@ class Demo {
 			$groupcast->setPredefinedKeyValue("badge", 0);
 			$groupcast->setPredefinedKeyValue("sound", "chime");
 			// Set 'production_mode' to 'true' if your app is under production mode
-			$groupcast->setPredefinedKeyValue("production_mode", "false");
+			$groupcast->setPredefinedKeyValue("production_mode", "true");
 			print("Sending groupcast notification, please wait...\r\n");
 			$groupcast->send();
 			print("Sent SUCCESS\r\n");
@@ -630,7 +630,7 @@ class Demo {
 			$customizedcast->setPredefinedKeyValue("badge", 0);
 			$customizedcast->setPredefinedKeyValue("sound", "chime");
 			// Set 'production_mode' to 'true' if your app is under production mode
-			$customizedcast->setPredefinedKeyValue("production_mode", "false");
+			$customizedcast->setPredefinedKeyValue("production_mode", "true");
 			print("Sending customizedcast notification, please wait...\r\n");
 			$customizedcast->send();
 			print("Sent SUCCESS\r\n");
