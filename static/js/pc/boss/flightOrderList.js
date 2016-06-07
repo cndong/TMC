@@ -106,7 +106,7 @@ $(function() {
 			return _$.changeStatusGetHtml(obj);
 		},
 		cS2BookSuccLayerConfig: {
-			area: ["500px", "700px"]
+			area: ["500px", "500px"]
 		},
 	});
 	
