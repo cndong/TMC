@@ -105,6 +105,9 @@ $(function() {
 		cS2BookSuccHtml: function(obj) {
 			return _$.changeStatusGetHtml(obj);
 		},
+		cS2BookSuccLayerConfig: {
+			area: ["500px", "700px"]
+		},
 	});
 	
 	_$.bindChangeStatusClick();

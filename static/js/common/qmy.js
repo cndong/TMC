@@ -350,14 +350,14 @@ _$.extend({
 		
 		var defaultLayerConfig = {
 			title: typeof(_$[funcs["titleFunc"]]) == "undefined" ? "提示" : _$[funcs["titleFunc"]],
-			area: "500px",
+			area: ["500px"],
 			content: _$[funcs["htmlFunc"]](obj),
 			btn: ["确定", "取消"],
 			yes: typeof(_$[funcs["clickFunc"]]) == "undefined" ? defaultClickFunc : _$[funcs["clickFunc"]]
 		}
 		
 		if (typeof(_$[funcs["layerConfigFunc"]]) != "undefined") {
-			defaultLayerConfig = _$.mergeParams(defaultLayerConfig, _$[funcs["layerConfigFunc"]]());
+			defaultLayerConfig = _$.mergeParams(defaultLayerConfig, _$[funcs["layerConfigFunc"]]);
 		}
 		layer.open(defaultLayerConfig);
 		
