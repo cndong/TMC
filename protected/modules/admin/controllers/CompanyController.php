@@ -24,6 +24,20 @@ class CompanyController extends AdminController {
         $this->render('departmentList', array('dataProvider' => $dataProvider, 'params' => $data['params']));
     }
     
+    public function actionUserList() {
+        $_GET['companyID'] = $this->admin->companyID;
+        $data = User::search($_GET, True);
+        $dataProvider = new CActiveDataProvider('User', array(
+            'criteria' => $data['criteria'],
+            'pagination' => array(
+                'pageSize' => 10,
+            )
+        ));
+    
+        $this->setRenderParams('breadCrumbs', array('企业管理', '员工列表'));
+        $this->render('userList', array('dataProvider' => $dataProvider, 'params' => $data['params']));
+    }
+    
     public function actionAjaxDepartmentList() {
         $rtn = array();
         
@@ -33,6 +47,16 @@ class CompanyController extends AdminController {
         }
         
         $this->corAjax(array('departmentList' => $rtn));
+    }
+    
+    public function actionAjaxUserRoleList() {
+        $rtn = array();
+        $roles = UserRole::model()->findAll('deleted=:deleted', array(':deleted' => UserRole::DELETED_F));
+        foreach ($roles as $role) {
+            $rtn[] = F::arrayGetByKeys($role, array('id', 'name'));
+        }
+    
+        $this->corAjax(array('userRoleList' => $rtn));
     }
     
     public function actionCreateDepartment() {

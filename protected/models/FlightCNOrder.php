@@ -610,6 +610,7 @@ class FlightCNOrder extends QActiveRecord {
         $ticketAttributes['orderID'] = $this->id;
         
         $routeTypes = $this->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
+        $realTAOPrice = 0;
         foreach ($routeTypes as $routeType) {
             if (empty($params[$routeType]) || !is_array($params[$routeType])) {
                 return F::errReturn(RC::RC_VAR_ERROR);
@@ -645,6 +646,8 @@ class FlightCNOrder extends QActiveRecord {
                     $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('cabin', 'cabinClass', 'cabinClassName', 'departTime', 'arriveTime')));
                     $ticketAttributes['status'] = FlightStatus::BOOK_SUCC;
                     
+                    $realTAOPrice += $ticketAttributes['realTicketPrice'] + $ticketAttributes['realAirportTax'] + $ticketAttributes['realOilTax'];
+                    
                     $ticket = new FlightCNTicket();
                     $ticket->attributes = $ticketAttributes;
                     if (!$ticket->save()) {
@@ -655,7 +658,17 @@ class FlightCNOrder extends QActiveRecord {
             }
         }
         
-        return F::corReturn(array());
+        $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
+        $company = Company::model()->findByPk($this->companyID);
+        if (
+            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $realTAOPrice, 0, $info)) ||
+            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->insurePrice, 0, $info)) ||
+            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->invoicePrice, 0, $info))
+        ) {
+            return $res;
+        }
+        
+        return F::corReturn();
     }
     
     private function _cS2ApplyRsnBefore($params) {

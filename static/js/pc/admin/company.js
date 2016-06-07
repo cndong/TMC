@@ -17,6 +17,26 @@ $(function() {
 			});
 			return html;
 		},
+		getUserRolesOptions: function(roleID) {
+			roleID = roleID || 0;
+			
+			var html = '';
+			$.ajax({
+				url: "/admin/company/ajaxUserRoleList",
+				dataType: "json",
+				async: false,
+				success: function(data) {
+					if (!data.rc) {
+						for (var i in data.data.userRoleList) {
+							var userRole = data.data.userRoleList[i];
+							var selected = roleID == userRole["id"] ? ' selected' : '';
+							html += '<option value="' + userRole["id"] + '"' + selected + '>' + userRole["name"];
+						}
+					}
+				}
+			});
+			return html;
+		},
 		createDepartmentTitle: "添加部门",
 		createDepartmentHtml: function(obj) {
 			var companyID = obj.attr("data-company-id");
@@ -76,6 +96,12 @@ $(function() {
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工姓名:</label><div class="col-sm-6"><input type="text" class="form-control" name="create_user_name" data-format="!TEXTZ|TEXTNZ" data-err="员工姓名不能为空!|员工姓名错误!" /></div></div></div>';
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工手机:</label><div class="col-sm-6"><input type="text" class="form-control" name="create_user_mobile" data-format="!TEXTZ|MOBILE" data-err="员工手机不能为空!|员工手机错误!" /></div></div></div>';
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工密码:</label><div class="col-sm-6"><input type="text" class="form-control" name="create_user_password" data-format="!TEXTZ" data-err="员工密码不能为空!" /></div></div></div>';
+			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">员工角色:</label><div class="col-sm-6">';
+			html += '<select name="create_user_roleIDs" class="form-control input-sm" data-format="INTNZ" data-err="请选择员工角色">';
+			html += '<option value="0">----请选择----';
+			html += _$.getUserRolesOptions();
+			html += '</select>';
+			html += '</div></div></div>';
 			html += '<div class="row row-form-margin"><div class="form-group form-group-sm"><label class="col-sm-3 control-label text-right">是否审核:</label><div class="col-sm-6"><label class="radio-inline"><input type="radio" name="create_user_isReviewer" value="1" />审核人</label><label class="radio-inline"><input type="radio" name="create_user_isReviewer" value="0" checked />非审核人</label></div></div></div>';
 			
 			return html;

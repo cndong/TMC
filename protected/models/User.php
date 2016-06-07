@@ -58,6 +58,7 @@ class User extends QActiveRecord {
             'companyID' => ParamsFormat::INTNZ,
             'departmentID' => ParamsFormat::INTNZ,
             'password' => ParamsFormat::TEXTNZ,
+            'roleIDs' => ParamsFormat::INTNZ,
             'isReviewer' => '!' . ParamsFormat::BOOL . '--' . Dict::STATUS_FALSE
         );
     }
@@ -75,6 +76,10 @@ class User extends QActiveRecord {
             return F::errReturn(RC::RC_USER_HAD_EXISTS);
         }
         
+        if (!UserRole::model()->findByPk($params['roleIDs'])) {
+            return F::errReturn(RC::RC_USER_ROLE_NOT_EXISTS);
+        }
+        
         return F::corReturn($params);
     }
     
@@ -86,10 +91,7 @@ class User extends QActiveRecord {
         $user = new User();
         $user->attributes = $res['data'];
         if (!$user->save()) {
-            Q::log('----------------');
-            Q::log($user->getErrors(), 'dberror.createUser');
-            Q::log($params, 'dberror.createUser');
-            Q::log('----------------');
+            Q::logModel($user);
         
             return F::errReturn(RC::RC_USER_CREATE_ERROR);
         }

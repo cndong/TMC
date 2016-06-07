@@ -7,7 +7,7 @@
 </div>
 <div class="row row-form-margin">
     <div class="col-sm-4">
-        <div class="panel panel-info">
+        <div class="panel panel-default">
             <div class="panel-heading">企业信息</div>
             <div class="panel-body">
                 <p class="text-success">企业名称:<b><?php echo $company->name; ?></b></p>

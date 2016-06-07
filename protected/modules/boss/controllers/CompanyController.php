@@ -60,6 +60,16 @@ class CompanyController extends BossController {
         $this->corAjax(array('departmentList' => $rtn));
     }
     
+    public function actionAjaxUserRoleList() {
+        $rtn = array();
+        $roles = UserRole::model()->findAll('deleted=:deleted', array(':deleted' => UserRole::DELETED_F));
+        foreach ($roles as $role) {
+            $rtn[] = F::arrayGetByKeys($role, array('id', 'name'));
+        }
+        
+        $this->corAjax(array('userRoleList' => $rtn));
+    }
+    
     public function actionCompanyList() {
         $data = Company::search($_GET, True);
         $dataProvider = new CActiveDataProvider('Company', array(

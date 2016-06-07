@@ -10,10 +10,10 @@ class Company extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('name', 'required'),
-            array('deleted, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('name, finance', 'required'),
+            array('finance, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
             array('name', 'length', 'max' => 90),
-            array('id, name, deleted, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, name, finance, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -26,7 +26,8 @@ class Company extends QActiveRecord {
     
     private static function _getCreateCompnyFormats() {
         return array(
-            'name' => ParamsFormat::TEXTNZ
+            'name' => ParamsFormat::TEXTNZ,
+            'finance' => '!' . ParamsFormat::INTNZ . '--0'
         );
     }
     
@@ -50,11 +51,7 @@ class Company extends QActiveRecord {
         $company = new Company();
         $company->attributes = $res['data'];
         if (!$company->save()) {
-            Q::log('----------------');
-            Q::log($company->getErrors(), 'dberror.createCompany');
-            Q::log($res['data'], 'dberror.createCompany');
-            Q::log('----------------');
-            
+            Q::logModel($company);
             return F::errReturn(RC::RC_COM_CREATE_ERROR);
         }
         
@@ -81,5 +78,34 @@ class Company extends QActiveRecord {
         $rtn['data'] = self::model()->findAll($criteria);
         
         return $rtn;
+    }
+    
+    public function changeFinance($type, $payout, $income = 0, $info = array()) {
+        $num = $income - $payout;
+        if ($num == 0) {
+            return F::corReturn();
+        }
+        
+        if ($this->balance + $num < 0) {
+            return F::errReturn(RC::RC_FINANCE_NOT_ENOUGH);
+        }
+        
+        $sql = 'UPDATE ' . $this->tableName() . ' SET `balance`=`balance`' . sprintf('%+d', $num) . ' WHERE `id`=:id';
+        $params = array(':id' => $this->id);
+        if ($num < 0) {
+            $sql .= ' AND finance>:num';
+            $params[':num'] = abs($num);
+        }
+        
+        if (!Yii::app()->db->createCommand($sql)->execute($params)) {
+            return F::errReturn(RC::RC_DB_ERROR);
+        }
+        
+        $this->finance += $num;
+        if (!F::isCorrect($res = CompanyFinance::create($this, $type, $payout, $income, $info))) {
+            return $res;
+        }
+        
+        return F::corReturn();
     }
 }

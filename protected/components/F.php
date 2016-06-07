@@ -451,4 +451,17 @@ class F {
     public static function decryptWithBase64($data, $key) {
         return Yii::app()->securityManager->decrypt(base64_decode(strtr($data, array_flip(self::$encryptWithBase64TR))), $key);
     }
+    
+    public static function addQuote($str) {
+        return '<{' . $str . '}>';
+    }
+    
+    public static function trQuoteTemplate($template, $arr) {
+        $tr = array();
+        foreach ($arr as $k => $v) {
+            $tr[self::addQuote($k)] = $v;
+        }
+        
+        return strtr($template, $tr);
+    }
 }
