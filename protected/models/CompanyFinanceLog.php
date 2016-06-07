@@ -32,8 +32,6 @@ class CompanyFinanceLog extends QActiveRecord {
     }
     
     public static function create($companyID, $type, $payout, $income, $info) {
-        $info = json_encode($info);
-        
         $company = $companyID;
         if (!($company instanceof Company) && !($company = Company::model()->findByPk($companyID))) {
             return F::errReturn(RC::RC_COM_NOT_EXISTS);
