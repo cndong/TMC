@@ -15,7 +15,7 @@
         <tr>
             <td class="text-center"><?php echo CompanyFinanceLog::$types[$data->type]['name']; ?></td>
             <td class="text-center"><?php echo $data->income; ?></td>
-            <td class="text-center"><?php echo $data->outpay; ?></td>
+            <td class="text-center"><?php echo $data->payout; ?></td>
             <td class="text-center"><?php echo $data->finance; ?></td>
             <td class="text-center"><?php echo $data->getInfoDes(); ?></td>
             <td class="text-center"><?php echo date('Y-m-d H:i:s', $data->ctime); ?></td>
