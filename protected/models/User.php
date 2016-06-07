@@ -90,12 +90,15 @@ class User extends QActiveRecord {
         
         $user = new User();
         $user->attributes = $res['data'];
+        $password = $user->password;
         if (!$user->save()) {
             Q::logModel($user);
-        
+            
             return F::errReturn(RC::RC_USER_CREATE_ERROR);
         }
-        
+        if (!F::isCorrect($res = SMS::send(array('name' => $user->name, 'mobile' => $user->mobile, 'password' => $password, ), SMSTemplate::NEW_USRE))) {
+            return $res;
+        }
         return F::corReturn($user);
     }
     
