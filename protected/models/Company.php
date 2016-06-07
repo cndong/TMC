@@ -86,11 +86,11 @@ class Company extends QActiveRecord {
             return F::corReturn();
         }
         
-        if ($this->balance + $num < 0) {
+        if ($this->finance + $num < 0) {
             return F::errReturn(RC::RC_FINANCE_NOT_ENOUGH);
         }
         
-        $sql = 'UPDATE ' . $this->tableName() . ' SET `balance`=`balance`' . sprintf('%+d', $num) . ' WHERE `id`=:id';
+        $sql = 'UPDATE ' . $this->tableName() . ' SET `finance`=`finance`' . sprintf('%+d', $num) . ' WHERE `id`=:id';
         $params = array(':id' => $this->id);
         if ($num < 0) {
             $sql .= ' AND finance>:num';
