@@ -9,7 +9,7 @@
             <th class="text-center" width="15%">航程信息</th>
             <th class="text-center" width="10%">联系人</th>
             <th class="text-center" width="5%">价格</th>
-            <th class="text-center" width="10%">用户信息</th>
+            <th class="text-center" width="10%">下单用户</th>
             <th class="text-center" width="10%">状态</th>
         </tr>
     </thead>
@@ -23,6 +23,7 @@
                 $cities = DataAirport::getCNCities();
                 foreach ($data->segments as $segment) {
                     echo '航段:', $cities[$segment->departCityCode]['cityName'], '-', $cities[$segment->arriveCityCode]['cityName'], '<br />';
+                    echo '航班:', $segment->flightNo, '<br />';
                     echo '时间:', date('Y-m-d H:i', $segment->departTime), '<br />';
                 }
             ?>
