@@ -162,11 +162,14 @@ class FlightController extends ApiController {
         }
         
         $rtn = array();
+        $cities = ProviderF::getCNCityList();
         if ($user->isReviewer) {
             $res = FlightCNOrder::search(array('departmentID' => $user->departmentID, 'status' => FlightStatus::$flightStatusGroup['waitCheck']));
             foreach ($res['data'] as $order) {
                 $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
-                $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
+                $tmp['departCity'] = $cities[$order->routes['departRoute']['departCityCode']]['cityName'];
+                $tmp['arriveCity'] = $cities[$order->routes['departRoute']['arriveCityCode']]['cityName'];
+                $tmp['departTime'] = $order->routes['departRoute']['departTime'];
                 $tmp['status'] = FlightStatus::getUserDes($order['status']);
                 $rtn[] = $tmp;
             }
