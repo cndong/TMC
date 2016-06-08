@@ -60,11 +60,11 @@
         </tr>
         <tr>
             <td colspan="6">
-                <span class="pull-left text-danger">
                 <?php 
                     $cities = DataAirport::getCNCities();
                     $classifyPassengers = FlightCNOrder::classifyPassengers(FlightCNOrder::parsePassengers($data->passengers));
                     foreach ($data->segments as $segment) {
+                        echo '<span class="pull-left text-danger">';
                         echo "【航段】{$cities[$segment->departCityCode]['cityName']}({$segment->departCityCode})-{$cities[$segment->arriveCityCode]['cityName']}({$segment->arriveCityCode})";
                         echo "【航班】{$segment->flightNo}, {$segment->cabin}";
                         foreach ($classifyPassengers as $ticketType => $passengers) {
@@ -73,7 +73,7 @@
                                 echo '【', DictFlight::$ticketTypes[$ticketType]['name'], '价格】', $segment[$ticketTypeStr . 'Price'] / 100, '-', $segment[$ticketTypeStr . 'AirportTax'] / 100, '-', $segment[$ticketTypeStr . 'OilTax'] / 100;
                             }
                         }
-                        echo '【时间】', date('Y-m-d H:i', $segment->departTime), '<br />';
+                        echo '【时间】', date('Y-m-d H:i', $segment->departTime), '</span>';
                     }
                 ?>
             </span>
@@ -81,7 +81,7 @@
         </tr>
         <tr>
             <td colspan="6">
-                <span class="pull-left text-warning">
+                
                 <?php 
                     foreach ($classifyPassengers as $ticketType => $passengers) {
                         if (!empty($passengers)) {
@@ -89,7 +89,7 @@
                             foreach ($passengers as $passenger) {
                                 $cardType = Dict::$cardTypes[$passenger['cardType']]['name'];
                                 $sex = Dict::$sexTypes[$passenger['sex']]['name'];
-                                echo "【{$ticketTypeName}-{$passenger['name']}-{$cardType}-{$passenger['cardNo']}-{$passenger['birthday']}-{$sex}】<br />";
+                                echo "<span class='pull-left text-warning'>【{$ticketTypeName}-{$passenger['name']}-{$cardType}-{$passenger['cardNo']}-{$passenger['birthday']}-{$sex}】</span>";
                             }
                         }
                     }
