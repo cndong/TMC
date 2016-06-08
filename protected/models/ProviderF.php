@@ -23,6 +23,10 @@ class ProviderF extends Provider {
         return DataAirport::getINAirports();
     }
     
+    public static function getAirlineList() {
+        return DataAirline::getAirlines();
+    }
+    
     public static function encryptOrderParams($orderParams) {
         return F::encryptWithBase64(json_encode($orderParams), QEnv::$orderParamsKey[Dict::BUSINESS_FLIGHT]);
     }

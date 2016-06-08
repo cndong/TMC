@@ -137,11 +137,14 @@ class FlightController extends ApiController {
         }
         
         $rtn = array();
-        
+
+        $cities = ProviderF::getCNCityList();
         $res = FlightCNOrder::search($params);
         foreach ($res['data'] as $order) {
             $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
-            $tmp = array_merge($tmp, F::arrayGetByKeys($order['departRoute'], array('departCity', 'arriveCity', 'departTime')));
+            $tmp['departCity'] = $cities[$order->routes['departRoute']['departCityCode']]['cityName'];
+            $tmp['arriveCity'] = $cities[$order->routes['departRoute']['arriveCityCode']]['cityName'];
+            $tmp['departTime'] = $order->routes['departRoute']['departTime'];
             $tmp['status'] = FlightStatus::getUserDes($order['status']);
             $rtn[] = $tmp;
         }
@@ -177,31 +180,55 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $res = FlightCNOrder::search($_GET, False, True, True);
+        $res = FlightCNOrder::search($_GET, False);
         if (empty($res['data'])) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
+        
         $order = current($res['data']);
-        $order = array_merge($order, $this->_getFlags($order['status']));
-        $order['status'] = FlightStatus::getUserDes($order['status']);
+        $cities = ProviderF::getCNCityList(); 
+        $airports = ProviderF::getCNAirportList();
+        $airlines = ProviderF::getAirlineList();
+        
+        $rtn = $this->_getFlags($order->status);
+        $rtn['contacterName'] = $order->contactName;
+        $rtn['contacterMobile'] = $order->contactMobile;
+        $rtn['passengers'] = array_values(FlightCNOrder::parsePassengers($order->passengers));
+        $rtn = array_merge($rtn, F::arrayGetByKeys($order, array('id', 'orderPrice', 'reason', 'ctime')));
+        $rtn['status'] = FlightStatus::getUserDes($order['status']);
         foreach (array('departRoute', 'returnRoute') as $routeType) {
-            if (empty($order[$routeType])) {
+            if (empty($order->routes[$routeType])) {
                 continue;
             }
-            
-            foreach ($order[$routeType]['segments'] as &$segment) {
-                unset($segment['id']); unset($segment['orderID']); unset($segment['ctime']); unset($segment['utime']);
-                $segment['departTerm'] = $segment['departTerm'] == '--' ? '' : $segment['departTerm'];
-                $segment['arriveTerm'] = $segment['arriveTerm'] == '--' ? '' : $segment['arriveTerm'];
-                foreach ($segment['tickets'] as $k => $ticket) {
-                    $segment['tickets'][$k] = F::arrayGetByKeys($ticket, array('passengerID', 'ticketNo', 'departTime'));
+            $rtn[$routeType] = $order->routes[$routeType];
+            $rtn[$routeType]['departCity'] = $cities[$rtn[$routeType]['departCityCode']]['cityName'];
+            $rtn[$routeType]['arriveCity'] = $cities[$rtn[$routeType]['arriveCityCode']]['cityName'];
+            foreach ($rtn[$routeType]['segments'] as $segmentID => $segment) {
+                $tmp = array(
+                    'departTerm' => $segment->departTerm == '--' ? '' : $segment->departTerm,
+                    'arriveTerm' => $segment->arriveTerm == '--' ? '' : $segment->arriveTerm,
+                    'departCity' => $cities[$segment->departCityCode]['cityName'],
+                    'arriveCity' => $cities[$segment->arriveCityCode]['cityName'],
+                    'departAirport' => $airports[$segment->departAirportCode]['airportName'],
+                    'arriveAirport' => $airports[$segment->arriveAirportCode]['airportName'],
+                    'airline' => $airlines[$segment->airlineCode]['name'],
+                    'tickets' => array()
+                );
+                $tmp = array_merge($tmp, F::arrayGetByKeys($segment, array('departTime', 'arriveTime', 'flightNo', 'cabinClassName')));
+                
+                foreach ($segment->tickets as $ticket) {
+                    $tmpTicket = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $tmpTicket['ticketNo'] = $ticket->ticketNo;
+                    $tmp['tickets'][] = $tmpTicket;
                 }
                 
-                $segment['tickets'] = array_values($segment['tickets']);
+                $rtn[$routeType]['segments'][$segmentID] = $tmp;
             }
+            
+            $rtn[$routeType]['segments'] = array_values($rtn[$routeType]['segments']);
         }
         
-        $this->corAjax($order);
+        $this->corAjax($rtn);
     }
     
     public function actionReview() {

@@ -22,4 +22,10 @@ class FlightCNSegment extends QActiveRecord {
             array('id, orderID, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, cabinClassName, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, departTerm, arriveTerm, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
+    
+    public function relations() {
+        return array(
+            'tickets' => array(self::HAS_MANY, 'FlightCNTicket', 'segmentID')
+        );
+    }
 }

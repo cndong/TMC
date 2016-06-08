@@ -1,6 +1,10 @@
 $(function() {
 	_$.extend({
 		formats: _$.mergeParams(_$.formats, {
+			"F_FLIGHT_NO": /^[A-Z0-9]{5,6}$/,
+			"F_AIRLINE_CODE": /^[A-Z]{2}$/,
+			"F_CRAFT_CODE": /^[A-Z0-9]{3}$/,
+			"F_CABIN": /^[A-Z]\d?$/,
 			"F_PNR": /^[A-Z0-9]{6}$/,
 			"F_TICKET_NO": /^\d{3}-\d{10}$/
 		}),
@@ -106,6 +110,13 @@ $(function() {
 			return _$.changeStatusGetHtml(obj);
 		},
 		cS2BookSuccLayerConfig: {
+			area: ["500px", "500px"]
+		},
+		cS2RsnAgreeTitle: "同意改签",
+		cS2RsnAgreeHtml: function(obj) {
+			return _$.changeStatusGetHtml(obj);
+		},
+		cS2RsnAgreeLayerConfig: {
 			area: ["500px", "500px"]
 		},
 	});

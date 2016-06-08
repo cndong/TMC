@@ -26,16 +26,16 @@ class SMSTemplate {
             )
         ),
         self::NEW_USRE => array(
-                'name' => '新建用户账号',
-                'limit' => 10,
-                'limitUnit' => '1d',
-                'interval' => 60,
-                'template' => '尊敬的用户[<{name}>]您好, 您的登录账号: <{mobile}>, 初始密码: <{password}>。登录后请修改初始密码，APP下载链接: http://dwz.cn/sfbm_tmc',
-                'formats' => array(
-                        'name' => ParamsFormat::TEXTNZ,
-                        'mobile' => ParamsFormat::MOBILE,
-                        'password' => ParamsFormat::TEXTNZ,
-                )
+            'name' => '新建用户账号',
+            'limit' => 10,
+            'limitUnit' => '1d',
+            'interval' => 60,
+            'template' => '尊敬的用户[<{name}>]您好, 您的登录账号: <{mobile}>, 初始密码: <{password}>。登录后请修改初始密码，APP下载链接: http://dwz.cn/sfbm_tmc',
+            'formats' => array(
+                'name' => ParamsFormat::TEXTNZ,
+                'mobile' => ParamsFormat::MOBILE,
+                'password' => ParamsFormat::TEXTNZ,
+            )
         ),
     );
     

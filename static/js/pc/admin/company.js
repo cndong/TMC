@@ -108,7 +108,7 @@ $(function() {
 		},
 		createUserParams: function() {
 			var field = "create_user_";
-			return _$.collectParams("input[name^='" + field + "']:text,select[name^='" + field + "'],input:checked", field, _$.createTips);
+			return _$.collectParams("input[name^='" + field + "']:text,input[name^='" + field + "']:hidden,select[name^='" + field + "'],input:checked", field, _$.createTips);
 		},
 		createUserShow: function(obj) {
 			var companySelect = $("select[name='create_user_companyID']");

@@ -1,6 +1,8 @@
 <?php
 class TestController extends QController {
     public function actionTaobao() {
+        $order = FlightCNOrder::model()->findByPk(9);
+        var_dump($order->getTicketsWithRouteType());exit;
         var_dump(FlightCNOrder::createOrder($_POST));
         Yii::app()->end();
         exit;

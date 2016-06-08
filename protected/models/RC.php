@@ -88,6 +88,7 @@ class RC {
             self::RC_NO_CHANGE => '数据没有变化',
             self::RC_VAR_ERROR => '参数错误',
             self::RC_LOGIN_FAILED => '用户名或密码错误',
+            self::RC_FINANCE_NOT_ENOUGH => '余额不足',
             
             self::RC_COM_HAD_EXISTS => '企业已存在',
             self::RC_COM_NOT_EXISTS => '企业不存在',

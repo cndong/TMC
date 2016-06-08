@@ -31,7 +31,7 @@
             <td class="text-center"><?php echo $data->contacter->name, '<br />', $data->contacter->mobile; ?></td>
             <td class="text-center"><?php echo $data->orderPrice / 100; ?></td>
             <td class="text-center"><?php echo "{$data->user->name}<br />{$data->department->name}"; ?></td>
-            <td class="text-center"><?php echo FlightStatus::getAdminDes($data->status); ?></td>
+            <td class="text-center"><?php echo FlightStatus::getUserDes($data->status); ?></td>
         </tr>
 <?php if ($index + 1 == $widget->dataProvider->getItemCount()) { ?>
     </tbody>

@@ -69,10 +69,7 @@ class SMS {
         }
         
         if (!$smsLog->save()) {
-            Q::log('------保存短信发送结果失败开始------');
-            Q::log($smsLog->getErrors());
-            Q::log($smsLog->attributes);
-            Q::Log('------保存短信发送结果失败结束------');
+            Q::logModel($smsLog);
             
             return F::errReturn(RC::RC_MODEL_UPDATE_ERROR);
         }
