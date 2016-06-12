@@ -674,7 +674,7 @@ class FlightCNOrder extends QActiveRecord {
         $routeTypes = $this->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
         foreach ($routeTypes as $routeType) {
             $route = $routes[$routeType];
-            $firstSegment = current($route['segment']);
+            $firstSegment = current($route['segments']);
             $params = array(
                 'mobile' => $this->contactMobile,
                 'departAirport' => $airports[$route['departAirportCode']]['airportName'],
