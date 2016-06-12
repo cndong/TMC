@@ -13,6 +13,7 @@
                 <p class="text-success">企业名称:<b><?php echo $company->name; ?></b></p>
                 <p class="text-warning">现有部门:<b><?php echo $departmentNum; ?></b></p>
                 <p class="text-info">现有员工:<b><?php echo $userNum; ?></b></p>
+                <p class="text-danger">账户余额:<b>¥<?php echo $company->finance / 100; ?></b></p>
             </div>
             <div class="panel-footer">创建时间:<?php echo date('Y-m-d H:i:s', $company->ctime); ?></div>
         </div>
