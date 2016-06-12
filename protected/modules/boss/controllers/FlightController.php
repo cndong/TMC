@@ -93,7 +93,7 @@ class FlightController extends BossController {
                 $rtn .= '<div>';
                 foreach ($segment->tickets as $ticket) {
                     $ticketType = DictFlight::$ticketTypes[$passengers[$ticket->passengerID]['type']]['name'];
-                    $rtn .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[]' />{$passengers[$ticket->passengerID]->name}({$ticketType})</label>";
+                    $rtn .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[]' data-ticket-type='{$passengers[$ticket->passengerID]['type']}' />{$passengers[$ticket->passengerID]->name}({$ticketType})</label>";
                 }
                 $rtn .= '</div>';
             }
@@ -114,6 +114,13 @@ class FlightController extends BossController {
         }
         $rtn .= '</select></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">购买保险</div><div class="col-sm-6"><label class="radio-inline"><input type="radio" name="cS2RsnAgree_isInsured" value="1" checked />购买保险</label><label class="radio-inline"><input type="radio" name="cS2RsnAgree_isInsured" value="0" />不买保险</label></div></div>';
+        foreach (DictFlight::$ticketTypes as $ticketType => $ticketTypeConfig) {
+            $ticketTypeStr = $ticketTypeConfig['str'];
+            $rtn .= "<div class='t_ticketTypes row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}票价</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='cS2BookSucc_segments[{$segment->id}][{$ticketTypeStr}TicketPrice]' data-format='FLOATNZ' data-err='{$ticketTypeName}票价错误' /></div></div>";
+            $rtn .= "<div class='t_ticketTypes row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}机建</div></div>";
+            $rtn .= "<div class='t_ticketTypes row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}燃油</div></div>";
+        }
+        
         
         return $rtn;
     }
