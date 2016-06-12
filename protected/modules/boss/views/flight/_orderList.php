@@ -81,7 +81,6 @@
         </tr>
         <tr>
             <td colspan="6">
-                
                 <?php 
                     foreach ($classifyPassengers as $ticketType => $passengers) {
                         if (!empty($passengers)) {

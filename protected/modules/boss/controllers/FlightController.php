@@ -94,14 +94,13 @@ class FlightController extends BossController {
                 $rtn .= '<div>';
                 foreach ($segment->tickets as $ticket) {
                     $ticketType = DictFlight::$ticketTypes[$passengers[$ticket->passengerID]['type']]['name'];
-                    $rtn .= "<label class='checkbox-inline'><input type='checkbox' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[]' />{$passengers[$ticket->passengerID]->name}({$ticketType})</label>";
+                    $rtn .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[]' />{$passengers[$ticket->passengerID]->name}({$ticketType})</label>";
                 }
                 $rtn .= '</div>';
             }
         }
         $rtn .= '</div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">航班号</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_flightNo" class="form-control input-sm" data-format="F_FLIGHT_NO" data-err="航班号错误" /></div></div>';
-        $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">航司</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_airlineCode" class="form-control input-sm" data-format="F_AIRLINE_CODE" data-err="航司错误" /></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">舱位</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_cabin" class="form-control input-sm" data-format="F_CABIN" data-err="舱位错误" /></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">舱位名称</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_cabinClassName" class="form-control input-sm" data-format="TEXTNZ" data-err="舱位名称错误" /></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">舱位类别</div><div class="col-sm-6"><select name="cS2RsnAgree_cabinClass" class="form-control input-sm" data-format="INTNZ" data-err="请选择舱位类别"><option value="0">----请选择----';
@@ -116,8 +115,6 @@ class FlightController extends BossController {
         }
         $rtn .= '</select></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">购买保险</div><div class="col-sm-6"><label class="radio-inline"><input type="radio" name="cS2RsnAgree_isInsured" value="1" checked />购买保险</label><label class="radio-inline"><input type="radio" name="cS2RsnAgree_isInsured" value="0" />不买保险</label></div></div>';
-        
-        
         
         return $rtn;
     }

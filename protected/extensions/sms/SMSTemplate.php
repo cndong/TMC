@@ -3,6 +3,7 @@ class SMSTemplate {
     const COMMON = 1;
     const FORGET_PASSWD = 2;
     const NEW_USRE = 3;
+    const F_BOOK_SUCC = 4;
     
     public static $templates = array(
         self::COMMON => array(
@@ -26,7 +27,7 @@ class SMSTemplate {
             )
         ),
         self::NEW_USRE => array(
-            'name' => '新建用户账号',
+            'name' => '新建用户',
             'limit' => 10,
             'limitUnit' => '1d',
             'interval' => 60,
@@ -37,6 +38,20 @@ class SMSTemplate {
                 'password' => ParamsFormat::TEXTNZ,
             )
         ),
+        self::F_BOOK_SUCC => array(
+            'name' => '机票出票成功',
+            'limit' => 50,
+            'limitUnit' => '1d',
+            'interval' => 60,
+            'template' => '尊敬的旅客：您预订的<{departAirport}>-<{arriveAirport}><{flightNo}>航班于<{departTime}>起飞, 乘机人:<{passengers}>，已出票。请您携带预定时填写的有效证件, 提前2小时到机场值机！祝您旅途愉快！',
+            'formats' => array(
+                'departAirport' => ParamsFormat::TEXTNZ,
+                'arriveAirport' => ParamsFormat::TEXTNZ,
+                'flightNo' => ParamsFormat::F_FLIGHT_NO,
+                'departTime' => ParamsFormat::MDHM,
+                'passengers' => ParamsFormat::TEXTNZ
+            ),
+        )
     );
     
     public static function getLimitUnitTime($type) {

@@ -406,7 +406,11 @@ class FlightCNOrder extends QActiveRecord {
         foreach ($routeTypes as $routeType) {
             $firstSegment = current($rtn[$routeType]['segments']);
             $lastSegment = end($rtn[$routeType]['segments']);
-            $rtn[$routeType] = array_merge($rtn[$routeType], array('departCityCode' => $firstSegment['departCityCode'], 'arriveCityCode' => $lastSegment['arriveCityCode'], 'departTime' => $firstSegment['departTime'], 'arriveTime' => $lastSegment['arriveTime']));
+            $rtn[$routeType] = array_merge($rtn[$routeType], array(
+                'departCityCode' => $firstSegment['departCityCode'], 'arriveCityCode' => $lastSegment['arriveCityCode'],
+                'departAirportCode' => $firstSegment['departAirportCode'], 'arriveAirportCode' => $lastSegment['arriveAirportCode'],
+                'departTime' => $firstSegment['departTime'], 'arriveTime' => $lastSegment['arriveTime']
+            ));
         }
         
         return $rtn;
@@ -658,6 +662,30 @@ class FlightCNOrder extends QActiveRecord {
             !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->invoicePrice, 0, $info))
         ) {
             return $res;
+        }
+        
+        return F::corReturn();
+    }
+    
+    private function _cS2BookSuccAfter() {
+        $airports = ProviderF::getCNAirportList();
+        $passengers = implode(',', F::arrayGetField(self::parsePassengers($this->passengers), 'name'));
+        $routes = $this->getRoutes();
+        $routeTypes = $this->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
+        foreach ($routeTypes as $routeType) {
+            $route = $routes[$routeType];
+            $firstSegment = current($route['segment']);
+            $params = array(
+                'mobile' => $this->contactMobile,
+                'departAirport' => $airports[$route['departAirportCode']]['airportName'],
+                'arriveAirport' => $airports[$route['arriveAirportCode']]['airportName'],
+                'flightNo' => $firstSegment['flightNo'],
+                'departTime' => $route['departTime'],
+                'arriveTime' => $route['arriveTime'],
+                'passengers' => $passengers
+            );
+            
+            SMS::send($params, SMSTemplate::F_BOOK_SUCC);
         }
         
         return F::corReturn();
