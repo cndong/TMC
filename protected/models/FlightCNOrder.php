@@ -680,8 +680,9 @@ class FlightCNOrder extends QActiveRecord {
                 'departAirport' => $airports[$route['departAirportCode']]['airportName'],
                 'arriveAirport' => $airports[$route['arriveAirportCode']]['airportName'],
                 'flightNo' => $firstSegment['flightNo'],
-                'departTime' => $route['departTime'],
-                'arriveTime' => $route['arriveTime'],
+                'departDate' => date('m月d日', $route['departTime']),
+                'departTime' => date('H:i', $route['departTime']),
+                'arriveTime' => date('H:i', $route['arriveTime']),
                 'passengers' => $passengers
             );
             

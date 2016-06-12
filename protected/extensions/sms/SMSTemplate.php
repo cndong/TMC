@@ -43,14 +43,16 @@ class SMSTemplate {
             'limit' => 50,
             'limitUnit' => '1d',
             'interval' => 60,
-            'template' => '尊敬的旅客：您预订的<{departAirport}>-<{arriveAirport}><{flightNo}>航班于<{departTime}>起飞, 乘机人:<{passengers}>，已出票。请您携带预定时填写的有效证件, 提前2小时到机场值机！祝您旅途愉快！',
+            'template' => '尊敬的旅客：您预订的<{departDate}><{departTime}><{departAirport}>-<{arriveTime}><{arriveAirport}>-<{flightNo}>已出票，旅客:<{passengers}>。请您携带预定时填写的有效证件, 提前2小时到达机场办理登机。祝您旅途愉快！',
             'formats' => array(
+                'departDate' => ParamsFormat::TEXTNZ,
+                'departTime' => ParamsFormat::TIMEHM,
                 'departAirport' => ParamsFormat::TEXTNZ,
+                'arriveTime' => ParamsFormat::TIMEHM,
                 'arriveAirport' => ParamsFormat::TEXTNZ,
                 'flightNo' => ParamsFormat::F_FLIGHT_NO,
-                'departTime' => ParamsFormat::MDHM,
                 'passengers' => ParamsFormat::TEXTNZ
-            ),
+            )
         )
     );
     

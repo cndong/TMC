@@ -20,7 +20,6 @@ class ParamsFormat {
     const DATE = 'array("ParamsFormat", "isDate")';
     const TIME = 'array("ParamsFormat", "isTime")';
     const DATEHM = 'array("ParamsFormat", "isDateHM")';
-    const MDHM = 'array("ParamsFormat", "isMDHM")';
     const TIMEHM = 'array("ParamsFormat", "isTimeHM")';
     const DATETIME = 'array("F", "isDateTime")';
     const TIMESTAMP = 'array("F", "isTimestamp")';
@@ -67,10 +66,6 @@ class ParamsFormat {
     
     public static function isDateHM($str) {
         return F::isDateTime($str, 'Y-m-d H:i');
-    }
-    
-    public static function isMDHM($str) {
-        return F::isDateTime($str, 'm-d H:i');
     }
     
     public static function isIntNotZero($str) {
