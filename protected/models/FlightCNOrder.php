@@ -723,19 +723,12 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _cS2CheckSuccAfter($params) {
-        $this->mail("新订单-对公-审核通过-{$this->id}");
+        $cpl['tplInfo']['orderID'] = $this->id ;
+        Mail::sendMail($cpl, 'CheckSucc');
     }
     
     private function _cS2PayedAfter($params) {
-        $this->mail("新订单-对私-已支付-{$this->id}");
+        $cpl['tplInfo']['orderID'] = $this->id ;
+        Mail::sendMail($cpl, 'Payed');
     }
-    
-    private function mail($title, $text= '') {
-        $text= $text ? $text : "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$this->id}</a>";
-        $param = array();
-        $param['Subject'] = $title;
-        $param['To'][0]['email'] = 'g-flight@sfbm.com' ;
-        @Mail::sendMail($param);
-    }
-    
 }

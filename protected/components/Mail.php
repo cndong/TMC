@@ -31,24 +31,12 @@
  * 					'AddReplyTo' => 'xxx@sina.com','xxxx',	//可传，设置回复地址
  * 					'typeInfo' => array(),	//可传，设置模板参数
  * 			)
- * $param string $type   设置邮件模板('cpl':十分便民火车票出票量日报表 )
+ * $param string $tpl 设置邮件模板('cpl':十分便民火车票出票量日报表 )
  * return array $mailResult array('status'=>'success/fail','msg'=>'')
  * 调用方法：
  *  //模板版本
  *  Yii::import ('application.components.PHPMailer.Mail',true);
- *	$cpl['typeInfo']['totalOrderNum'] = 1 ;
- *	$cpl['typeInfo']['successOrderNum'] = 1 ;
- *	$cpl['typeInfo']['successRefundFee'] = 1 ;
- *	$cpl['typeInfo']['successTicketCount'] = 1 ;
- *	$cpl['typeInfo']['totalOrderPrice'] = 1 ;
- *	$cpl['typeInfo']['successRealPrice'] = 1 ;
- *	$cpl['typeInfo']['successTotalAmount'] = 1 ;
- *	$cpl['typeInfo']['successOrderPrice'] = 1 ;
- *	$cpl['typeInfo']['backTicketCount'] = 1 ;
- *	$cpl['typeInfo']['backOrderPrice'] = 1 ;
- *	$cpl['typeInfo']['backRefundFee'] = 1 ;
- *	$cpl['typeInfo']['backInsureFee'] = 1 ;
- *	$cpl['typeInfo']['backFee'] = 1 ;
+ *	$cpl['typeInfo']['orderID'] = 10052 ;
  *	$cpl['To'][0]['email'] = 'yangjing@sfbm.com' ;
  *	Mail::sendMail($cpl,'cpl');
  *	//非模板版本
@@ -62,25 +50,26 @@
 
 Yii::import ('application.components.PHPMailer.PHPMailer');
 class Mail{
-	 public static function sendMail($sendInfo=array(),$type=''){
-	    Q::log($sendInfo, 'mail'.type);
+	 public static function sendMail($sendInfo=array(),$tpl=''){
+	    Q::log($sendInfo, 'mail'.$tpl);
 	    if (QEnv::IS_SEND_SMS) return array('status'=>'success','msg'=>'');
-	 	if($type == ''){
+	 	if($tpl == ''){
 	 		if(!isset($sendInfo['Subject']) || !isset($sendInfo['Body'])){
 	 			$mailResult['status'] = 'fail';
 				$mailResult['msg'] = "您未使用模板发送，请填写邮件主题和内容再发送！";
 	 			return $mailResult;
 	 		}
 	 	}else{
-	 		if(!isset($sendInfo['typeInfo']) || empty($sendInfo['typeInfo'])){
+	 		if(!isset($sendInfo['tplInfo']) || empty($sendInfo['tplInfo'])){
 	 			$mailResult['status'] = 'fail';
 				$mailResult['msg'] = "您使用模板发送邮件，请输入参数！";
 	 			return $mailResult;
 	 		}else{
-	 			$result = Mail::getSubjectAndBody($type,$sendInfo['typeInfo']);
+	 			$result = Mail::getTPL($tpl,$sendInfo['tplInfo']);
 	 			if(!empty($result)){
 	 				$sendInfo['Subject'] = $result['Subject'];
 	 				$sendInfo['Body'] = $result['Body'];
+	 				if(isset($result['To'])) $sendInfo['To'] = $result['To'];
 	 			}else{
 	 				$mailResult['status'] = 'fail';
 					$mailResult['msg'] = "调用模板失败，请输入完整的参数！";
@@ -106,12 +95,13 @@ class Mail{
 			$sendInfo['Port'] = 25;
 		}
 	 	if(!isset($sendInfo['Host'])){
-			$host = trim($fromName[1]);
+/* 			$host = trim($fromName[1]);
 			if($host == 'sfbm.com'){
 				$host = 'qq.com';
 			}else if($host == 'qumaiya.com'){
 				$host = 'exmail.qq.com';
-			}
+			} */
+			$host = 'exmail.qq.com';
 			$sendInfo['Host'] = "smtp.".$host;
 		}
 		if(!isset($sendInfo['From'])){
@@ -226,8 +216,25 @@ class Mail{
 				$mailResult['msg'] = '发送邮件失败！';
 			}
 		}
-	    Q::log($mailResult, 'mail'.type.'mailResult');
+	    Q::log($mailResult, 'mail.mailResult');
 		return $mailResult;
+	}
+	
+	public static function getTPL($tpl,$content){
+        $result = array();
+        switch($tpl){
+            case 'CheckSucc':
+                    $result['Subject'] = "新订单-对公-审核通过-{$content['orderID']}";
+                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$content['orderID']}</a>";
+                    $result['To'][0]['email'] = 'g-flight@sfbm.com';
+                    break;
+            case 'Payed':
+                    $result['Subject'] = "新订单-对私-已支付-{$content['orderID']}";
+                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$content['orderID']}</a>";
+                    $result['To'][0]['email'] = 'g-flight@sfbm.com';
+                    break;
+        }
+        return $result;
 	}
 }
 ?>
