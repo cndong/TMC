@@ -1,4 +1,7 @@
 <?php
+/*
+ * 随永杰 2016-06-05
+ */
 class SMS {
     const PROVIDER_WZ = 1;
     public static $providers = array(
