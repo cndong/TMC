@@ -224,13 +224,13 @@ class Mail{
         $result = array();
         switch($tpl){
             case 'CheckSucc':
-                    $result['Subject'] = "新订单-对公-审核通过-{$content['orderID']}";
-                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$content['orderID']}</a>";
+                    $result['Subject'] = "测试新订单-对公-审核通过-{$content['orderID']}";
+                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
                     $result['To'][0]['email'] = 'g-flight@sfbm.com';
                     break;
             case 'Payed':
-                    $result['Subject'] = "新订单-对私-已支付-{$content['orderID']}";
-                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$content['orderID']}</a>";
+                    $result['Subject'] = "测试新订单-对私-已支付-{$content['orderID']}";
+                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
                     $result['To'][0]['email'] = 'g-flight@sfbm.com';
                     break;
         }
