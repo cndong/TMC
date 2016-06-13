@@ -721,6 +721,7 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _cS2BookSuccAfter() {
+        //短信通知
         $airports = ProviderF::getCNAirportList();
         $passengers = implode(',', F::arrayGetField(self::parsePassengers($this->passengers), 'name'));
         $routes = $this->getRoutes();
@@ -740,6 +741,21 @@ class FlightCNOrder extends QActiveRecord {
             );
             
             SMS::send($params, SMSTemplate::F_BOOK_SUCC);
+        }
+        
+        //APP推送
+        $title = '订单提示'; $text= "尊敬的客户您好, 恭喜您的订单{$this->id}出票成功, 点击查看详情";
+        $params = array('behaviorType'=>'V001', 'orderID'=>$this->id);
+        $user = User::model()->findByPk($this->userID);
+        switch ($user->deviceType) {
+            case 1:
+                $push = new Push(Q::PUSH_IOS_KEY, Q::PUSH_IOS_SECRET);
+                $push->sendIOSUnicast($text, $user->deviceToken, $params);
+                break;
+            case 2:
+                $push = new Push(Q::PUSH_ANDROID_KEY, Q::PUSH_ANDROID_SECRET);
+                $push->sendAndroidUnicast($title, $text, $user->deviceToken, $params);
+                break;
         }
         
         return F::corReturn();
@@ -970,5 +986,15 @@ class FlightCNOrder extends QActiveRecord {
         }
         
         return F::corReturn();
+    }
+    
+    private function _cS2CheckSuccAfter($params) {
+        $cpl['tplInfo']['orderID'] = $this->id ;
+        Mail::sendMail($cpl, 'CheckSucc');
+    }
+    
+    private function _cS2PayedAfter($params) {
+        $cpl['tplInfo']['orderID'] = $this->id ;
+        Mail::sendMail($cpl, 'Payed');
     }
 }
