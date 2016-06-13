@@ -23,7 +23,6 @@ class FlightController extends BossController {
         }
         
         $_POST['operaterID'] = $this->admin->id;
-        
         $this->onAjax($order->changeStatus($_POST['status'], $_POST));
     }
     
@@ -81,19 +80,19 @@ class FlightController extends BossController {
     }
     
     private function _cS2RsnAgreeHtml($order) {
-        $rtn = '<div class="row"><div class="col-sm-3 text-right">改签乘客</div><div class="col-sm-9">';
-        
-        $initOrder = $order->getTicketsWithRouteType();
-        $passengers = $order->getPassengerObjs();
         $cities = ProviderF::getCNCityList();
+        $routes = $order->getRoutes();
+        
+        $rtn = '<div class="row"><div class="col-sm-3 text-right">改签乘客</div><div class="col-sm-9">';
         $routeTypes = $order->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
         foreach ($routeTypes as $routeType) {
-            foreach ($initOrder[$routeType]['segments'] as $segment) {
+            foreach ($routes[$routeType]['segments'] as $segment) {
                 $rtn .= "<div class='text-danger'><label>{$cities[$segment->departCityCode]['cityName']}-{$cities[$segment->arriveCityCode]['cityName']}</label></div>";
                 $rtn .= '<div>';
                 foreach ($segment->tickets as $ticket) {
-                    $ticketType = DictFlight::$ticketTypes[$passengers[$ticket->passengerID]['type']]['name'];
-                    $rtn .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[]' data-ticket-type='{$passengers[$ticket->passengerID]['type']}' />{$passengers[$ticket->passengerID]->name}({$ticketType})</label>";
+                    $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $ticketType = DictFlight::$ticketTypes[$passenger['type']]['name'];
+                    $rtn .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[{$ticket->id}]' data-ticket-type='{$passenger['type']}' />{$passenger['name']}({$ticketType})</label>";
                 }
                 $rtn .= '</div>';
             }
@@ -113,14 +112,100 @@ class FlightController extends BossController {
             $rtn .= "<option value='{$craftType}'>{$craftConfig['name']}";
         }
         $rtn .= '</select></div></div>';
+        $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">出发时间</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_departTime" class="c_time form-control input-sm" data-format="DATE_HM" data-err="出发时间错误" readonly /></div></div>';
+        $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">到达时间</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_arriveTime" class="c_time form-control input-sm" data-format="DATE_HM" data-err="到达时间错误" readonly /></div></div>';
+        $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">出发航楼</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_departTerm" class="form-control input-sm" data-format="F_TERM" data-err="出发航站楼错误" /></div></div>';
+        $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">到达航楼</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_arriveTerm" class="form-control input-sm" data-format="F_TERM" data-err="到达航站楼错误" /></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">购买保险</div><div class="col-sm-6"><label class="radio-inline"><input type="radio" name="cS2RsnAgree_isInsured" value="1" checked />购买保险</label><label class="radio-inline"><input type="radio" name="cS2RsnAgree_isInsured" value="0" />不买保险</label></div></div>';
         foreach (DictFlight::$ticketTypes as $ticketType => $ticketTypeConfig) {
-            $ticketTypeStr = $ticketTypeConfig['str'];
-            $rtn .= "<div class='t_ticketTypes row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}票价</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='cS2BookSucc_segments[{$segment->id}][{$ticketTypeStr}TicketPrice]' data-format='FLOATNZ' data-err='{$ticketTypeName}票价错误' /></div></div>";
-            $rtn .= "<div class='t_ticketTypes row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}机建</div></div>";
-            $rtn .= "<div class='t_ticketTypes row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}燃油</div></div>";
+            $rtn .= "<div class='t_ticketTypes row row-form-margin hidden' data-ticket-type='{$ticketType}'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}票价</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='{$ticketType}_cS2RsnAgree_{$ticketTypeConfig['str']}TicketPrice' data-format='FLOATNZ' data-err='{$ticketTypeConfig['name']}票价错误' /></div></div>";
+            $rtn .= "<div class='t_ticketTypes row row-form-margin hidden' data-ticket-type='{$ticketType}'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}机建</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='{$ticketType}_cS2RsnAgree_{$ticketTypeConfig['str']}AirportTax' data-format='FLOAT' data-err='{$ticketTypeConfig['name']}机建错误' /></div></div>";
+            $rtn .= "<div class='row row-form-margin hidden'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}燃油</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='{$ticketType}_cS2RsnAgree_{$ticketTypeConfig['str']}OilTax' data-format='FLOAT' data-err='{$ticketTypeConfig['name']}燃油错误' value='0' /></div></div>";
+            $rtn .= "<div class='t_ticketTypes row row-form-margin hidden' data-ticket-type='{$ticketType}'><div class='col-sm-3 text-right'>{$ticketTypeConfig['name']}手续</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='{$ticketType}_cS2RsnAgree_{$ticketTypeConfig['str']}HandlePrice' data-format='FLOAT' data-err='{$ticketTypeConfig['name']}手续费错误' /></div></div>";
         }
         
+        return $rtn;
+    }
+    
+    private function _cS2RsnSuccHtml($order) {
+        $rtn = '';
+        
+        $cities = ProviderF::getCNCityList();
+        $classifyTickets = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
+        foreach ($order->tickets as $k => $ticket) {
+            if ($ticket->status != FlightStatus::RSN_AGREE) {
+                continue;
+            }
+            
+            if ($k <= 0) {
+                $segments = F::arrayAddField($order->segments, 'id');
+                $rtn .= "<div class='row'><div class='col-sm-3 text-right'>航段信息</div><div class='col-sm-6 text-danger'>{$cities[$segments[$ticket->segmentID]['departCityCode']]['cityName']}-{$cities[$segments[$ticket->segmentID]['arriveCityCode']]['cityName']}</div></div>";
+            }
+        
+            $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+            $classifyTickets[$passenger['type']][] = $ticket;
+        }
+        
+        $ticketHtml = '';
+        foreach ($classifyTickets as $ticketType => $tickets) {
+            if (count($tickets) <= 0) {
+                continue;
+            }
+            
+            $ticketTypeStr = DictFlight::$ticketTypes[$ticketType]['str'];
+            $ticketTypeName = DictFlight::$ticketTypes[$ticketType]['name'];
+            $rtn .= "<div class='row row-form-margin'><div class='col-sm-3 text-right'>{$ticketTypeName}PNR</div><div class='col-sm-6'><input type='text' class='form-control input-sm' name='cS2RsnSucc_{$ticketTypeStr}SmallPNR' data-format='F_PNR' data-err='{$ticketTypeName}PNR错误' /></div></div>";;
+            foreach ($tickets as $ticket) {
+                $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+                $ticketHtml .= "<div class='row row-form-margin'><div class='col-sm-3 text-right'>{$passenger['name']}票号</div><div class='col-sm-6 text-left'><input type='text' class='form-control input-sm' name='cS2RsnSucc_ticketNo[{$ticket->id}]' data-format='F_TICKET_NO' data-err='{$passenger['name']}票号错误' /></div></div>";
+            }
+        }
+        
+        return $rtn . $ticketHtml;
+    }
+    
+    private function _cS2RfdAgreeHtml($order) {
+        $rtn = '';
+        $cities = ProviderF::getCNCityList();
+        $routes = $order->getRoutes();
+        $routeTypes = $order->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
+        foreach ($routeTypes as $routeType) {
+            foreach ($routes[$routeType]['segments'] as $segment) {
+                $ticketNum = 0;
+                $segmentHtml = "<div class='row row-form-margin'><div class='col-sm-12 text-center text-danger'>{$cities[$segment->departCityCode]['cityName']}-{$cities[$segment->arriveCityCode]['cityName']}</div></div>";
+                $segmentHtml .= "<div class='row row-form-margin'><div class='col-sm-3'>选择乘客</div><div class='col-sm-9'>";
+                foreach ($order->tickets as $ticket) {
+                    if ($ticket->segmentID != $segment->id || !in_array($ticket->status, FlightStatus::getCanRefundTicketStatus())) {
+                        continue;
+                    }
+                    
+                    $ticketNum++;
+                    $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $segmentHtml .= '<div class="checkbox form-inline">';
+                    $segmentHtml .= "<label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passenger['name']}' />{$passenger['name']}</label>";
+                    $segmentHtml .= '</div>';
+                }
+                $segmentHtml .= '</div></div>';
+                
+                $rtn .= $ticketNum > 0 ? $segmentHtml : '';
+            }
+        }
+        
+        return $rtn;
+    }
+    
+    private function _cS2RfdedHtml($order) {
+        $rtn = '<div class="row"><div class="col-sm-3">退款乘客</div><div class="col-sm-6">';
+        $cities = ProviderF::getCNCityList();
+        $segments = F::arrayAddField($order->segments, 'id');
+        $classifyTickets = FlightCNOrder::classifyTickets($order->tickets);
+        $tickets = empty($classifyTickets[FlightStatus::RFD_AGREE]) ? array() : $classifyTickets[FlightStatus::RFD_AGREE];
+        $ticketNum = 0;
+        foreach ($tickets as $ticket) {
+            $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+            $rtn .= "<div class='checkbox form-inline'><label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passenger['name']}' />{$passenger['name']}</label></div>";
+        }
+        $rtn .= '</div></div>';
         
         return $rtn;
     }

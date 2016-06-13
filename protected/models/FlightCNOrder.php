@@ -39,6 +39,35 @@ class FlightCNOrder extends QActiveRecord {
         return $this->isPrivate;
     }
     
+    public function getLastDepartTime() {
+        $rtn = 0;
+        foreach ($this->tickets as $ticket) {
+            if ($ticket->departTime > $rtn) {
+                $rtn = $ticket->departTime;
+            }
+        }
+        
+        return $rtn;
+    }
+    
+    public function isCanApplyResing() {
+        return $this->getLastDepartTime() - Q_TIME > DictFlight::RESIGN_BEFORE_TIME;
+    }
+    
+    public function isCanApplyRefund() {
+        return $this->getLastDepartTime() - Q_TIME > DictFlight::REFUND_BEFORE_TIME;
+    }
+    
+    public function isCanRefunded() {
+        foreach ($this->tickets as $ticket) {
+            if (in_array($ticket->status, FlightStatus::getCanRefundedTicketStatus())) {
+                return True;
+            }
+        }
+        
+        return False;
+    }
+    
     public static function concatPassenger($passenger) {
         $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex');
         $attributes = F::arrayGetByKeys($passenger, $fields);
@@ -81,6 +110,19 @@ class FlightCNOrder extends QActiveRecord {
             $rtn[$passenger['type']][UserPassenger::getPassengerKey($passenger)] = F::arrayGetByKeys($passenger, $keys);
         }
     
+        return $rtn;
+    }
+    
+    public static function classifyTickets($tickets) {
+        $rtn = array();
+        foreach ($tickets as $ticket) {
+            if (empty($rtn[$ticket->status])) {
+                $rtn[$ticket->status] = array();
+            }
+            
+            $rtn[$ticket->status][$ticket->id] = $ticket;
+        }
+        
         return $rtn;
     }
     
@@ -480,15 +522,24 @@ class FlightCNOrder extends QActiveRecord {
             return F::errReturn(RC::RC_STATUS_NOT_EXISTS);
         }
 
-        $isUserOp = FlightStatus::isUserOp($this->status, $status);
-        $isAdminHd = FlightStatus::isAdminHd($this->status, $status);
-        $isAdminOp = FlightStatus::isAdminOp($this->status, $status);
-        if (!($isUserOp || $isAdminHd || $isAdminOp)) {
-            return F::errReturn(RC::RC_STATUS_NOT_OP);
-        }
-        
-        if (($isAdminHd || $isAdminOp) && empty($params['operaterID'])) {
-            return F::errReturn(RC::RC_STATUS_NO_OPERATER);
+        $isUserOp = $isAdminHd = $isAdminOp = False;
+        if (!FlightStatus::isJumpCheck($status)) {
+            $isUserOp = FlightStatus::isUserOp($this->status, $status);
+            $isAdminHd = FlightStatus::isAdminHd($this->status, $status);
+            $isAdminOp = FlightStatus::isAdminOp($this->status, $status);
+            if (!($isUserOp || $isAdminHd || $isAdminOp)) {
+                return F::errReturn(RC::RC_STATUS_NOT_OP);
+            }
+            
+            if (($isAdminHd || $isAdminOp) && empty($params['operaterID'])) {
+                return F::errReturn(RC::RC_STATUS_NO_OPERATER);
+            }
+            
+            if ($func = FlightStatus::getCheckFunc($status)) {
+                if (!$this->$func()) {
+                    return F::errReturn(RC::RC_STATUS_NOT_MATCH_CHECK);
+                }
+            }
         }
         
         $toStatusConfig = FlightStatus::$flightStatus[$status];
@@ -531,7 +582,7 @@ class FlightCNOrder extends QActiveRecord {
         return $res;
     }
     
-    private function _changeStatus($sets, $condition, $conditionParams) {
+    private function _changeStatus($sets, $condition = '', $conditionParams = array()) {
         $newSets = $sets;
         $sets = array();
         foreach ($newSets as $k => $v) {
@@ -610,6 +661,7 @@ class FlightCNOrder extends QActiveRecord {
     private function _cS2BookSuccBefore($params) {
         $ticketAttributes = F::arrayGetByKeys($this, array('userID', 'departmentID', 'companyID'));
         $ticketAttributes['orderID'] = $this->id;
+        $ticketAttributes['ticketID'] = 0;
         $ticketAttributes['isInsured'] = $this->isInsured;
         
         $realTAOPrice = 0;
@@ -638,9 +690,10 @@ class FlightCNOrder extends QActiveRecord {
                 $ticketAttributes['passenger'] = self::concatPassenger($passenger);
                 $ticketAttributes['ticketNo'] = $segmentParams['ticketNo'][$passengerKey];
                 $ticketAttributes['insurePrice'] = $this->insurePrice / $this->passengerNum;
+                $ticketAttributes['resignHandlePrice'] = $ticketAttributes['refundHandlePrice'] = $ticketAttributes['refundPrice'] = 0;
                 $ticketAttributes['payPrice'] = 0;
                 $ticketAttributes['tradeNo'] = '';
-                $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('cabin', 'cabinClass', 'cabinClassName', 'departTime', 'arriveTime')));
+                $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('cabin', 'cabinClass', 'cabinClassName', 'departTime', 'arriveTime', 'departTerm', 'arriveTerm')));
                 $ticketAttributes['status'] = FlightStatus::BOOK_SUCC;
             
                 $realTAOPrice += $ticketAttributes['realTicketPrice'] + $ticketAttributes['realAirportTax'] + $ticketAttributes['realOilTax'];
@@ -692,17 +745,230 @@ class FlightCNOrder extends QActiveRecord {
         return F::corReturn();
     }
     
-    private function _cS2ApplyRsnBefore($params) {
-        //需要重写
-        return F::corReturn(array('params' => array('status' => FlightStatus::RSN_SUCC)));
+    private function _getCS2RsnAgreeFormats() {
+        $rtn = array(
+            'ticketIDs' => ParamsFormat::ISARRAY,
+            'flightNo' => ParamsFormat::F_FLIGHT_NO,
+            'cabin' => ParamsFormat::F_CABIN_CODE,
+            'cabinClassName' => ParamsFormat::TEXTNZ,
+            'cabinClass' => ParamsFormat::F_CABIN_CLASS,
+            'craftCode' => ParamsFormat::F_CRAFT_CODE,
+            'craftType' => ParamsFormat::F_CRAFT_TYPE,
+            'departTime' => ParamsFormat::DATEHM,
+            'arriveTime' => ParamsFormat::DATEHM,
+            'departTerm' => ParamsFormat::F_TERM,
+            'arriveTerm' => ParamsFormat::F_TERM,
+            'isInsured' => ParamsFormat::BOOL,
+        );
+        
+        return array_merge($rtn, array_fill_keys(array(
+            'adultTicketPrice', 'adultAirportTax', 'adultOilTax', 'adultHandlePrice',
+            'childTicketPrice', 'childAirportTax', 'childOilTax', 'childHandlePrice',
+            'babyTicketPrice', 'babyAirportTax', 'babyOilTax', 'babyHandlePrice',
+        ), '!' . ParamsFormat::FLOAT . '--0'));
     }
     
-    private function _cS2RsnRefuseBefore($params) {
-        return F::corReturn(array('params' => array('status' => FlightStatus::BOOK_SUCC)));
+    private function _cS2RsnAgreeBefore($params) {
+        if (!($params = F::checkParams($params, $this->_getCS2RsnAgreeFormats())) || count($params['ticketIDs']) <= 0) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $segmentID = 0;
+        $payPrice = 0;
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        foreach ($params['ticketIDs']  as $ticketID) {
+            if (!isset($tickets[$ticketID])) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
+            $ticket = $tickets[$ticketID];
+            if (!in_array($ticket->status, FlightStatus::getCanResignTicketStatus())) {
+                return F::errReturn(RC::RC_STATUS_ERROR);
+            }
+            
+            $passenger = self::parsePassenger($ticket->passenger);
+            $segmentID = $segmentID == 0 ? $ticket->segmentID : $segmentID;
+            if ($ticket->segmentID != $segmentID) {
+                return F::errReturn(RC::RC_F_RESIGN_ONLY_ONE_SEGMENT);
+            }
+            
+            $price = array(
+                'adultTicketPrice', 'adultAirportTax', 'adultOilTax', 'adultHandlePrice',
+                'childTicketPrice', 'childAirportTax', 'childOilTax', 'childHandlePrice',
+                'babyTicketPrice', 'babyAirportTax', 'babyOilTax', 'babyHandlePrice'
+            );
+            foreach ($price as $k) {
+                $params[$k] = $params[$k] * 100;
+            }
+            
+            $ticketTypeStr = DictFlight::$ticketTypes[$passenger['type']]['str'];
+            $attributes = F::arrayGetByKeys($ticket, array('userID', 'departmentID', 'companyID', 'orderID', 'segmentID', 'passenger'));
+            $attributes = array_merge($attributes, F::arrayGetByKeys($params, array('flightNo', 'cabin', 'cabinClassName', 'cabinClass', 'craftCode', 'craftType', 'departTerm', 'arriveTerm', 'isInsured')));
+            $attributes = array_merge($attributes, F::arrayChangeKeys($params, array(
+                $ticketTypeStr . 'TicketPrice' => 'ticketPrice', $ticketTypeStr . 'AirportTax' => 'airportTax', $ticketTypeStr . 'OilTax' => 'oilTax', $ticketTypeStr . 'HandlePrice' => 'resignHandlePrice'
+            )));
+            $attributes = array_merge($attributes, F::arrayChangeKeys($attributes, array('ticketPrice' => 'realTicketPrice', 'airportTax' => 'realAirportTax', 'oilTax' => 'realOilTax')));
+            $attributes['refundHandlePrice'] = 0;
+            $attributes['insurePrice'] = intval($attributes['isInsured']) * DictFlight::INSURE_PRICE;
+            $attributes['payPrice'] = $attributes['ticketPrice'] + $attributes['airportTax'] + $attributes['oilTax'] + $attributes['resignHandlePrice'] + $attributes['insurePrice']
+                                    - $ticket->realTicketPrice - $ticket->realAirportTax - $ticket->realOilTax;
+            $attributes['payPrice'] = max($attributes['payPrice'], 0);
+            $attributes['ticketID'] = $ticket->id;
+            $attributes['departTime'] = strtotime($params['departTime']);
+            $attributes['arriveTime'] = strtotime($params['arriveTime']);
+            $attributes['status'] = FlightStatus::RSN_AGREE;
+            
+            if (!FlightCNTicket::model()->updateByPk($ticket->id, array('status' => FlightStatus::RSN_RSNEDING), 'status=:status', array(':status' => $ticket->status))) {
+                Q::logModel($ticket);
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+            }
+            
+            $newTicket = new FlightCNTicket();
+            $newTicket->attributes = $attributes;
+            if (!$newTicket->save()) {
+                Q::logModel($newTicket);
+                return F::errReturn(RC::RC_MODEL_CREATE_ERROR);
+            }
+            
+            $payPrice += $attributes['payPrice'];
+        }
+        
+        $status = !$this->isPrivate ? FlightStatus::RSN_AGREE : ($payPrice > 0 ? FlightStatus::RSN_NED_PAY : FlightStatus::RSN_PAYED);
+        return F::corReturn(array('params' => array('status' => $status)));
     }
     
-    private function _cS2ApplyRfdBefore($params) {
-        //需要重写
-        return F::corReturn(array('params' => array('status' => FlightStatus::RFD_ADM_RFDED)));
+    private function _getCS2RsnSuccFormats() {
+        $rtn = array_fill_keys(array('adultBigPNR', 'adultSmallPNR', 'childBigPNR', 'childSmallPNR', 'babyBigPNR', 'babySmallPNR'), '!' . ParamsFormat::F_PNR . '--');
+        $rtn['ticketNo'] = ParamsFormat::ISARRAY;
+    
+        return $rtn;
+    }
+    
+    private function _cS2RsnSuccBefore($params) {
+        if (!($params = F::checkParams($params, $this->_getCS2RsnSuccFormats()))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $rsnPrice = $insurePrice = 0;
+        $logPassengers = array();
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        foreach ($tickets as $ticket) {
+            if ($ticket->status != FlightStatus::RSN_AGREE) {
+                continue;
+            }
+            
+            $passenger = self::parsePassenger($ticket->passenger);
+            $bigPNRKey = DictFlight::$ticketTypes[$passenger['type']]['str'] . 'BigPNR';
+            $smallPNRKey = DictFlight::$ticketTypes[$passenger['type']]['str'] . 'SmallPNR';
+            if (!F::checkParams($params, array($smallPNRKey => ParamsFormat::F_PNR)) || !F::checkParams($params['ticketNo'], array($ticket->id => ParamsFormat::F_TICKET_NO))) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
+            $attributes = array('status' => FlightStatus::RSN_SUCC, 'bigPNR' => $params[$bigPNRKey], 'smallPNR' => $params[$smallPNRKey], 'ticketNo' => $params['ticketNo'][$ticket->id]);
+            if (!FlightCNTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => FlightStatus::RSN_AGREE))) {
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+            }
+            
+            if (!FlightCNTicket::model()->updateByPk($ticket->ticketID, array('status' => FlightStatus::RSNED), 'status=:status', array(':status' => FlightStatus::RSN_RSNEDING))) {
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+            }
+            
+            $insurePrice += $ticket->insurePrice;
+            $rsnPrice += $ticket->payPrice;
+            $logPassengers[] = $passenger['name'];
+        }
+        
+        $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
+        $company = Company::model()->findByPk($this->companyID);
+        if (
+            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
+            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $insurePrice, 0, $info))
+        ) {
+            return $res;
+        }
+        
+        $num = FlightCNTicket::model()->countByAttributes(array('orderID' => $this->id, 'status' => FlightStatus::BOOK_SUCC));
+        $status = $num > 0 ? FlightStatus::BOOK_SUCC : FlightStatus::RSNED;
+        
+        return F::corReturn(array('params' => array('status' => $status)));
+    }
+    
+    private function _cS2RfdAgreeBefore($params) {
+        if (!F::checkParams($params, array('handlePrice' => ParamsFormat::ISARRAY))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        foreach ($params['handlePrice'] as $ticketID => $refundPrice) {
+            if (!isset($tickets[$ticketID])) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
+            $ticket = $tickets[$ticketID];
+            if (!in_array($ticket->status, FlightStatus::getCanRefundTicketStatus())) {
+                return F::errReturn(RC::RC_STATUS_ERROR);
+            }
+            
+            $attributes = array('status' => FlightStatus::RFD_AGREE, 'refundHandlePrice' => $refundPrice * 100);
+            if (!FlightCNTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => $ticket->status))) {
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+            }
+        }
+        
+        $classifyTickets = self::classifyTickets(FlightCNTicket::model()->findAllByAttributes(array('orderID' => $this->id)));
+        $isCanResgin = $isCanRefund = False;
+        foreach ($classifyTickets as $status => $tickets) {
+            if (in_array($status, FlightStatus::getCanResignTicketStatus())) {
+                $isCanResgin = True;
+            } elseif (in_array($status, FlightStatus::getCanRefundTicketStatus())) {
+                $isCanRefund = True;
+            }
+        }
+        
+        $rtnStatus = empty($rtnStatus) ? FlightStatus::RFD_AGREE : ($isCanResgin ? FlightStatus::BOOK_SUCC : FlightStatus::RSN_SUCC);
+        return F::corReturn(array('params' => array('status' => $rtnStatus)));
+    }
+    
+    private function _cS2RfdedBefore($params) {
+        if (!F::checkParams($params, array('refundPrice' => ParamsFormat::ISARRAY))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        $totalRefundPrice = 0;
+        $passengers = array();
+        foreach ($params['refundPrice'] as $ticketID => $refundPrice) {
+            if (empty($tickets[$ticketID])) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
+            $ticket = $tickets[$ticketID];
+            if (!in_array($ticket->status, FlightStatus::getCanRefundedTicketStatus())) {
+                return F::errReturn(RC::RC_STATUS_ERROR);
+            }
+            $passenger = self::parsePassenger($ticket->passenger);
+            $passengers[] = $passenger['name'];
+            
+            $refundPrice = $refundPrice * 100;
+            if (!FlightCNTicket::model()->updateByPk($ticket->id, array('status' => FlightStatus::RFDED, 'refundPrice' => $refundPrice), 'status=:status', array(':status' => $ticket->status))) {
+                return F::errReturn(RC::RC_STATUS_CHANGE_ERROR);
+            }
+            
+            $totalRefundPrice += $refundPrice;
+        }
+        
+        $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name, 'passengers' => implode('、', $passengers));
+        if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, 0, $totalRefundPrice, $info))) {
+            return $res;
+        }
+        
+        $criteria = new CDbCriteria();
+        $criteria->compare('orderID', $this->id);
+        $criteria->addInCondition('status', FlightStatus::getCanRefundedTicketStatus());
+        if (FlightCNTicket::model()->count($criteria) <= 0 && $this->status == FlightStatus::RFD_AGREE) {
+            return F::corReturn(array('params' => array('status' => FlightStatus::RFDED)));
+        }
+        
+        return F::corReturn();
     }
 }

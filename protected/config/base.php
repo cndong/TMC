@@ -52,7 +52,7 @@ return array(
                 ),
                 /*
                 array(
-                    'class' => 'CWebLogRoute'
+                    'class' => 'CWebLogRoute',
                 )
                 */
             ),

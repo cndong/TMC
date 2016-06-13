@@ -55,11 +55,14 @@ class RC {
     const RC_STATUS_NOT_EXISTS = 100232;
     const RC_STATUS_NOT_OP = 100233;
     const RC_STATUS_NO_OPERATER = 100234;
-    const RC_STATUS_CHANGE_ERROR = 100235;
-    const RC_REASON_ERROR = 100236;
-    const RC_HAVE_NO_REVIEW_PRIVILEGE = 100237;
-    const RC_MUST_INSURE = 100238;
-    const RC_USER_ROLE_NOT_EXISTS = 200239;
+    const RC_STATUS_NOT_MATCH_CHECK = 100235;
+    const RC_STATUS_CHANGE_ERROR = 100236;
+    const RC_STATUS_TICKET_CHANGE_ERROR = 100237;
+    const RC_STATUS_ERROR = 100238;
+    const RC_REASON_ERROR = 100239;
+    const RC_HAVE_NO_REVIEW_PRIVILEGE = 100240;
+    const RC_MUST_INSURE = 100241;
+    const RC_USER_ROLE_NOT_EXISTS = 200242;
 
     const RC_P_ERROR = 100301;
     
@@ -70,6 +73,7 @@ class RC {
     const RC_F_PRICE_ERROR = 100405;
     const RC_F_PASSENGER_NUM_ERROR = 100406;
     const RC_F_CABIN_NUM_ERROR = 100407;
+    const RC_F_RESIGN_ONLY_ONE_SEGMENT = 100408;
     
     const RC_SMS_LOG_NOT_EXISTS = 100501;
     const RC_SMS_HAD_SENDED = 100501;
@@ -119,6 +123,7 @@ class RC {
             self::RC_F_PRICE_ERROR => '价格错误',
             self::RC_F_PASSENGER_NUM_ERROR => '乘客数量超出上限',
             self::RC_F_CABIN_NUM_ERROR => '舱位数量不足',
+            self::RC_F_RESIGN_ONLY_ONE_SEGMENT => '只能改签一个航段',
             
             self::RC_SMS_LOG_NOT_EXISTS => '短信日志不存在',
             self::RC_SMS_HAD_SENDED => '短信已发送',

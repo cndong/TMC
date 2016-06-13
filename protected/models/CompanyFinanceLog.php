@@ -11,8 +11,8 @@ class CompanyFinanceLog extends QActiveRecord {
         self::TYPE_ORDER_PRICE => array('name' => '票价(含税)', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>'),
         self::TYPE_INSURE_PRICE => array('name' => '保险', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>'),
         self::TYPE_INVOICE_PRICE => array('name' => '邮费', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>'),
-        self::TYPE_RESIGN_PRICE => array('name' => '改签', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>'),
-        self::TYPE_REFUND => array('name' => '退票', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>')
+        self::TYPE_RESIGN_PRICE => array('name' => '改签', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>，改签乘客:<{passengers}>'),
+        self::TYPE_REFUND => array('name' => '退票', 'template' => '订单号:<{orderID}>，部门:<{departmentName}>，用户:<{userName}>，退款乘客:<{passengers}>')
     );
     
     public static function model($className = __CLASS__) {

@@ -71,6 +71,9 @@ class DictFlight {
     const MAX_PASSENGER_NUM = 9;
     const INSURE_PRICE = 3000;
     
+    const RESIGN_BEFORE_TIME = -1800;
+    const REFUND_BEFORE_TIME = -1800;
+    
     public static function isCNCityCode($cityCode) {
         $cities = ProviderF::getCNCityList();
         return isset($cities[$cityCode]);
@@ -89,5 +92,13 @@ class DictFlight {
     public static function isINAirportCode($airportCode) {
         $airports = ProviderF::getINAirportList();
         return isset($airports[$airportCode]);
+    }
+    
+    public static function isCabinClass($cabinClass) {
+        return isset(self::$cabinClasses[$cabinClass]);
+    }
+    
+    public static function isCraftType($craftType) {
+        return isset(self::$craftTypes[$craftType]);
     }
 }

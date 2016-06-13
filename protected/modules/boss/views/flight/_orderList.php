@@ -1,9 +1,5 @@
 <?php
     if ($index <= 0) {
-        /*
-	    $_batchNos = F::arrayGetField($widget->dataProvider->getData(), 'batchNo');
-	    $_orders = FlightCNOrder::getByBatchNos($_batchNos);
-	    */
 ?>
 <table class="table table-striped table-bordered table-hover">
     <thead>
@@ -12,10 +8,11 @@
             <th class="text-center" width="5%">往返</th>
             <th class="text-center" width="10%">联系人</th>
             <th class="text-center" width="5%">价格</th>
-            <th class="text-center" width="10%">用户信息</th>
+            <th class="text-center" width="5%">用户信息</th>
             <th class="text-center" width="10%">状态</th>
-            <th class="text-center" width="10%">客服</th>
+            <th class="text-center" width="5%">客服</th>
             <th class="text-center" width="15%">操作</th>
+            <th class="text-center" width="5%">退款成功</th>
         </tr>
     </thead>
     <tbody>
@@ -50,12 +47,15 @@
                         $counter++;
                         $toStatusConfig = FlightStatus::$flightStatus[$toStatus];
                         $btnColor = empty($toStatusConfig['btnColor']) ? 'info' : $toStatusConfig['btnColor'];
-                        echo '<button class="c_change_status btn btn-' . $btnColor . ' mini" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $toStatusConfig['btn'] . '</button>';
+                        echo '<button class="c_change_status btn btn-' . $btnColor . '" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $toStatusConfig['btn'] . '</button>';
                     }
                     
                     echo $counter <= 0 ? '无' : '';
                 ?>
                 </div>
+            </td>
+            <td rowspan="3" class="text-center">
+                <?php echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . FlightStatus::RFDED . '" data-status-str="' . FlightStatus::$flightStatus[FlightStatus::RFDED]['str'] . '">退款成功</button>' : '无'; ?>
             </td>
         </tr>
         <tr>

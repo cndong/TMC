@@ -39,13 +39,15 @@ class ParamsFormat {
     const F_CN_AIRPORT_CODE = 'array("DictFlight", "isCNAirportCode")';
     const F_AIRLINE_TCODE = '/^[A-Z]{2}$/';
     const F_CRAFT_CODE = '/^[A-Z0-9]{3}$/';
+    const F_CRAFT_TYPE = 'array("DictFlight", "isCraftType")';
     const F_FLIGHT_NO = '/^[A-Z0-9]{5,6}$/';
     const F_CABIN_CODE = '/^[A-Z]\d?$/';
-    const F_CABIN_CLASS = '/^[A-Z]$/';
+    const F_CABIN_CLASS = 'array("DictFlight", "isCabinClass")';
     const F_STATUS = 'array("FlightStatus", "isFlightStatus")';
     const F_STATUS_ARRAY = 'array("FlightStatus", "isFlightStatusArray")';
     const F_PNR = '/^[A-Z0-9]{6}$/';
     const F_TICKET_NO = '/^\d{3}-\d{10}$/';
+    const F_TERM = '/^(--)|(T\d)$/';
     const PASSENGER_TYPE = 'array("Dict", "isPassengerType")';
     const CARD_TYPE = 'array("Dict", "isCardType")';
     const SEX = 'array("Dict", "isSex")';

@@ -15,17 +15,18 @@ class FlightStatus {
     const APPLY_RSN = 13;
     const RSNING = 14;
     const RSN_REFUSE = 15;
-    const RSN_AGREE = 16; //需要填写要改签的航班信息和要改签的乘客
-    const RSN_NED_PAY = 17; //个人票使用
-    const RSN_PAYED = 18; //个人票使用
-    const RSN_SUCC = 19; //因公票此步计算差额 新票为此状态
-    const RESED = 20; //原票改为已改签状态
-    const APPLY_RFD = 21;
-    const RFDING = 22;
-    const RFD_REFUSE = 23;
-    const RFD_AGREE = 24;
-    const RFD_ADM_RFDING = 25;
-    const RFD_ADM_RFDED = 26;
+    const RSN_RSNEDING = 16; //原票改为此状态 *票*
+    const RSN_AGREE = 17; //需要填写要改签的航班信息和要改签的乘客 *订单+票*
+    const RSN_NED_PAY = 18; //个人票使用
+    const RSN_NED_PAY_TIMEOUT = 19; //个人票使用
+    const RSN_PAYED = 20; //个人票使用
+    const RSN_SUCC = 21; //因公票此步计算差额 新票为此状态
+    const RSNED = 22; //原票改为已改签状态 *订单+票*
+    const APPLY_RFD = 23;
+    const RFDING = 24;
+    const RFD_REFUSE = 25;
+    const RFD_AGREE = 26;//退票操作需要接单、退款操作无需接单
+    const RFDED = 27;
     
     public static $flightStatus = array(
         self::WAIT_CHECK => array(
@@ -79,7 +80,7 @@ class FlightStatus {
             'adminHdStatus' => array(self::BOOK_FAIL_RFDING)
         ),
         self::BOOK_FAIL_RFDING => array(
-            'des' => array('user' => '订票失败，正在退款'), //需要加个check判断是否是私人的 然后退款
+            'des' => array('user' => '订票失败，正在退款'),
             'str' => 'BookFailRfding',
             'adminOpStatus' => array(self::BOOK_FAIL_RFDED),
         ),
@@ -91,6 +92,7 @@ class FlightStatus {
         self::APPLY_RSN => array(
             'des' => array('user' => '已申请改签'),
             'str' => 'ApplyRsn',
+            'check' => 'isCanApplyResign',
             'adminHdStatus' => array(self::RSNING)
         ),
         self::RSNING => array(
@@ -98,22 +100,37 @@ class FlightStatus {
             'str' => 'Rsning',
             'adminOpStatus' => array(self::RSN_AGREE, self::RSN_REFUSE)
         ),
-        self::RSN_AGREE => array(//保存完改签信息后需要判断是否是私人并需要支付，是则改为RSN_NED_PAY状态
+        self::RSN_AGREE => array(
             'des' => array('user' => '正在改签'),
             'str' => 'RsnAgree',
-            'adminOpStatus' => array(self::RSN_SUCC, self::RESED),
-            'btn' => '同意改签'
+            'adminOpStatus' => array(self::RSN_SUCC),
+            'btn' => '同意改签',
+            'btnColor' => 'success'
         ),
         self::RSN_REFUSE => array(
             'des' => array('user' => '改签失败'),
-            'str' => 'RsnRefuse', //虚状态需要改为订票成功
-            'btn' => '拒绝改签'
+            'str' => 'RsnRefuse',
+            'btn' => '拒绝改签',
+            'btnColor' => 'danger'
         ),
-        self::RSN_NED_PAY => array( //私人的才显示，把需支付金额加入要改签的票中
-            'des' => array('user' => '改签需支付'),
+        self::RSN_RSNEDING => array(
+            'des' => array('user' => '正在改签')
+        ),
+        self::RSN_NED_PAY => array(
+            'des' => array('user' => '改签中，需支付差额'),
             'str' => 'RsnNedPay',
-            'check' => 'isPrivate',
-            'userStatus' => array(self::RSN_PAYED)
+            'userStatus' => array(self::RSN_PAYED),
+            'adminOpStatus' => array(self::RSN_NED_PAY_TIMEOUT)
+        ),
+        self::RSN_PAYED => array(
+            'des' => array('user' => '改签中，已支付差额'),
+            'str' => 'RsnPayed',
+            'adminOpStatus' => array(self::RSN_SUCC),
+        ),
+        self::RSN_NED_PAY_TIMEOUT => array(
+            'des' => array('user' => '改签已超时'),
+            'str' => 'RsnNedPayTimeout',
+            'btn' => '支付超时'
         ),
         self::RSN_PAYED => array(
             'des' => array('user' => '已支付改签差额'),
@@ -121,21 +138,24 @@ class FlightStatus {
             'adminOpStatus' => array(self::RSN_SUCC)
         ),
         self::RSN_SUCC => array(
-            'des' => array('user' => '改签成功'), //因公的需扣款
+            'des' => array('user' => '改签票'),
             'str' => 'RsnSucc',
-            'userStatus' => array(self::APPLY_RFD)
+            'btn' => '改签成功',
+            'btnColor' => 'success'
         ),
-        self::RESED => array(
+        self::RSNED => array(
             'des' => array('user' => '已改签'),
             'str' => 'Resed',
+            'userStatus' => array(self::APPLY_RFD)
         ),
         self::APPLY_RFD => array(
             'des' => array('user' => '申请退票'),
             'str' => 'ApplyRfd',
+            'check' => 'isCanApplyRefund',
             'adminHdStatus' => array(self::RFDING)
         ),
         self::RFDING => array(
-            'des' => array('user' => '正在退票'),
+            'des' => array('user' => '正在退款'),
             'str' => 'Rfding',
             'adminOpStatus' => array(self::RFD_REFUSE, self::RFD_AGREE)
         ),
@@ -145,20 +165,14 @@ class FlightStatus {
             'btn' => '拒绝退票'
         ),
         self::RFD_AGREE => array(
-            'des' => array('user' => '退票成功，待退款'),
+            'des' => array('user' => '正在退款'),
             'str' => 'RfdAgree',
-            'adminHdStatus' => array(self::RFD_ADM_RFDING),
             'btn' => '同意退票'
         ),
-        self::RFD_ADM_RFDING => array(
-            'des' => array('user' => '正在退款'),
-            'str' => 'RfdAdmRfding',
-            'adminOpStatus' => array(self::RFD_ADM_RFDED)
-        ),
-        self::RFD_ADM_RFDED => array(
+        self::RFDED => array(
             'des' => array('user' => '已退款'),
-            'str' => 'RfdAdmRfded',
-            'btn' => '退款成功'
+            'str' => 'Rfded',
+            'isJumpCheck' => True
         ),
     );
 
@@ -200,6 +214,10 @@ class FlightStatus {
         return isset(self::$flightStatus[$status]['isTicket']) ? self::$flightStatus[$status]['isTicket'] : False;
     }
     
+    public static function isJumpCheck($status) {
+        return isset(self::$flightStatus[$status]['isJumpCheck']) ? self::$flightStatus[$status]['isJumpCheck'] : False;
+    }
+    
     public static function getUserDes($status) {
         return self::$flightStatus[$status]['des']['user'];
     }
@@ -222,5 +240,25 @@ class FlightStatus {
     
     public static function getCheckFunc($status) {
         return isset(self::$flightStatus[$status]['check']) ? self::$flightStatus[$status]['check'] : False;
+    }
+    
+    public static function getCanResignOrderStatus() {
+        return array(self::BOOK_SUCC);
+    }
+    
+    public static function getCanResignTicketStatus() {
+        return array(self::BOOK_SUCC);
+    }
+    
+    public static function getCanRefundOrderStatus() {
+        return array(self::BOOK_SUCC, self::RSNED);
+    }
+    
+    public static function getCanRefundTicketStatus() {
+        return array(self::BOOK_SUCC, self::RSN_SUCC);
+    }
+    
+    public static function getCanRefundedTicketStatus() {
+        return array(self::RFD_AGREE);
     }
 }
