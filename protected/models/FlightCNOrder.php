@@ -50,7 +50,7 @@ class FlightCNOrder extends QActiveRecord {
         return $rtn;
     }
     
-    public function isCanApplyResing() {
+    public function isCanApplyResign() {
         return $this->getLastDepartTime() - Q_TIME > DictFlight::RESIGN_BEFORE_TIME;
     }
     
