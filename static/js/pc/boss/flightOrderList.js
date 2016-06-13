@@ -6,7 +6,8 @@ $(function() {
 			"F_CRAFT_CODE": /^[A-Z0-9]{3}$/,
 			"F_CABIN": /^[A-Z]\d?$/,
 			"F_PNR": /^[A-Z0-9]{6}$/,
-			"F_TICKET_NO": /^\d{3}-\d{10}$/
+			"F_TICKET_NO": /^\d{3}-\d{10}$/,
+			"F_TERM": /^(T\d)|(--)$/,
 		}),
 		changeStatusUrl: "/boss/flight/changeStatus",
 		changeStatusRequest: function(params) {
@@ -81,7 +82,6 @@ $(function() {
 			}
 			
 			params = _$.mergeParams(_$.changeStatusBaseParams(obj), params);
-			
 			return params;
 		},
 		bindChangeStatusClick: function() {
@@ -118,6 +118,116 @@ $(function() {
 		},
 		cS2RsnAgreeLayerConfig: {
 			area: ["500px", "500px"]
+		},
+		cS2RsnAgreeShow: function(obj) {
+			$(".c_select_ticket").change(function() {
+				var ticketType = $(this).attr("data-ticket-type");
+				var isChecked = $(this).prop("checked");
+				if (isChecked) {
+					$(".t_ticketTypes[data-ticket-type='" + ticketType + "']").removeClass("hidden");
+				} else {
+					if ($(".c_select_ticket[data-ticket-type='" + ticketType + "']:checked").length < 1) {
+						$(".t_ticketTypes[data-ticket-type='" + ticketType + "']").addClass("hidden");
+					}
+				}
+			});
+			$(".c_time").focus(function() {
+				WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});
+			});
+		},
+		cS2RsnAgreeParams: function(obj) {
+			var field = 'cS2RsnAgree_';
+			var params = _$.collectParams("input[name^='" + field + "']:text,input[name^='" + field + "']:hidden,select[name^='" + field + "'],input:checked", field, _$.createTips);
+			if (!params) {
+				return false;
+			}
+
+			var tickets = $("input[name^='" + field + "ticketIDs[']:checked");
+			if (tickets.length <= 0) {
+				_$.createTips("请选择要改签的乘客");
+				return false;
+			}
+			
+			var ticketTypes = {};
+			tickets.each(function() {
+				ticketTypes[$(this).attr("data-ticket-type")] = true;
+			});
+			
+			for (var ticketType in ticketTypes) {
+				var ticketField = ticketType + "_" + field;
+				var ticketParams = _$.collectParams("input[name^='" + ticketField + "']", ticketField, _$.createTips);
+				if (!ticketParams) {
+					return false;
+				}
+				
+				params = _$.mergeParams(params, ticketParams);
+			}
+			
+			return _$.mergeParams(_$.changeStatusBaseParams(obj), params)
+		},
+		cS2RsnSuccTitle: "改签成功",
+		cS2RsnSuccHtml: function(obj) {
+			return _$.changeStatusGetHtml(obj);
+		},
+		cS2RfdAgreeTitle: "同意退票",
+		cS2RfdAgreeHtml: function(obj) {
+			return _$.changeStatusGetHtml(obj);
+		},
+		cS2RfdAgreeShow: function(obj) {
+			$(".c_select_ticket").change(function() {
+				var ticketID = $(this).attr("data-ticket-id");
+				var passengerName = $(this).attr("data-passenger-name");
+				var isChecked = $(this).prop("checked");
+				if (isChecked) {
+					$(this).parent().append('<input type="text" class="form-control input-sm" name="cS2RfdAgree_handlePrice[' + ticketID + ']" data-format="FLOAT" data-err="' + passengerName + '手续费错误" placeholder="手续费" />');
+				} else {
+					$(this).siblings().remove("input:text");
+				}
+			});
+		},
+		cS2RfdAgreeParams: function(obj) {
+			var field = 'cS2RfdAgree_';
+			var params = _$.collectParams("input[name^='" + field + "']:text", field, _$.createTips);
+			if (!params) {
+				return false;
+			}
+			
+			if ($("input[name^='" + field + "handlePrice[']").length <= 0) {
+				_$.createTips("请选择要退票的乘客");
+				return false;
+			}
+			
+			return _$.mergeParams(_$.changeStatusBaseParams(obj), params);
+		},
+		cS2RfdedTitle: "退款成功",
+		cS2RfdedHtml: function(obj) {
+			return _$.changeStatusGetHtml(obj);
+		},
+		cS2RfdedShow: function(obj) {
+			$(".c_select_ticket").change(function() {
+				var ticketID = $(this).attr("data-ticket-id");
+				var passengerName = $(this).attr("data-passenger-name");
+				var isChecked = $(this).prop("checked");
+				if (isChecked) {
+					$(this).parent().append('<input type="text" class="form-control input-sm" name="cS2Rfded_refundPrice[' + ticketID + ']" data-format="FLOAT" data-err="' + passengerName + '实退金额错误" placeholder="实退金额" />');
+				} else {
+					$(this).siblings().remove("input:text");
+				}
+			});
+		},
+		cS2RfdedParams: function(obj) {
+			var field = 'cS2Rfded_';
+			var params = _$.collectParams("input[name^='" + field + "']:text", field, _$.createTips);
+			if (!params) {
+				return false;
+			}
+			
+			if ($("input[name^='" + field + "refundPrice[']").length <= 0) {
+				_$.createTips("请选择退款成功的乘客");
+				return false;
+			}
+			
+			return _$.mergeParams(_$.changeStatusBaseParams(obj), params);
 		},
 	});
 	
