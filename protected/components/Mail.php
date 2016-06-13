@@ -51,7 +51,7 @@
 Yii::import ('application.components.PHPMailer.PHPMailer');
 class Mail{
 	 public static function sendMail($sendInfo=array(),$tpl=''){
-	    Q::log($sendInfo, 'mail'.$tpl);
+	    Q::log($sendInfo, 'mail.send.'.$tpl);
 	    if (QEnv::IS_SEND_SMS) return array('status'=>'success','msg'=>'');
 	 	if($tpl == ''){
 	 		if(!isset($sendInfo['Subject']) || !isset($sendInfo['Body'])){
