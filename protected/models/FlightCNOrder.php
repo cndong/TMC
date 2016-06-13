@@ -988,15 +988,13 @@ class FlightCNOrder extends QActiveRecord {
         return F::corReturn();
     }
     
-    /*
-    private function _cS2CheckSuccAfter() {
+    private function _cS2CheckSuccAfter($params) {
         $cpl['tplInfo']['orderID'] = $this->id ;
         Mail::sendMail($cpl, 'CheckSucc');
     }
     
-    private function _cS2PayedAfter() {
+    private function _cS2PayedAfter($params) {
         $cpl['tplInfo']['orderID'] = $this->id ;
         Mail::sendMail($cpl, 'Payed');
     }
-    */
 }
