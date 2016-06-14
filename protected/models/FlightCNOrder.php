@@ -421,6 +421,9 @@ class FlightCNOrder extends QActiveRecord {
             }
     
             $train->commit();
+            
+            Log::add(Log::TYPE_CN_FLIGHT, $order->id, array('status' => $order->status, 'isSucc' => True));
+            
             return F::corReturn($order);
         } catch (Exception $e) {
             $train->rollback();
@@ -578,6 +581,7 @@ class FlightCNOrder extends QActiveRecord {
         }
         
         $this->_setCollectParams($status, array(), False);
+        Log::add(Log::TYPE_CN_FLIGHT, $this->id, array('status' => $this->status, 'isSucc' => F::isCorrect($res), 'params' => $params, 'res' => $res));
         
         return $res;
     }
