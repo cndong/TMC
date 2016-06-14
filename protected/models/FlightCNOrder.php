@@ -984,8 +984,8 @@ class FlightCNOrder extends QActiveRecord {
         
         $criteria = new CDbCriteria();
         $criteria->compare('orderID', $this->id);
-        $criteria->addInCondition('status', FlightStatus::getCanRefundedTicketStatus());
-        if (FlightCNTicket::model()->count($criteria) <= 0 && $this->status == FlightStatus::RFD_AGREE) {
+        $criteria->addInCondition('status', array(FlightStatus::RFDED));
+        if (FlightCNTicket::model()->count($criteria) == $this->passengerNum) {
             return F::corReturn(array('params' => array('status' => FlightStatus::RFDED)));
         }
         
