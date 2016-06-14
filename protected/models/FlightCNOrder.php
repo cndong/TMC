@@ -971,7 +971,7 @@ class FlightCNOrder extends QActiveRecord {
             
             $refundPrice = $refundPrice * 100;
             if (!FlightCNTicket::model()->updateByPk($ticket->id, array('status' => FlightStatus::RFDED, 'refundPrice' => $refundPrice), 'status=:status', array(':status' => $ticket->status))) {
-                return F::errReturn(RC::RC_STATUS_CHANGE_ERROR);
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
             }
             
             $totalRefundPrice += $refundPrice;
