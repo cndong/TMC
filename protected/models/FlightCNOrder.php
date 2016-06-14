@@ -992,15 +992,31 @@ class FlightCNOrder extends QActiveRecord {
         return F::corReturn();
     }
     
+    //对公-审核成功-邮件机票组
     private function _cS2CheckSuccAfter() {
         $cpl['tplInfo']['orderID'] = $this->id ;
-        Mail::sendMail($cpl, 'CheckSucc');
+        @Mail::sendMail($cpl, 'CheckSucc');
         return F::corReturn();
     }
     
+    //对私-支付成功-邮件机票组
     private function _cS2PayedAfter() {
         $cpl['tplInfo']['orderID'] = $this->id ;
-        Mail::sendMail($cpl, 'Payed');
+        @Mail::sendMail($cpl, 'Payed');
+        return F::corReturn();
+    }
+    
+    //申请退票成功-邮件机票组
+    private function _cS2ApplyRfdAfter() {
+        $cpl['tplInfo']['orderID'] = $this->id ;
+        @Mail::sendMail($cpl, 'ApplyRfd');
+        return F::corReturn();
+    }
+    
+    //申请改签成功-邮件机票组
+    private function _cS2ApplyRsnAfter() {
+        $cpl['tplInfo']['orderID'] = $this->id ;
+        @Mail::sendMail($cpl, 'ApplyRsn');
         return F::corReturn();
     }
 }

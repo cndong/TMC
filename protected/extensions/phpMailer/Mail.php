@@ -48,34 +48,35 @@
  *	Mail::sendMail($cpl); 
  */
 
-Yii::import ('application.components.PHPMailer.PHPMailer');
 class Mail{
 	 public static function sendMail($sendInfo=array(),$tpl=''){
 	    Q::log($sendInfo, 'mail.send.'.$tpl);
-	    if (QEnv::IS_SEND_SMS) return array('status'=>'success','msg'=>'');
+	    $mailResult = array();
+	    if(QEnv::IS_SEND_SMS) return $mailResult = array('status'=>'success','msg'=>'');
 	 	if($tpl == ''){
 	 		if(!isset($sendInfo['Subject']) || !isset($sendInfo['Body'])){
 	 			$mailResult['status'] = 'fail';
 				$mailResult['msg'] = "您未使用模板发送，请填写邮件主题和内容再发送！";
-	 			return $mailResult;
 	 		}
 	 	}else{
 	 		if(!isset($sendInfo['tplInfo']) || empty($sendInfo['tplInfo'])){
 	 			$mailResult['status'] = 'fail';
 				$mailResult['msg'] = "您使用模板发送邮件，请输入参数！";
-	 			return $mailResult;
 	 		}else{
-	 			$result = Mail::getTPL($tpl,$sendInfo['tplInfo']);
-	 			if(!empty($result)){
-	 				$sendInfo['Subject'] = $result['Subject'];
-	 				$sendInfo['Body'] = $result['Body'];
-	 				if(isset($result['To'])) $sendInfo['To'] = $result['To'];
+	 			$resultTPL = Mail::getTPL($tpl,$sendInfo['tplInfo']);
+	 			if(!empty($resultTPL)){
+	 				$sendInfo['Subject'] = $resultTPL['Subject'];
+	 				$sendInfo['Body'] = $resultTPL['Body'];
+	 				if(isset($resultTPL['To'])) $sendInfo['To'] = $resultTPL['To'];
 	 			}else{
 	 				$mailResult['status'] = 'fail';
 					$mailResult['msg'] = "调用模板失败，请输入完整的参数！";
-		 			return $mailResult;
 	 			}
 	 		}
+	 	}
+	 	if($mailResult) {
+	 	    Q::log($mailResult, 'mail.mailResult.Error');
+	 	    return $mailResult;
 	 	}
 	 	//实例化
 		$mail = new PHPMailer();
@@ -222,16 +223,28 @@ class Mail{
 	
 	public static function getTPL($tpl,$content){
         $result = array();
+        $body = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
+        $email = 'g-flight@sfbm.com'; 
         switch($tpl){
             case 'CheckSucc':
-                    $result['Subject'] = "测试新订单-对公-审核通过-{$content['orderID']}";
-                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
-                    $result['To'][0]['email'] = 'g-flight@sfbm.com';
+                    $result['Subject'] = "新订单-对公-审核通过-{$content['orderID']}";
+                    $result['Body'] = $body;
+                    $result['To'][0]['email'] = $email;
                     break;
             case 'Payed':
-                    $result['Subject'] = "测试新订单-对私-已支付-{$content['orderID']}";
-                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
-                    $result['To'][0]['email'] = 'g-flight@sfbm.com';
+                    $result['Subject'] = "新订单-对私-已支付-{$content['orderID']}";
+                    $result['Body'] = $body;
+                    $result['To'][0]['email'] = $email;
+                    break;
+          case 'ApplyRfd':
+                    $result['Subject'] = "退票-{$content['orderID']}";
+                    $result['Body'] = $body;
+                    $result['To'][0]['email'] = $email;
+                    break;
+          case 'ApplyRsn':
+                    $result['Subject'] = "改签-{$content['orderID']}";
+                    $result['Body'] = $body;
+                    $result['To'][0]['email'] = $email;
                     break;
         }
         return $result;
