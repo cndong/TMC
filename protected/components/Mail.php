@@ -51,7 +51,7 @@
 Yii::import ('application.components.PHPMailer.PHPMailer');
 class Mail{
 	 public static function sendMail($sendInfo=array(),$tpl=''){
-	    Q::log($sendInfo, 'mail'.$tpl);
+	    Q::log($sendInfo, 'mail.send.'.$tpl);
 	    if (QEnv::IS_SEND_SMS) return array('status'=>'success','msg'=>'');
 	 	if($tpl == ''){
 	 		if(!isset($sendInfo['Subject']) || !isset($sendInfo['Body'])){
@@ -224,13 +224,13 @@ class Mail{
         $result = array();
         switch($tpl){
             case 'CheckSucc':
-                    $result['Subject'] = "新订单-对公-审核通过-{$content['orderID']}";
-                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$content['orderID']}</a>";
+                    $result['Subject'] = "测试新订单-对公-审核通过-{$content['orderID']}";
+                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
                     $result['To'][0]['email'] = 'g-flight@sfbm.com';
                     break;
             case 'Payed':
-                    $result['Subject'] = "新订单-对私-已支付-{$content['orderID']}";
-                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList'>{$content['orderID']}</a>";
+                    $result['Subject'] = "测试新订单-对私-已支付-{$content['orderID']}";
+                    $result['Body'] = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
                     $result['To'][0]['email'] = 'g-flight@sfbm.com';
                     break;
         }
