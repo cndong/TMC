@@ -61,18 +61,20 @@ class FlightStatus {
         self::BOOKING => array(
             'des' => array('user' => '正在出票'),
             'str' => 'Booking',
-            'adminOpStatus' => array(self::BOOK_FAIL, self::BOOK_SUCC)
+            'adminOpStatus' => array(self::BOOK_SUCC, self::BOOK_FAIL)
         ),
         self::BOOK_FAIL => array(
             'des' => array('user' => '出票失败'),
             'str' => 'BookFail',
-            'btn' => '出票失败'
+            'btn' => '出票失败',
+            'btnColor' => 'danger'
         ),
         self::BOOK_SUCC => array(
             'des' => array('user' => '出票成功'),
             'str' => 'BookSucc',
             'userStatus' => array(self::APPLY_RSN, self::APPLY_RFD),
-            'btn' => '出票成功'
+            'btn' => '出票成功',
+            'btnColor' => 'success'
         ),
         self::BOOK_FAIL_WAIT_RFD => array(
             'des' => array('user' => '出票失败，等待退款'),
@@ -157,17 +159,19 @@ class FlightStatus {
         self::RFDING => array(
             'des' => array('user' => '正在退款'),
             'str' => 'Rfding',
-            'adminOpStatus' => array(self::RFD_REFUSE, self::RFD_AGREE)
+            'adminOpStatus' => array(self::RFD_AGREE, self::RFD_REFUSE)
         ),
         self::RFD_REFUSE => array(
             'des' => array('user' => '退票失败'),
             'str' => 'RfdRefuse',
-            'btn' => '拒绝退票'
+            'btn' => '拒绝退票',
+            'btnColor' => 'danger'
         ),
         self::RFD_AGREE => array(
             'des' => array('user' => '正在退款'),
             'str' => 'RfdAgree',
-            'btn' => '同意退票'
+            'btn' => '同意退票',
+            'btnColor' => 'success'
         ),
         self::RFDED => array(
             'des' => array('user' => '已退款'),
