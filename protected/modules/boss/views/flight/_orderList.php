@@ -4,15 +4,15 @@
 <table class="table table-striped table-bordered table-hover">
     <thead>
         <tr>
-            <th class="text-center" width="10%">订单信息</th>
+            <th class="text-center" width="13%">订单信息</th>
             <th class="text-center" width="5%">往返</th>
             <th class="text-center" width="10%">联系人</th>
             <th class="text-center" width="5%">价格</th>
-            <th class="text-center" width="5%">用户信息</th>
-            <th class="text-center" width="10%">状态</th>
-            <th class="text-center" width="5%">客服</th>
-            <th class="text-center" width="15%">操作</th>
-            <th class="text-center" width="5%">退款成功</th>
+            <th class="text-center" width="12%">用户信息</th>
+            <th class="text-center" width="15%">状态</th>
+            <th class="text-center" width="10%">客服</th>
+            <th class="text-center" width="20%">操作</th>
+            <th class="text-center" width="10%">退款成功</th>
         </tr>
     </thead>
     <tbody>
