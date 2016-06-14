@@ -1,14 +1,14 @@
 <?php
-require_once(dirname(__FILE__) . '/' . 'notification/android/AndroidBroadcast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/android/AndroidFilecast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/android/AndroidGroupcast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/android/AndroidUnicast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/android/AndroidCustomizedcast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/ios/IOSBroadcast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/ios/IOSFilecast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/ios/IOSGroupcast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/ios/IOSUnicast.php');
-require_once(dirname(__FILE__) . '/' . 'notification/ios/IOSCustomizedcast.php');
+require_once(dirname(__FILE__) . '/android/AndroidBroadcast.php');
+require_once(dirname(__FILE__) . '/android/AndroidFilecast.php');
+require_once(dirname(__FILE__) . '/android/AndroidGroupcast.php');
+require_once(dirname(__FILE__) . '/android/AndroidUnicast.php');
+require_once(dirname(__FILE__) . '/android/AndroidCustomizedcast.php');
+require_once(dirname(__FILE__) . '/ios/IOSBroadcast.php');
+require_once(dirname(__FILE__) . '/ios/IOSFilecast.php');
+require_once(dirname(__FILE__) . '/ios/IOSGroupcast.php');
+require_once(dirname(__FILE__) . '/ios/IOSUnicast.php');
+require_once(dirname(__FILE__) . '/ios/IOSCustomizedcast.php');
 
 class Push {
     protected $appkey           = NULL;

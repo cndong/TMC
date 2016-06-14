@@ -8,7 +8,9 @@ return array(
         'application.components.*',
         'application.datas.*',
         'application.extensions.*',
-        'application.extensions.sms.*'
+        'application.extensions.sms.*',
+        'application.extensions.push.*',
+        'application.extensions.phpMailer.*',
     ),
     'defaultController' => 'boss/index',
     'modules' => array(
