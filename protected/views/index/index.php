@@ -225,7 +225,7 @@
     </div>
 </nav>
 <div id="page-wrapper">
-	<iframe id="right" name="right" scrolling="no" width="100%" src="<?php echo $this->createUrl('right'); ?>" frameborder="0"></iframe>
+	<iframe id="right" name="right" width="100%" src="<?php echo $this->createUrl('right'); ?>" frameborder="0"></iframe>
 </div>
 <script type="text/javascript">
     $(function() {
@@ -241,7 +241,7 @@
 	            $('div.navbar-collapse').removeClass('collapse');
 	        }
 
-	        height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
+	        height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 6;
 	        height = height - topOffset;
 	        if (height < 1) height = 1;
 	        if (height > topOffset) {

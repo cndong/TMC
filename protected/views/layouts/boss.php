@@ -14,7 +14,7 @@
 	 <title>后台管理系统</title>
 </head>
 <body>
-    <div id="wrapper">
+    <div class="<?php if ($className = $this->getRenderParams('containerClass', 'container-fluid')) {echo $className;} ?>">
         <?php 
             if ($breadCrumbs = $this->getRenderParams('breadCrumbs', array())) {
         ?>
