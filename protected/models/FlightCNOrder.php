@@ -770,7 +770,6 @@ class FlightCNOrder extends QActiveRecord {
             'ticketIDs' => ParamsFormat::ISARRAY,
             'flightNo' => ParamsFormat::F_FLIGHT_NO,
             'cabin' => ParamsFormat::F_CABIN_CODE,
-            'cabinClassName' => ParamsFormat::TEXTNZ,
             'cabinClass' => ParamsFormat::F_CABIN_CLASS,
             'craftCode' => ParamsFormat::F_CRAFT_CODE,
             'craftType' => ParamsFormat::F_CRAFT_TYPE,
@@ -823,7 +822,7 @@ class FlightCNOrder extends QActiveRecord {
             
             $ticketTypeStr = DictFlight::$ticketTypes[$passenger['type']]['str'];
             $attributes = F::arrayGetByKeys($ticket, array('userID', 'departmentID', 'companyID', 'orderID', 'segmentID', 'passenger'));
-            $attributes = array_merge($attributes, F::arrayGetByKeys($params, array('flightNo', 'cabin', 'cabinClassName', 'cabinClass', 'craftCode', 'craftType', 'departTerm', 'arriveTerm', 'isInsured')));
+            $attributes = array_merge($attributes, F::arrayGetByKeys($params, array('flightNo', 'cabin', 'cabinClass', 'craftCode', 'craftType', 'departTerm', 'arriveTerm', 'isInsured')));
             $attributes = array_merge($attributes, F::arrayChangeKeys($params, array(
                 $ticketTypeStr . 'TicketPrice' => 'ticketPrice', $ticketTypeStr . 'AirportTax' => 'airportTax', $ticketTypeStr . 'OilTax' => 'oilTax', $ticketTypeStr . 'HandlePrice' => 'resignHandlePrice'
             )));
@@ -834,6 +833,7 @@ class FlightCNOrder extends QActiveRecord {
                                     - $ticket->realTicketPrice - $ticket->realAirportTax - $ticket->realOilTax;
             $attributes['payPrice'] = max($attributes['payPrice'], 0);
             $attributes['ticketID'] = $ticket->id;
+            $attributes['cabinClassName'] = DictFlight::$cabinClasses[$attributes['cabinClass']]['name'];
             $attributes['departTime'] = strtotime($params['departTime']);
             $attributes['arriveTime'] = strtotime($params['arriveTime']);
             $attributes['status'] = FlightStatus::RSN_AGREE;
@@ -855,6 +855,10 @@ class FlightCNOrder extends QActiveRecord {
         
         $status = !$this->isPrivate ? FlightStatus::RSN_AGREE : ($payPrice > 0 ? FlightStatus::RSN_NED_PAY : FlightStatus::RSN_PAYED);
         return F::corReturn(array('params' => array('status' => $status)));
+    }
+    
+    private function _cS2RsnRefuseBefore($params) {
+        return F::corReturn(array('params' => array('status' => FlightStatus::BOOK_SUCC)));
     }
     
     private function _getCS2RsnSuccFormats() {

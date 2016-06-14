@@ -103,7 +103,6 @@ class FlightController extends BossController {
         $rtn .= '</div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">航班号</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_flightNo" class="form-control input-sm" data-format="F_FLIGHT_NO" data-err="航班号错误" /></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">舱位</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_cabin" class="form-control input-sm" data-format="F_CABIN" data-err="舱位错误" /></div></div>';
-        $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">舱位名称</div><div class="col-sm-6"><input type="text" name="cS2RsnAgree_cabinClassName" class="form-control input-sm" data-format="TEXTNZ" data-err="舱位名称错误" /></div></div>';
         $rtn .= '<div class="row row-form-margin"><div class="col-sm-3 text-right">舱位类别</div><div class="col-sm-6"><select name="cS2RsnAgree_cabinClass" class="form-control input-sm" data-format="INTNZ" data-err="请选择舱位类别"><option value="0">----请选择----';
         foreach (DictFlight::$cabinClasses as $cabinClass => $cabinConfig) {
             $rtn .= "<option value='{$cabinClass}'>{$cabinConfig['name']}";
