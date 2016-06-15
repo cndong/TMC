@@ -52,7 +52,7 @@ class Mail{
 	 public static function sendMail($sendInfo=array(),$tpl=''){
 	    Q::log($sendInfo, 'mail.send.'.$tpl);
 	    $mailResult = array();
-	    if(QEnv::IS_SEND_SMS) return $mailResult = array('status'=>'success','msg'=>'');
+	    if(!QEnv::IS_SEND_SMS) return $mailResult = array('status'=>'success','msg'=>'');
 	 	if($tpl == ''){
 	 		if(!isset($sendInfo['Subject']) || !isset($sendInfo['Body'])){
 	 			$mailResult['status'] = 'fail';

@@ -4,7 +4,7 @@ class UserController extends ApiController {
         $rtn = F::arrayGetByKeys($user, array('id', 'mobile', 'name', 'isReviewer', 'ctime', 'avatar'));
         $rtn['company'] = $user->company->name;
         $rtn['department'] = $user->department->name;
-        $rtn['avatar'] =  $rtn['avatar'] ? "http://{$_SERVER['HTTP_HOST']}/avatar/{$rtn['avatar']}" : '';
+        $rtn['avatar'] =  $rtn['avatar'] ? "http://{$_SERVER['HTTP_HOST']}/avatar/{$rtn['avatar']}" : "http://{$_SERVER['HTTP_HOST']}/static/images/api/defaultAvatar.png";
         return $rtn;
     }
     
