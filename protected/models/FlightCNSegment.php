@@ -18,7 +18,7 @@ class FlightCNSegment extends QActiveRecord {
             array('craftCode', 'length', 'max' => 15),
             array('cabinClass', 'length', 'max' => 1),
             array('cabinClassName', 'length', 'max' => 50),
-            array('departTerm, arriveTerm', 'length', 'max' => 2),
+            array('departTerm, arriveTerm', 'length', 'max' => 15),
             array('id, orderID, isBack, flightNo, airlineCode, craftCode, craftType, cabin, cabinClass, cabinClassName, departCityCode, arriveCityCode, departAirportCode, arriveAirportCode, departTime, arriveTime, departTerm, arriveTerm, adultPrice, childPrice, babyPrice, adultAirportTax, childAirportTax, babyAirportTax, adultOilTax, childOilTax, babyOilTax, ctime, utime', 'safe', 'on' => 'search'),
         );
     }

@@ -17,7 +17,7 @@ class FlightCNTicket extends QActiveRecord {
             array('craftCode', 'length', 'max' => 15),
             array('cabinClassName', 'length', 'max' => 50),
             array('passenger', 'length', 'max' => 73),
-            array('departTerm, arriveTerm', 'length', 'max' => 2),
+            array('departTerm, arriveTerm', 'length', 'max' => 15),
             array('id, userID, departmentID, companyID, orderID, segmentID, ticketID, passenger, isInsured, bigPNR, smallPNR, ticketNo, ticketPrice, airportTax, oilTax, insurePrice, resignHandlePrice, refundHandlePrice, realTicketPrice, realResignHandlePrice, realRefundHandlePrice, refundPrice, payPrice, tradeNo, flightNo, craftCode, craftType, cabin, cabinClass, cabinClassName, departTime, arriveTime, departTerm, arriveTerm, status, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
