@@ -865,7 +865,7 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _cS2RsnSuccBefore($params) {
-        if (empty($params['tickets']) || count($params['tickets']) <= 0) {
+        if (!F::checkParams($params, array('tickets' => ParamsFormat::ISARRAY)) || count($params['tickets']) <= 0) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
 
@@ -880,6 +880,8 @@ class FlightCNOrder extends QActiveRecord {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
             
+            $attributes['realTicketPrice'] *= 100;
+            $attributes['realResignHandlePrice'] *= 100;
             $attributes['status'] = FlightStatus::RSN_SUCC;
             if (!FlightCNTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => FlightStatus::RSN_AGREE))) {
                 return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
@@ -914,13 +916,13 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _cS2RfdAgreeBefore($params) {
-        if (!F::checkParams($params, array('handlePrice' => ParamsFormat::ISARRAY))) {
+        if (!F::checkParams($params, array('tickets' => ParamsFormat::ISARRAY)) || count($params['tickets']) <= 0) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
         $tickets = F::arrayAddField($this->tickets, 'id');
-        foreach ($params['handlePrice'] as $ticketID => $refundPrice) {
-            if (!isset($tickets[$ticketID])) {
+        foreach ($params['tickets'] as $ticketID => $price) {
+            if (!isset($tickets[$ticketID]) || !F::checkParams($price, array('refundHandlePrice' => ParamsFormat::FLOAT, 'realRefundHandlePrice' => ParamsFormat::FLOAT))) {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
             
@@ -929,7 +931,7 @@ class FlightCNOrder extends QActiveRecord {
                 return F::errReturn(RC::RC_STATUS_ERROR);
             }
             
-            $attributes = array('status' => FlightStatus::RFD_AGREE, 'refundHandlePrice' => $refundPrice * 100);
+            $attributes = array('status' => FlightStatus::RFD_AGREE, 'refundHandlePrice' => $price['refundHandlePrice'] * 100, 'realRefundHandlePrice' => $price['realRefundHandlePrice'] * 100);
             if (!FlightCNTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => $ticket->status))) {
                 return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
             }
@@ -950,14 +952,14 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _cS2RfdedBefore($params) {
-        if (!F::checkParams($params, array('refundPrice' => ParamsFormat::ISARRAY))) {
+        if (!F::checkParams($params, array('tickets' => ParamsFormat::ISARRAY)) || count($params['tickets']) <= 0) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
         $tickets = F::arrayAddField($this->tickets, 'id');
         $totalRefundPrice = 0;
         $passengers = array();
-        foreach ($params['refundPrice'] as $ticketID => $refundPrice) {
+        foreach ($params['tickets'] as $ticketID => $refundPrice) {
             if (empty($tickets[$ticketID])) {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
@@ -977,9 +979,11 @@ class FlightCNOrder extends QActiveRecord {
             $totalRefundPrice += $refundPrice;
         }
         
-        $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name, 'passengers' => implode('、', $passengers));
-        if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, 0, $totalRefundPrice, $info))) {
-            return $res;
+        if (!$this->isPrivate) {
+            $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name, 'passengers' => implode('、', $passengers));
+            if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, 0, $totalRefundPrice, $info))) {
+                return $res;
+            }
         }
         
         $criteria = new CDbCriteria();

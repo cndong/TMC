@@ -195,15 +195,23 @@ $(function() {
 		cS2RfdAgreeHtml: function(obj) {
 			return _$.changeStatusGetHtml(obj);
 		},
+		cS2RfdAgreeLayerConfig: {
+			area: "50%"
+		},
 		cS2RfdAgreeShow: function(obj) {
 			$(".c_select_ticket").change(function() {
 				var ticketID = $(this).attr("data-ticket-id");
-				var passengerName = $(this).attr("data-passenger-name");
+				var rowID = 'cS2RsnAgreeRow_' + ticketID;
+				var passenger = $(this).attr("data-passenger-name");
 				var isChecked = $(this).prop("checked");
 				if (isChecked) {
-					$(this).parent().append('<input type="text" class="form-control input-sm" name="cS2RfdAgree_handlePrice[' + ticketID + ']" data-format="FLOAT" data-err="' + passengerName + '手续费错误" placeholder="手续费" />');
+					var html = '<div class="row row-form-margin" id="' + rowID + '"><div class="col-sm-4 text-right">' + passenger + '</div><div class="col-sm-6 form-inline">';
+					html += '<div class="form-group form-group-sm"><label>手续费</label><input type="text" name="cS2RfdAgree_tickets[' + ticketID + '][refundHandlePrice]" data-format="FLOAT" data-err="' + passenger + '手续费错误" class="form-control" size="5" /></div>';
+					html += '<div class="form-group form-group-sm"><label>实际手续费</label><input type="text" name="cS2RfdAgree_tickets[' + ticketID + '][realRefundHandlePrice]" data-format="FLOAT" data-err="' + passenger + '实际手续费错误" class="form-control" size="5" /></div>';
+					html += '</div></div>';
+					$(this).parents(".row").parent().append(html);
 				} else {
-					$(this).siblings().remove("input:text");
+					$("#" + rowID).remove();
 				}
 			});
 		},
@@ -214,7 +222,7 @@ $(function() {
 				return false;
 			}
 			
-			if ($("input[name^='" + field + "handlePrice[']").length <= 0) {
+			if ($("input[name^='" + field + "tickets[']").length <= 0) {
 				_$.createTips("请选择要退票的乘客");
 				return false;
 			}
@@ -228,12 +236,16 @@ $(function() {
 		cS2RfdedShow: function(obj) {
 			$(".c_select_ticket").change(function() {
 				var ticketID = $(this).attr("data-ticket-id");
-				var passengerName = $(this).attr("data-passenger-name");
+				var rowID = 'cS2RsnAgreeRow_' + ticketID;
+				var passenger = $(this).attr("data-passenger-name");
 				var isChecked = $(this).prop("checked");
 				if (isChecked) {
-					$(this).parent().append('<input type="text" class="form-control input-sm" name="cS2Rfded_refundPrice[' + ticketID + ']" data-format="FLOAT" data-err="' + passengerName + '实退金额错误" placeholder="实退金额" />');
+					var html = '<div class="row row-form-margin" id="' + rowID + '"><div class="col-sm-4 text-right">' + passenger + '</div><div class="col-sm-6 form-inline">';
+					html += '<div class="form-group form-group-sm"><input type="text" name="cS2Rfded_tickets[' + ticketID + ']" data-format="FLOAT" data-err="' + passenger + '金额错误" value="' + $(this).attr("data-refund-price") + '" class="form-control" size="5" /></div>';
+					html += '</div></div>';
+					$(this).parents(".row").parent().append(html);
 				} else {
-					$(this).siblings().remove("input:text");
+					$("#" + rowID).remove();
 				}
 			});
 		},
@@ -244,7 +256,7 @@ $(function() {
 				return false;
 			}
 			
-			if ($("input[name^='" + field + "refundPrice[']").length <= 0) {
+			if ($("input[name^='" + field + "tickets[']").length <= 0) {
 				_$.createTips("请选择退款成功的乘客");
 				return false;
 			}

@@ -167,7 +167,7 @@ class FlightController extends BossController {
             foreach ($routes[$routeType]['segments'] as $segment) {
                 $ticketNum = 0;
                 $segmentHtml = "<div class='row row-form-margin'><div class='col-sm-12 text-center text-danger'>{$cities[$segment->departCityCode]['cityName']}-{$cities[$segment->arriveCityCode]['cityName']}</div></div>";
-                $segmentHtml .= "<div class='row row-form-margin'><div class='col-sm-3'>选择乘客</div><div class='col-sm-9'>";
+                $segmentHtml .= "<div class='row row-form-margin'><div class='col-sm-4 text-right'>选择乘客</div><div class='col-sm-6'>";
                 foreach ($order->tickets as $ticket) {
                     if ($ticket->segmentID != $segment->id || !in_array($ticket->status, FlightStatus::getCanRefundTicketStatus())) {
                         continue;
@@ -175,8 +175,11 @@ class FlightController extends BossController {
                     
                     $ticketNum++;
                     $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $ticketTypeName = DictFlight::$ticketTypes[$passenger['type']]['name'];
+                    $passengerName = "{$passenger['name']}($ticketTypeName)";
+                    
                     $segmentHtml .= '<div class="checkbox form-inline">';
-                    $segmentHtml .= "<label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passenger['name']}' />{$passenger['name']}</label>";
+                    $segmentHtml .= "<label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passengerName}' data-ticket-price='{$ticket->realTicketPrice}' data-airport-tax='{$ticket->airportTax}' data-oil-tax='{$ticket->oilTax}' />{$passengerName}</label>";
                     $segmentHtml .= '</div>';
                 }
                 $segmentHtml .= '</div></div>';
@@ -189,7 +192,7 @@ class FlightController extends BossController {
     }
     
     private function _cS2RfdedHtml($order) {
-        $rtn = '<div class="row"><div class="col-sm-3">退款乘客</div><div class="col-sm-6">';
+        $rtn = '<div class="row"><div class="col-sm-4 text-right">退款乘客</div><div class="col-sm-6">';
         $cities = ProviderF::getCNCityList();
         $segments = F::arrayAddField($order->segments, 'id');
         $classifyTickets = FlightCNOrder::classifyTickets($order->tickets);
@@ -197,7 +200,11 @@ class FlightController extends BossController {
         $ticketNum = 0;
         foreach ($tickets as $ticket) {
             $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
-            $rtn .= "<div class='checkbox form-inline'><label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passenger['name']}' />{$passenger['name']}</label></div>";
+            $ticketTypeName = DictFlight::$ticketTypes[$passenger['type']]['name'];
+            $passengerName = "{$passenger['name']}($ticketTypeName)";
+            $refundPrice = ($ticket->ticketPrice + $ticket->airportTax + $ticket->oilTax - $ticket->refundHandlePrice) / 100;
+            
+            $rtn .= "<div class='checkbox form-inline'><label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passengerName}' data-refund-price='{$refundPrice}' />{$passengerName}</label></div>";
         }
         $rtn .= '</div></div>';
         
