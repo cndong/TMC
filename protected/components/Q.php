@@ -11,7 +11,6 @@ class Q {
     
     const HOST_PREFIX_M = 'm.';
     
-    
     const PUSH_ANDROID_KEY = '57495d3ce0f55a85260027dd';
     const PUSH_ANDROID_SECRET= 'm8r1vllgdwqzdygqvvllaeas98tjnpfm';
     const PUSH_IOS_KEY = '5749300267e58e4b070004b6';

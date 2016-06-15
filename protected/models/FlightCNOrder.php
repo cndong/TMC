@@ -653,13 +653,15 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _getCS2BookSuccFormats() {
-        $rtn = array_merge(
-            array_fill_keys(array('adultBigPNR', 'adultSmallPNR', 'childBigPNR', 'childSmallPNR', 'babyBigPNR', 'babySmallPNR'), '!' . ParamsFormat::F_PNR . '--'),
-            array_fill_keys(array('adultTicketPrice', 'adultAirportTax', 'adultOilTax', 'childTicketPrice', 'childAirportTax', 'childOilTax', 'babyTicketPrice', 'babyAirportTax', 'babyOilTax'), '!' . ParamsFormat::FLOATNZ . '--0')
+        return array(
+            'bigPNR' => '!' . ParamsFormat::F_PNR . '--',
+            'smallPNR' => ParamsFormat::F_PNR,
+            'ticketPrice' => ParamsFormat::FLOATNZ,
+            'airportTax' => ParamsFormat::FLOAT,
+            'oilTax' => ParamsFormat::FLOAT,
+            'realTicketPrice' => ParamsFormat::FLOATNZ,
+            'ticketNo' => ParamsFormat::F_TICKET_NO
         );
-        $rtn['ticketNo'] = ParamsFormat::ISARRAY;
-        
-        return $rtn;
     }
     
     private function _cS2BookSuccBefore($params) {
@@ -668,39 +670,33 @@ class FlightCNOrder extends QActiveRecord {
         $ticketAttributes['ticketID'] = 0;
         $ticketAttributes['isInsured'] = $this->isInsured;
         
-        $realTAOPrice = 0;
+        $userTAOPrice = 0;
         $passengers = self::parsePassengers($this->passengers);
         foreach ($this->segments as $segment) {
-            if (empty($params['segments'][$segment->id]) || !($segmentParams = F::checkParams($params['segments'][$segment->id], $this->_getCS2BookSuccFormats()))) {
+            if (empty($params['segments'][$segment->id]) || !is_array($params['segments'][$segment->id])) {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
             
+            $segmentParams = $params['segments'][$segment->id];
             $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('flightNo', 'craftType', 'craftCode')));
             $ticketAttributes['segmentID'] = $segment->id;
             foreach ($passengers as $passengerKey => $passenger) {
-                if (!F::checkParams($segmentParams['ticketNo'], array($passengerKey => ParamsFormat::F_TICKET_NO))) {
+                if (empty($segmentParams[$passengerKey]) || !($passengerParams = F::checkParams($segmentParams[$passengerKey], $this->_getCS2BookSuccFormats()))) {
                     return F::errReturn(RC::RC_VAR_ERROR);
                 }
             
-                $passengerTypeStr = DictFlight::$ticketTypes[$passenger['type']]['str'];
-                $ticketAttributes['ticketPrice'] = $segment[$passengerTypeStr . 'Price'];
-                $ticketAttributes['airportTax'] = $segment[$passengerTypeStr . 'AirportTax'];
-                $ticketAttributes['oilTax'] = $segment[$passengerTypeStr . 'OilTax'];
-                $ticketAttributes['realTicketPrice'] = $segmentParams[$passengerTypeStr . 'TicketPrice'] * 100;
-                $ticketAttributes['realAirportTax'] = $segmentParams[$passengerTypeStr . 'AirportTax'] * 100;
-                $ticketAttributes['realOilTax'] = $segmentParams[$passengerTypeStr . 'OilTax'] * 100;
-                $ticketAttributes['bigPNR'] = $segmentParams[$passengerTypeStr . 'BigPNR'];
-                $ticketAttributes['smallPNR'] = $segmentParams[$passengerTypeStr . 'SmallPNR'];
+                $ticketAttributes['ticketPrice'] = $passengerParams['ticketPrice'] * 100;
+                $ticketAttributes['airportTax'] = $passengerParams['airportTax'] * 100;
+                $ticketAttributes['oilTax'] = $passengerParams['oilTax'] * 100;
+                $ticketAttributes['realTicketPrice'] = $passengerParams['realTicketPrice'] * 100;
+                $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($passengerParams, array('bugPNR', 'smallPNR', 'ticketNo')));
                 $ticketAttributes['passenger'] = self::concatPassenger($passenger);
-                $ticketAttributes['ticketNo'] = $segmentParams['ticketNo'][$passengerKey];
                 $ticketAttributes['insurePrice'] = $this->insurePrice / $this->passengerNum;
-                $ticketAttributes['resignHandlePrice'] = $ticketAttributes['refundHandlePrice'] = $ticketAttributes['refundPrice'] = 0;
-                $ticketAttributes['payPrice'] = 0;
-                $ticketAttributes['tradeNo'] = '';
+                $ticketAttributes['resignHandlePrice'] = $ticketAttributes['refundHandlePrice'] = $ticketAttributes['realResignHandlePrice'] = $ticketAttributes['realRefundHandlePrice'] = $ticketAttributes['refundPrice'] = $ticketAttributes['payPrice'] = 0;
                 $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('cabin', 'cabinClass', 'cabinClassName', 'departTime', 'arriveTime', 'departTerm', 'arriveTerm')));
                 $ticketAttributes['status'] = FlightStatus::BOOK_SUCC;
             
-                $realTAOPrice += $ticketAttributes['realTicketPrice'] + $ticketAttributes['realAirportTax'] + $ticketAttributes['realOilTax'];
+                $userTAOPrice += $ticketAttributes['ticketPrice'] + $ticketAttributes['airportTax'] + $ticketAttributes['oilTax'];
             
                 $ticket = new FlightCNTicket();
                 $ticket->attributes = $ticketAttributes;
@@ -711,14 +707,16 @@ class FlightCNOrder extends QActiveRecord {
             }
         }
         
-        $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
-        $company = Company::model()->findByPk($this->companyID);
-        if (
-            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $realTAOPrice, 0, $info)) ||
-            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->insurePrice, 0, $info)) ||
-            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->invoicePrice, 0, $info))
-        ) {
-            return $res;
+        if (!$this->isPrivate) {
+            $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
+            $company = Company::model()->findByPk($this->companyID);
+            if (
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $userTAOPrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->insurePrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->invoicePrice, 0, $info))
+            ) {
+                return $res;
+            }
         }
         
         return F::corReturn();
@@ -747,7 +745,7 @@ class FlightCNOrder extends QActiveRecord {
             SMS::send($params, SMSTemplate::F_BOOK_SUCC);
         }
         
-        //APP推送
+        //APP推送 **需要改掉**
         $title = '订单提示'; $text= "尊敬的客户您好, 恭喜您的订单{$this->id}出票成功, 点击查看详情";
         $params = array('behaviorType'=>'V001', 'orderID'=>$this->id);
         $user = User::model()->findByPk($this->userID);
@@ -766,36 +764,39 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _getCS2RsnAgreeFormats() {
-        $rtn = array(
-            'ticketIDs' => ParamsFormat::ISARRAY,
+        return array(
+            'tickets' => ParamsFormat::ISARRAY,
             'flightNo' => ParamsFormat::F_FLIGHT_NO,
-            'cabin' => ParamsFormat::F_CABIN_CODE,
             'cabinClass' => ParamsFormat::F_CABIN_CLASS,
-            'craftCode' => ParamsFormat::F_CRAFT_CODE,
-            'craftType' => ParamsFormat::F_CRAFT_TYPE,
             'departTime' => ParamsFormat::DATEHM,
             'arriveTime' => ParamsFormat::DATEHM,
-            'departTerm' => ParamsFormat::F_TERM,
-            'arriveTerm' => ParamsFormat::F_TERM,
-            'isInsured' => ParamsFormat::BOOL,
+            'isInsured' => '!' . ParamsFormat::BOOL . '--0',
         );
-        
-        return array_merge($rtn, array_fill_keys(array(
-            'adultTicketPrice', 'adultAirportTax', 'adultOilTax', 'adultHandlePrice',
-            'childTicketPrice', 'childAirportTax', 'childOilTax', 'childHandlePrice',
-            'babyTicketPrice', 'babyAirportTax', 'babyOilTax', 'babyHandlePrice',
-        ), '!' . ParamsFormat::FLOAT . '--0'));
+    }
+    
+    private function _getCS2RsnAgreeTicketFormats() {
+        return array(
+            'ticketPrice' => ParamsFormat::FLOATNZ,
+            'airportTax' => ParamsFormat::FLOAT,
+            'oilTax' => ParamsFormat::FLOAT,
+            'resignHandlePrice' => ParamsFormat::FLOAT
+        );
     }
     
     private function _cS2RsnAgreeBefore($params) {
-        if (!($params = F::checkParams($params, $this->_getCS2RsnAgreeFormats())) || count($params['ticketIDs']) <= 0) {
+        if (!($params = F::checkParams($params, $this->_getCS2RsnAgreeFormats())) || count($params['tickets']) <= 0) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
         $segmentID = 0;
         $payPrice = 0;
         $tickets = F::arrayAddField($this->tickets, 'id');
-        foreach ($params['ticketIDs']  as $ticketID) {
+        $segments = F::arrayAddField($this->segments, 'id');
+        foreach ($params['tickets']  as $ticketID => $ticketParams) {
+            if (!F::checkParams($ticketParams, $this->_getCS2RsnAgreeTicketFormats())) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
             if (!isset($tickets[$ticketID])) {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
@@ -806,31 +807,24 @@ class FlightCNOrder extends QActiveRecord {
             }
             
             $passenger = self::parsePassenger($ticket->passenger);
-            $segmentID = $segmentID == 0 ? $ticket->segmentID : $segmentID;
+            $segmentID = $segmentID == 0 ? $ticket->segmentID : $segmentID; //只允许改签一个航段
             if ($ticket->segmentID != $segmentID) {
                 return F::errReturn(RC::RC_F_RESIGN_ONLY_ONE_SEGMENT);
             }
-            
-            $price = array(
-                'adultTicketPrice', 'adultAirportTax', 'adultOilTax', 'adultHandlePrice',
-                'childTicketPrice', 'childAirportTax', 'childOilTax', 'childHandlePrice',
-                'babyTicketPrice', 'babyAirportTax', 'babyOilTax', 'babyHandlePrice'
-            );
-            foreach ($price as $k) {
-                $params[$k] = $params[$k] * 100;
+            $segment = $segments[$segmentID];
+
+            foreach (array('ticketPrice', 'airportTax', 'oilTax', 'resignHandlePrice') as $priceKey) {
+                $ticketParams[$priceKey] *= 100; 
             }
             
-            $ticketTypeStr = DictFlight::$ticketTypes[$passenger['type']]['str'];
-            $attributes = F::arrayGetByKeys($ticket, array('userID', 'departmentID', 'companyID', 'orderID', 'segmentID', 'passenger'));
-            $attributes = array_merge($attributes, F::arrayGetByKeys($params, array('flightNo', 'cabin', 'cabinClass', 'craftCode', 'craftType', 'departTerm', 'arriveTerm', 'isInsured')));
-            $attributes = array_merge($attributes, F::arrayChangeKeys($params, array(
-                $ticketTypeStr . 'TicketPrice' => 'ticketPrice', $ticketTypeStr . 'AirportTax' => 'airportTax', $ticketTypeStr . 'OilTax' => 'oilTax', $ticketTypeStr . 'HandlePrice' => 'resignHandlePrice'
-            )));
-            $attributes = array_merge($attributes, F::arrayChangeKeys($attributes, array('ticketPrice' => 'realTicketPrice', 'airportTax' => 'realAirportTax', 'oilTax' => 'realOilTax')));
-            $attributes['refundHandlePrice'] = 0;
+            $attributes = F::arrayGetByKeys($ticket, array('userID', 'departmentID', 'companyID', 'orderID', 'segmentID', 'passenger', 'bitPNR', 'smallPNR', 'ticketNo'));
+            $attributes = array_merge($attributes, F::arrayGetByKeys($params, array('flightNo', 'cabin', 'cabinClass', 'isInsured')));
+            $attributes = array_merge($attributes, F::arrayGetByKeys($segment, array('cabin', 'craftCode', 'craftType', 'departTerm', 'arriveTerm')));
+            $attributes = array_merge($attributes, F::arrayGetByKeys($ticketParams, array('ticketPrice', 'airportTax', 'oilTax', 'resignHandlePrice')));
+            $attributes = array_merge($attributes, array_fill_keys(array('realTicketPrice', 'refundHandlePrice'), 0));
             $attributes['insurePrice'] = intval($attributes['isInsured']) * DictFlight::INSURE_PRICE;
             $attributes['payPrice'] = $attributes['ticketPrice'] + $attributes['airportTax'] + $attributes['oilTax'] + $attributes['resignHandlePrice'] + $attributes['insurePrice']
-                                    - $ticket->realTicketPrice - $ticket->realAirportTax - $ticket->realOilTax;
+                                    - $ticket->ticketPrice - $ticket->airportTax - $ticket->oilTax;
             $attributes['payPrice'] = max($attributes['payPrice'], 0);
             $attributes['ticketID'] = $ticket->id;
             $attributes['cabinClassName'] = DictFlight::$cabinClasses[$attributes['cabinClass']]['name'];
@@ -862,33 +856,31 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     private function _getCS2RsnSuccFormats() {
-        $rtn = array_fill_keys(array('adultBigPNR', 'adultSmallPNR', 'childBigPNR', 'childSmallPNR', 'babyBigPNR', 'babySmallPNR'), '!' . ParamsFormat::F_PNR . '--');
-        $rtn['ticketNo'] = ParamsFormat::ISARRAY;
-    
-        return $rtn;
+        return array(
+            'smallPNR' => ParamsFormat::F_PNR,
+            'realTicketPrice' => ParamsFormat::FLOATNZ,
+            'realResignHandlePrice' => ParamsFormat::FLOAT,
+            'ticketNo' => ParamsFormat::F_TICKET_NO
+        );
     }
     
     private function _cS2RsnSuccBefore($params) {
-        if (!($params = F::checkParams($params, $this->_getCS2RsnSuccFormats()))) {
+        if (empty($params['tickets']) || count($params['tickets']) <= 0) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
-        
+
         $rsnPrice = $insurePrice = 0;
         $logPassengers = array();
-        $tickets = F::arrayAddField($this->tickets, 'id');
-        foreach ($tickets as $ticket) {
+        foreach ($this->tickets as $ticket) {
             if ($ticket->status != FlightStatus::RSN_AGREE) {
                 continue;
             }
             
-            $passenger = self::parsePassenger($ticket->passenger);
-            $bigPNRKey = DictFlight::$ticketTypes[$passenger['type']]['str'] . 'BigPNR';
-            $smallPNRKey = DictFlight::$ticketTypes[$passenger['type']]['str'] . 'SmallPNR';
-            if (!F::checkParams($params, array($smallPNRKey => ParamsFormat::F_PNR)) || !F::checkParams($params['ticketNo'], array($ticket->id => ParamsFormat::F_TICKET_NO))) {
+            if (empty($params['tickets'][$ticket->id]) || !($attributes = F::checkParams($params['tickets'][$ticket->id], $this->_getCS2RsnSuccFormats()))) {
                 return F::errReturn(RC::RC_VAR_ERROR);
             }
             
-            $attributes = array('status' => FlightStatus::RSN_SUCC, 'bigPNR' => $params[$bigPNRKey], 'smallPNR' => $params[$smallPNRKey], 'ticketNo' => $params['ticketNo'][$ticket->id]);
+            $attributes['status'] = FlightStatus::RSN_SUCC;
             if (!FlightCNTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => FlightStatus::RSN_AGREE))) {
                 return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
             }
@@ -899,16 +891,20 @@ class FlightCNOrder extends QActiveRecord {
             
             $insurePrice += $ticket->insurePrice;
             $rsnPrice += $ticket->payPrice;
+            
+            $passenger = self::parsePassenger($ticket->passenger);
             $logPassengers[] = $passenger['name'];
         }
         
-        $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
-        $company = Company::model()->findByPk($this->companyID);
-        if (
-            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
-            !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $insurePrice, 0, $info))
-        ) {
-            return $res;
+        if (!$this->isPrivate) {
+            $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
+            $company = Company::model()->findByPk($this->companyID);
+            if (
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $insurePrice, 0, $info))
+            ) {
+                return $res;
+            }
         }
         
         $num = FlightCNTicket::model()->countByAttributes(array('orderID' => $this->id, 'status' => FlightStatus::BOOK_SUCC));
