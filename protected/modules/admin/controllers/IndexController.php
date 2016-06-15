@@ -33,6 +33,7 @@ class IndexController extends AdminController {
     }
     
     public function actionIndex() {
+        $this->setRenderParams('containerClass', '');
         $this->render('//index/index', array('menus' => $this->_getLeftHtml($this->admin->getMenus(), True)));
     }
     

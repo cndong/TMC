@@ -1,6 +1,7 @@
 <?php
 class QModule extends CWebModule {
     public $defaultController = 'index';
+    protected $_cookieKey = 'qmy';
     
     public function init() {
         $this->setImport(array(
@@ -8,6 +9,8 @@ class QModule extends CWebModule {
             $this->id . '.components.*',
         ));
     
+        Yii::app()->user->setStateKeyPrefix($this->_cookieKey);
+        Yii::app()->user->init();
         //需要恢复
         //Yii::app()->errorHandler->errorAction = $this->id . '/index/error';
     }
