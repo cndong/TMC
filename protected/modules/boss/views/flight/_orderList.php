@@ -5,20 +5,22 @@
     <thead>
         <tr>
             <th class="text-center" width="13%">订单信息</th>
+            <th class="text-center" width="5%">因公</th>
             <th class="text-center" width="5%">往返</th>
             <th class="text-center" width="10%">联系人</th>
             <th class="text-center" width="5%">价格</th>
             <th class="text-center" width="12%">用户信息</th>
             <th class="text-center" width="15%">状态</th>
-            <th class="text-center" width="10%">客服</th>
+            <th class="text-center" width="7%">客服</th>
             <th class="text-center" width="20%">操作</th>
-            <th class="text-center" width="10%">退款成功</th>
+            <th class="text-center" width="8%">退款成功</th>
         </tr>
     </thead>
     <tbody>
 <?php } ?>
         <tr>
             <td rowspan="3" class="text-center"><?php echo $data->id, '<br />', date('m-d H:i:s', $data->ctime), '<br />', Merchant::$merchants[$data->merchantID]['name']; ?></td>
+            <td class="text-center"><?php echo $data->isPrivate ? '否' : '是'; ?></td>
             <td class="text-center"><?php echo $data->isRound ? '是' : '否'; ?></td>
             <td class="text-center"><?php echo $data->contactName, '<br />', $data->contactMobile; ?></td>
             <td class="text-center"><?php echo $data->orderPrice / 100; ?></td>
@@ -59,7 +61,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="7">
                 <?php 
                     $cities = DataAirport::getCNCities();
                     $classifyPassengers = FlightCNOrder::classifyPassengers(FlightCNOrder::parsePassengers($data->passengers));
@@ -80,7 +82,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="7">
                 <?php 
                     foreach ($classifyPassengers as $ticketType => $passengers) {
                         if (!empty($passengers)) {

@@ -221,7 +221,12 @@ class FlightController extends ApiController {
                 
                 foreach ($segment->tickets as $ticket) {
                     $tmpTicket = FlightCNOrder::parsePassenger($ticket->passenger);
-                    $tmpTicket['ticketNo'] = $ticket->ticketNo;
+                    $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('ticketNo', 'departTime', 'arriveTime', 'flightNo', 'cabinClassName')));
+                    $tmpTicket['departTerm'] = $ticket->departTerm == '--' ? '' : $ticket->departTerm;
+                    $tmpTicket['arriveTerm'] = $ticket->arriveTerm == '--' ? '' : $ticket->arriveTerm;
+                    $tmpTicket['duration'] = $ticket->arriveTime - $ticket->departTime;
+                    $tmpTicket['isResignTicket'] = $ticket->status == FlightStatus::RSN_SUCC;
+                    $tmpTicket['isRefundTicket'] = in_array($ticket->status, FlightStatus::getRefundingTicketStatus());
                     $tmp['tickets'][] = $tmpTicket;
                 }
                 

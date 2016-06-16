@@ -265,4 +265,8 @@ class FlightStatus {
     public static function getCanRefundedTicketStatus() {
         return array(self::RFD_AGREE);
     }
+    
+    public static function getRefundingTicketStatus() {
+        return array(self::RFD_AGREE, self::RFDED);
+    }
 }
