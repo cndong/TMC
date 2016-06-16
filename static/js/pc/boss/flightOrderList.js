@@ -263,7 +263,34 @@ $(function() {
 			
 			return _$.mergeParams(_$.changeStatusBaseParams(obj), params);
 		},
+		getOrderDetailHtml: function(orderID) {
+			var rtn = '<div class="row">获取失败！</div>';
+			$.ajax({
+				type: "GET",
+				url: "/boss/flight/getOrderDetailHtml",
+				data: {orderID: orderID},
+				dataType: "json",
+				async: false,
+				success: function(data) {
+					if (!data.rc) {
+						rtn = data.data.html;
+					}
+				}
+			});
+			
+			return rtn;
+		},
+		bindOrderDetailClick: function() {
+			$(".c_order_detail").click(function() {
+				layer.open({
+					title: "订单详情",
+					content: _$.getOrderDetailHtml($(this).attr("data-order-id")),
+					area: "80%"
+				});
+			});
+		}
 	});
 	
 	_$.bindChangeStatusClick();
+	_$.bindOrderDetailClick();
 });
