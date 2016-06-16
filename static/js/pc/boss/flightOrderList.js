@@ -135,7 +135,7 @@ $(function() {
 					$("[name='cS2RsnAgree_isInsured']").prop("checked", $(this).attr("data-is-insured") == "1");
 					
 					var html = '<div class="row row-form-margin" id="' + rowID + '"><div class="col-sm-2 text-right">' + passenger + '</div><div class="col-sm-10 form-inline">';
-					html += '<div class="form-group form-group-sm"><label>票价</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][ticketPrice]" value="' + ticketPrice + '" data-format="FLOATNZ" data-err="' + passenger + '票价错误" data-ticket-price="' + ticketPrice + '" class="k_change_price form-control" size="5" /></div>';
+					html += '<div class="form-group form-group-sm"><label>票价</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][ticketPrice]" value="' + ticketPrice + '" data-format="FLOATNZ" data-err="' + passenger + '票价错误" data-ticket-price="' + ticketPrice + '" data-ticket-id="' + ticketID + '" class="k_change_price form-control" size="5" /></div>';
 					html += '<div class="form-group form-group-sm hidden"><label>机建</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][airportTax]" value="' + $(this).attr("data-airport-tax") + '" data-format="FLOAT" data-err="' + passenger + '机建费错误"  class="form-control" size="5" /></div>';
 					html += '<div class="form-group form-group-sm hidden"><label>燃油</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][oilTax]" value="' + $(this).attr("data-oil-tax") + '" data-format="FLOAT" data-err="' + passenger + '燃油费错误"  class="form-control" size="5" /></div>';
 					html += '<div class="form-group form-group-sm"><label>差价</label><input id=' + diffPriceID + ' type="text" value="0" class="form-control" size="5" readonly /></div>';
@@ -144,6 +144,7 @@ $(function() {
 					
 					$(this).parents(".row").parent().append(html);
 					$(".k_change_price").unbind("keyup").keyup(function() {
+						var diffPriceID = 'cS2RsnAgreeDiffPrice_' + $(this).attr("data-ticket-id");
 						$("#" + diffPriceID).val(parseFloat($(this).val()) - parseFloat($(this).attr("data-ticket-price")));
 					});
 				} else {
