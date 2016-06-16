@@ -953,7 +953,7 @@ class FlightCNOrder extends QActiveRecord {
             }
         }
         
-        $rtnStatus = empty($rtnStatus) ? FlightStatus::RFD_AGREE : ($isCanResgin ? FlightStatus::BOOK_SUCC : FlightStatus::RSN_SUCC);
+        $rtnStatus = $isCanResgin ? FlightStatus::BOOK_SUCC : ($isCanRefund ? FlightStatus::RSN_SUCC : FlightStatus::RFD_AGREE);
         return F::corReturn(array('params' => array('status' => $rtnStatus)));
     }
     
@@ -995,7 +995,7 @@ class FlightCNOrder extends QActiveRecord {
         $criteria = new CDbCriteria();
         $criteria->compare('orderID', $this->id);
         $criteria->addInCondition('status', array(FlightStatus::RFDED));
-        if (FlightCNTicket::model()->count($criteria) == $this->passengerNum) {
+        if (FlightCNTicket::model()->count($criteria) == $this->passengerNum * count($this->segments)) {
             return F::corReturn(array('params' => array('status' => FlightStatus::RFDED)));
         }
         

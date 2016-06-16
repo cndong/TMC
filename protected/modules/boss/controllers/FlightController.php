@@ -26,6 +26,15 @@ class FlightController extends BossController {
         $this->onAjax($order->changeStatus($_POST['status'], $_POST));
     }
     
+    public function actionGetOrderDetailHtml() {
+        if (!F::checkParams($_GET, array('orderID' => ParamsFormat::INT)) || !($order = FlightCNOrder::model()->findByPk($_GET['orderID']))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        $rtn = array('html' => $this->renderPartial('_orderDetail', array('order' => $order), True));
+        $this->corAjax($rtn);
+    }
+    
     public function actionGetChangeStatusHtml() {
         if (!($params = F::checkParams($_GET, array('orderID' => ParamsFormat::INTNZ, 'status' => ParamsFormat::F_STATUS)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
