@@ -26,6 +26,11 @@ class QEnv {
                 'appkey' => '23348441',
                 'secretKey' => '477b16da1e5ba3d68c75c0fdf46995c2'
             ),
+        ),
+        Dict::BUSINESS_HOTEL => array(
+            'CNBOOKING' => array(
+                'WSDL_URL' => 'http://119.254.19.125:8007/RESTServer.asmx/GetXmlData'
+            ),
         )
     );
     

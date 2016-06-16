@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CNResponse>
+  <ActionName>RoomTypeQuery</ActionName>
+  <MessageInfo>
+    <Code>30000</Code>
+    <Description>操作成功</Description>
+  </MessageInfo>
+  <Data>
+    <RoomTypes>
+      <RoomType RoomTypeId="009022" RoomTypeName="别墅" />
+      <RoomType RoomTypeId="009031" RoomTypeName="餐券" />
+      <RoomType RoomTypeId="009009" RoomTypeName="单人房" />
+      <RoomType RoomTypeId="009034" RoomTypeName="机票" />
+      <RoomType RoomTypeId="009010" RoomTypeName="双人房" />
+      <RoomType RoomTypeId="009044" RoomTypeName="机+酒" />
+      <RoomType RoomTypeId="009039" RoomTypeName="三人间" />
+      <RoomType RoomTypeId="009032" RoomTypeName="送关" />
+      <RoomType RoomTypeId="009038" RoomTypeName="游艇夜游" />
+      <RoomType RoomTypeId="009040" RoomTypeName="十人间" />
+      <RoomType RoomTypeId="009035" RoomTypeName="车票" />
+      <RoomType RoomTypeId="009024" RoomTypeName="四人房" />
+      <RoomType RoomTypeId="009016" RoomTypeName="双床房" />
+      <RoomType RoomTypeId="009037" RoomTypeName="其它杂费" />
+      <RoomType RoomTypeId="009028" RoomTypeName="公寓" />
+      <RoomType RoomTypeId="009033" RoomTypeName="租车" />
+      <RoomType RoomTypeId="009027" RoomTypeName="七人房" />
+      <RoomType RoomTypeId="009026" RoomTypeName="六人房" />
+      <RoomType RoomTypeId="009030" RoomTypeName="门票" />
+      <RoomType RoomTypeId="009011" RoomTypeName="3床房" />
+      <RoomType RoomTypeId="009020" RoomTypeName="大床房" />
+      <RoomType RoomTypeId="009036" RoomTypeName="组合套票（非房间）" />
+      <RoomType RoomTypeId="009025" RoomTypeName="五人房" />
+      <RoomType RoomTypeId="009021" RoomTypeName="大/双床" />
+      <RoomType RoomTypeId="009029" RoomTypeName="船票" />
+      <RoomType RoomTypeId="009042" RoomTypeName="十六人间" />
+      <RoomType RoomTypeId="009041" RoomTypeName="上下铺" />
+      <RoomType RoomTypeId="009043" RoomTypeName="八人间" />
+      <RoomType RoomTypeId="009015" RoomTypeName="套房" />
+      <RoomType RoomTypeId="009023" RoomTypeName="单/双人房" />
+    </RoomTypes>
+  </Data>
+</CNResponse>

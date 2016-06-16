@@ -8,10 +8,12 @@ class Dict {
     const BUSINESS_FLIGHT = 1;
     const BUSINESS_TRAIN = 2;
     const BUSINESS_BUS = 3;
+    const BUSINESS_HOTEL = 4;
     public static $businesses = array(
         self::BUSINESS_FLIGHT => array('name' => '飞机票'),
         self::BUSINESS_TRAIN => array('name' => '火车票'),
         self::BUSINESS_BUS => array('name' => '汽车票'),
+        self::BUSINESS_HOTEL => array('name' => '酒店'),
     );
     
     const TRIP_TYPE_ONEWAY = 1;
