@@ -102,7 +102,7 @@ class Company extends QActiveRecord {
         }
         
         $this->finance += $num;
-        if (!F::isCorrect($res = CompanyFinanceLog::create($this, $orderID, $type, $payout, $income, $info))) {
+        if (!F::isCorrect($res = CompanyFinanceLog::create($this, $type, $orderID, $payout, $income, $info))) {
             return $res;
         }
         

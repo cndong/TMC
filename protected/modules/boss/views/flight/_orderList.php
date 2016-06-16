@@ -19,7 +19,7 @@
     <tbody>
 <?php } ?>
         <tr>
-            <td rowspan="3" class="text-center"><?php echo $data->id, '<br />', date('m-d H:i:s', $data->ctime), '<br />', Merchant::$merchants[$data->merchantID]['name']; ?></td>
+            <td rowspan="3" class="text-center"><?php echo "<a href='javascript:;' class='c_order_detail' data-order-id='{$data->id}'>{$data->id}</a>", '<br />', date('m-d H:i:s', $data->ctime), '<br />', Merchant::$merchants[$data->merchantID]['name']; ?><br /></td>
             <td class="text-center"><?php echo $data->isPrivate ? '否' : '是'; ?></td>
             <td class="text-center"><?php echo $data->isRound ? '是' : '否'; ?></td>
             <td class="text-center"><?php echo $data->contactName, '<br />', $data->contactMobile; ?></td>

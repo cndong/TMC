@@ -118,14 +118,14 @@ class FlightCNOrder extends QActiveRecord {
         return $rtn;
     }
     
-    public static function classifyTickets($tickets) {
+    public static function classifyTickets($tickets, $field = 'status') {
         $rtn = array();
         foreach ($tickets as $ticket) {
-            if (empty($rtn[$ticket->status])) {
-                $rtn[$ticket->status] = array();
+            if (empty($rtn[$ticket->$field])) {
+                $rtn[$ticket->$field] = array();
             }
             
-            $rtn[$ticket->status][$ticket->id] = $ticket;
+            $rtn[$ticket->$field][$ticket->id] = $ticket;
         }
         
         return $rtn;
