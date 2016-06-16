@@ -225,8 +225,8 @@ class FlightController extends ApiController {
                     $tmpTicket['departTerm'] = $ticket->departTerm == '--' ? '' : $ticket->departTerm;
                     $tmpTicket['arriveTerm'] = $ticket->arriveTerm == '--' ? '' : $ticket->arriveTerm;
                     $tmpTicket['duration'] = $ticket->arriveTime - $ticket->departTime;
-                    $tmpTicket['isResignTicket'] = $ticket->status == FlightStatus::RSN_SUCC;
-                    $tmpTicket['isRefundTicket'] = in_array($ticket->status, FlightStatus::getRefundingTicketStatus());
+                    $tmpTicket['isResign'] = $ticket->status == FlightStatus::RSN_SUCC;
+                    $tmpTicket['isRefund'] = in_array($ticket->status, FlightStatus::getRefundingTicketStatus());
                     $tmp['tickets'][] = $tmpTicket;
                 }
                 

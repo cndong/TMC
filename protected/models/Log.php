@@ -1,5 +1,7 @@
 <?php
 class Log extends QActiveRecord {
+    const RECHARGE_ORDER_ID = 0;
+    
     const TYPE_CN_FLIGHT = 1;
     const TYPE_IN_FLIGHT = 2;
     const TYPE_TRAIN = 3;
