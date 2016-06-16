@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CNResponse>
+  <ActionName>BedTypeQuery</ActionName>
+  <MessageInfo>
+    <Code>30000</Code>
+    <Description>操作成功</Description>
+  </MessageInfo>
+  <Data>
+    <BedTypes>
+      <BedType BedTypeId="001101" BedTypeName="120*150cm单人床" />
+      <BedType BedTypeId="001034" BedTypeName="220*200cm大床" />
+      <BedType BedTypeId="001108" BedTypeName="150*200cm大床/120*200cm小床" />
+      <BedType BedTypeId="001047" BedTypeName="160*200cm大床/110*200cm双床" />
+      <BedType BedTypeId="001103" BedTypeName="75*195cm双床" />
+      <BedType BedTypeId="001085" BedTypeName="180*200cm大床/90*200cm双床" />
+      <BedType BedTypeId="001022" BedTypeName="200*200cm大床/120*200cm双床 " />
+      <BedType BedTypeId="001147" BedTypeName="137*198cm" />
+      <BedType BedTypeId="001043" BedTypeName="140*180cm双床" />
+      <BedType BedTypeId="001104" BedTypeName="85*195cm双床" />
+      <BedType BedTypeId="001126" BedTypeName="160*210cm 双床" />
+      <BedType BedTypeId="001132" BedTypeName="270*200cm大床/130*200cm双床" />
+      <BedType BedTypeId="001015" BedTypeName="150*200cm双床" />
+      <BedType BedTypeId="001143" BedTypeName="80*190cm双床  " />
+      <BedType BedTypeId="001023" BedTypeName="180*200cm大床/150*200cm双床 " />
+      <BedType BedTypeId="001077" BedTypeName="130*200cm双床" />
+      <BedType BedTypeId="001106" BedTypeName="110*200cm三床" />
+      <BedType BedTypeId="001058" BedTypeName="150*200cm大床/110*200cm双床" />
+      <BedType BedTypeId="001134" BedTypeName="230*200cm大床/120*200双床" />
+      <BedType BedTypeId="001051" BedTypeName="200*200大床/160*200双床" />
+      <BedType BedTypeId="001082" BedTypeName="100*200cm双床" />
+      <BedType BedTypeId="001045" BedTypeName="180*200cm大床/140*200cm双床" />
+      <BedType BedTypeId="001035" BedTypeName="220*220cm大床" />
+      <BedType BedTypeId="001044" BedTypeName="240*200cm大床" />
+      <BedType BedTypeId="001067" BedTypeName="260cm圆床" />
+      <BedType BedTypeId="001091" BedTypeName="75*180cm双床" />
+      <BedType BedTypeId="001066" BedTypeName="240cm圆床" />
+      <BedType BedTypeId="001027" BedTypeName="130*200cm双床" />
+      <BedType BedTypeId="001011" BedTypeName="120*220大床" />
+      <BedType BedTypeId="001118" BedTypeName="135*180cm" />
+      <BedType BedTypeId="001016" BedTypeName="180*200cm大床/135*200cm双床" />
+      <BedType BedTypeId="001148" BedTypeName="150*200CM大床/90*200双床" />
+      <BedType BedTypeId="001154" BedTypeName="圆床220x220&#xA;cm" />
+      <BedType BedTypeId="001038" BedTypeName="100*200cm双床" />
+      <BedType BedTypeId="001093" BedTypeName="180*180cm大床/90*180cm双床" />
+      <BedType BedTypeId="001133" BedTypeName="270*200cm大床" />
+      <BedType BedTypeId="001054" BedTypeName="190*200cm大床/120*200cm双床" />
+      <BedType BedTypeId="001136" BedTypeName="100*200cm单人床" />
+      <BedType BedTypeId="001061" BedTypeName="90*200cm双床" />
+      <BedType BedTypeId="001036" BedTypeName="140*200cm大床" />
+      <BedType BedTypeId="001081" BedTypeName="150*180cm大床/90*180cm双床" />
+      <BedType BedTypeId="001086" BedTypeName="150*200cm大床/150*200cm双床" />
+      <BedType BedTypeId="001018" BedTypeName="180*200cm大床/120*200cm双床" />
+      <BedType BedTypeId="001152" BedTypeName="上铺110cm*200cm" />
+      <BedType BedTypeId="001042" BedTypeName="180*200cm大床/110*200cm双床" />
+      <BedType BedTypeId="001072" BedTypeName="130*200cm大床" />
+      <BedType BedTypeId="001123" BedTypeName="180*200cm大床/125*200cm双床" />
+      <BedType BedTypeId="001117" BedTypeName="90*180cm" />
+      <BedType BedTypeId="001060" BedTypeName="200*200cm大床/100*200cm双床" />
+      <BedType BedTypeId="001110" BedTypeName="150*180cm大床/110*180cm小床" />
+      <BedType BedTypeId="001098" BedTypeName="200*200cm大床/110*200cm双床" />
+      <BedType BedTypeId="001121" BedTypeName="180cm大床/120|150cm子母床" />
+      <BedType BedTypeId="001144" BedTypeName="120*190cm双床  " />
+      <BedType BedTypeId="001150" BedTypeName="大床120cm*180cm.双床76*180cm" />
+      <BedType BedTypeId="001122" BedTypeName="180*200cm大床/120*200cm单人床" />
+      <BedType BedTypeId="001078" BedTypeName="125*200cm双床" />
+      <BedType BedTypeId="001116" BedTypeName="220*200cm大床/135*200cm双床" />
+      <BedType BedTypeId="001009" BedTypeName="180*200cm大床" />
+      <BedType BedTypeId="001107" BedTypeName="230cm圆床" />
+      <BedType BedTypeId="001052" BedTypeName="200*200大床/150*200双床" />
+      <BedType BedTypeId="001056" BedTypeName="180*200cm大床/130*200cm双床" />
+      <BedType BedTypeId="001139" BedTypeName="137*198cm大床/107*198 cm双床" />
+      <BedType BedTypeId="001153" BedTypeName="下铺130cm*200cm" />
+      <BedType BedTypeId="001053" BedTypeName="190*200cm大床" />
+      <BedType BedTypeId="001028" BedTypeName="200*200cm大床/130*200cm双床" />
+      <BedType BedTypeId="001075" BedTypeName="100*180cm双床" />
+      <BedType BedTypeId="001079" BedTypeName="150*180cm大床/100*180cm双床" />
+      <BedType BedTypeId="001021" BedTypeName="160*200cm大床" />
+      <BedType BedTypeId="001080" BedTypeName="140*180cm大床/100*180cm双床" />
+      <BedType BedTypeId="001145" BedTypeName="130*200大床/130*200大床/90*200单人床" />
+      <BedType BedTypeId="001032" BedTypeName="160*200cm双床" />
+      <BedType BedTypeId="001046" BedTypeName="140*200cm双床" />
+      <BedType BedTypeId="001155" BedTypeName="180*200cm+110*200cm" />
+      <BedType BedTypeId="001100" BedTypeName="150*200cm大床/120*200cm单人床" />
+      <BedType BedTypeId="001128" BedTypeName="160*200cm大床/140*200cm单人床" />
+      <BedType BedTypeId="001031" BedTypeName="160*200cm大床/120*200cm双床" />
+      <BedType BedTypeId="001012" BedTypeName="200*200cm大床/120*220cm双床" />
+      <BedType BedTypeId="001125" BedTypeName="180*205cm大床/135*205cm双床" />
+      <BedType BedTypeId="001083" BedTypeName="137*180cm大床/90*180cm双床" />
+      <BedType BedTypeId="001115" BedTypeName="130*180cm双床" />
+      <BedType BedTypeId="001131" BedTypeName="120*180cm大床/70*180双床" />
+      <BedType BedTypeId="001124" BedTypeName="135*200cm单人床" />
+      <BedType BedTypeId="001055" BedTypeName="180*200cm大床/150*200cm单人床" />
+      <BedType BedTypeId="001024" BedTypeName="200*220cm大床/120*200cm双床 " />
+      <BedType BedTypeId="001070" BedTypeName="150*200cm大床/135*200cm双床" />
+      <BedType BedTypeId="001001" BedTypeName="170*200cm大床" />
+      <BedType BedTypeId="001037" BedTypeName="130*220cm双床" />
+      <BedType BedTypeId="001112" BedTypeName="180*200cm双床" />
+      <BedType BedTypeId="001073" BedTypeName="110*200cm双床" />
+      <BedType BedTypeId="001049" BedTypeName="230*200cm大床" />
+      <BedType BedTypeId="001057" BedTypeName="180*200cm大床/120*180cm单人床" />
+      <BedType BedTypeId="001088" BedTypeName="180*200cm大床/100*200cm单人床" />
+      <BedType BedTypeId="001140" BedTypeName="180*200cm大床/90*180cm加床" />
+      <BedType BedTypeId="001129" BedTypeName="200*200cm大床/120*190cm双床" />
+      <BedType BedTypeId="001063" BedTypeName="130*200cm大床/90*200双床" />
+      <BedType BedTypeId="001041" BedTypeName="200*200cm大床/140*190cm双床" />
+      <BedType BedTypeId="001040" BedTypeName="200*200cm大床/140*190cm单人床" />
+      <BedType BedTypeId="001142" BedTypeName="120*190cm单人床" />
+      <BedType BedTypeId="001089" BedTypeName="137*180cm大床" />
+      <BedType BedTypeId="001094" BedTypeName="120*200cm三床房" />
+      <BedType BedTypeId="001084" BedTypeName="200cm圆床" />
+      <BedType BedTypeId="001151" BedTypeName="180*200cm大床/150*200cm大床" />
+      <BedType BedTypeId="001029" BedTypeName="200*200cm大床/135*200cm双床 " />
+      <BedType BedTypeId="001090" BedTypeName="90*180cm双床" />
+      <BedType BedTypeId="001146" BedTypeName="120*200cm+90*200cm" />
+      <BedType BedTypeId="001137" BedTypeName="100*200cm单人床/100*200cm单人床" />
+      <BedType BedTypeId="001130" BedTypeName="160*195cm大床/110*195cm双床" />
+      <BedType BedTypeId="001096" BedTypeName="137cm*200cm双床" />
+      <BedType BedTypeId="001092" BedTypeName="120*180cm大床" />
+      <BedType BedTypeId="001113" BedTypeName="120*180cm单人床" />
+      <BedType BedTypeId="001127" BedTypeName="150*190cm大床" />
+      <BedType BedTypeId="001065" BedTypeName="180cm圆床" />
+      <BedType BedTypeId="001074" BedTypeName="120*180cm大床/90*180cm双床" />
+      <BedType BedTypeId="001002" BedTypeName="230*200大床/150*200双床" />
+      <BedType BedTypeId="001033" BedTypeName="120*200cm大床" />
+      <BedType BedTypeId="001135" BedTypeName="100*100cm单人床" />
+      <BedType BedTypeId="001059" BedTypeName="180*200cm大床/130*200cm双床" />
+      <BedType BedTypeId="001017" BedTypeName="135*200cm双床" />
+      <BedType BedTypeId="001010" BedTypeName="200*220cm大床" />
+      <BedType BedTypeId="001064" BedTypeName="200*200大床/140*200cm双床" />
+      <BedType BedTypeId="001111" BedTypeName="130*200cm单人床" />
+      <BedType BedTypeId="001105" BedTypeName="200*200cm大床/130*200cm小床" />
+      <BedType BedTypeId="001020" BedTypeName="150*200cm大床/120*200cm双床" />
+      <BedType BedTypeId="001062" BedTypeName="150*180cm大床 /75*180cm双床" />
+      <BedType BedTypeId="001014" BedTypeName="120*200cm双床" />
+      <BedType BedTypeId="001087" BedTypeName="150*200cm大床/130*200cm双床" />
+      <BedType BedTypeId="001109" BedTypeName="210*200cm大床" />
+      <BedType BedTypeId="001076" BedTypeName="150*180cm大床" />
+      <BedType BedTypeId="001013" BedTypeName="110*200cm双床" />
+      <BedType BedTypeId="001039" BedTypeName="200*220cm大床/130*200cm双床 " />
+      <BedType BedTypeId="001099" BedTypeName="240*200cm大床/120*200cm双床" />
+      <BedType BedTypeId="001102" BedTypeName="150*200cm大床/100*200cm双床" />
+      <BedType BedTypeId="001095" BedTypeName="150*200cm大床/100*200cm双床" />
+      <BedType BedTypeId="001114" BedTypeName="230*230cm大床/135*230cm双床" />
+      <BedType BedTypeId="001030" BedTypeName="140*200cm双床" />
+      <BedType BedTypeId="001068" BedTypeName="180*210cm大床/120*210cm双床" />
+      <BedType BedTypeId="001050" BedTypeName="180*200cm大床/100*200cm双床" />
+      <BedType BedTypeId="001120" BedTypeName="220*200cm大床/120*200cm双床" />
+      <BedType BedTypeId="001138" BedTypeName="120*200cm大床" />
+      <BedType BedTypeId="001007" BedTypeName="135*200cm大床" />
+      <BedType BedTypeId="001071" BedTypeName="130*180cm大床/90*180cm双床" />
+      <BedType BedTypeId="001141" BedTypeName="80*200cm单人床" />
+      <BedType BedTypeId="001119" BedTypeName="135cm下铺,90上铺，长180" />
+      <BedType BedTypeId="001048" BedTypeName="160*200cm大床/130*200cm双床" />
+      <BedType BedTypeId="001019" BedTypeName="200*200cm大床/135*200cm双床" />
+      <BedType BedTypeId="001026" BedTypeName="120*180cm双床 " />
+      <BedType BedTypeId="001025" BedTypeName="200*200cm大床" />
+      <BedType BedTypeId="001069" BedTypeName="90*190cm双床/135*190cm大床" />
+      <BedType BedTypeId="001008" BedTypeName="150*200cm大床" />
+      <BedType BedTypeId="001149" BedTypeName="150*200cm大床/100*180cm双床" />
+      <BedType BedTypeId="001097" BedTypeName="165cm*200cm大床" />
+    </BedTypes>
+  </Data>
+</CNResponse>

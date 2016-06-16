@@ -42,7 +42,7 @@ class ApiController extends QController {
     }
     
     public function beforeAction($action) {
-        Q::log($_REQUEST);
+        Q::log($_REQUEST, 'Api.Request');
         
         if ($this->_isCheckAuth($action)) {
             if (!F::isCorrect($res = $this->_checkAuth($_REQUEST))) {

@@ -31,4 +31,8 @@ class KeyManager {
     public static function getFlightCNFlightDetailKey($departCityCode, $arriveCityCode, $departDate, $flightNo) {
         return 'FlightCNFlightList' . $departCityCode . $arriveCityCode . $departDate . $flightNo;
     }
+    
+    public static function getHotelCitiesKey() {
+        return 'HotelCities';
+    }
 }

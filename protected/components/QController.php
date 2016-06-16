@@ -34,9 +34,9 @@ class QController extends CController {
             $res['data'] = new stdClass();
         }
         
-        if ($res['rc'] != RC::RC_SUCCESS && empty($res['msg'])) {
-            $res['msg'] = RC::getMsg($res['rc']);
-            Q::log($res, 'error');
+        if ($res['rc'] != RC::RC_SUCCESS){
+            Q::log($res, 'Api.Respone.Error');
+            empty($res['msg']) && $res['msg'] = RC::getMsg($res['rc']);
         }
         
         echo json_encode($res);
