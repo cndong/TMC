@@ -600,7 +600,8 @@ class FlightCNOrder extends QActiveRecord {
                 $sets[$k] = $v;
             }
         }
-        
+
+        $sets['utime'] = Q_TIME;
         if (FlightStatus::isAdminOp($this->status, $sets['status'])) {
             $condition .= empty($condition) ? '' : ' AND';
             $condition .= ' operaterID=:operaterID';
