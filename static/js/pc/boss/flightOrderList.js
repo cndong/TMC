@@ -158,7 +158,7 @@ $(function() {
 				if ($(this).attr("data-flag") == "beginTime") {
 					WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '%y-%M-%d {%H-3}:%m'});
 				} else {
-					WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '#F{$(".c_time[data-flag=\'endTime\']").val()}'});
+					WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '#F{$(\'.c_time\').eq(0).val()}'});
 				}
 					
 			});
