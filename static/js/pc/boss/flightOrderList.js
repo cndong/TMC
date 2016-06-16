@@ -155,7 +155,12 @@ $(function() {
 				}
 			});
 			$(".c_time").focus(function() {
-				WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});
+				if ($(this).attr("data-flag") == "beginTime") {
+					WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '%y-%M-%d {%H-3}:%m'});
+				} else {
+					WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '#F{$(".c_time[data-flag=\'endTime\']").val()}'});
+				}
+					
 			});
 		},
 		cS2RsnAgreeParams: function(obj) {

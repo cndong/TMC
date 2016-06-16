@@ -126,7 +126,7 @@ class FlightController extends ApiController {
             'isCancel' => in_array($status, array(FlightStatus::WAIT_CHECK, FlightStatus::CHECK_SUCC, FlightStatus::WAIT_PAY)),
             'isResign' => $status == FlightStatus::BOOK_SUCC,
             'isPay' => $status == FlightStatus::WAIT_PAY,
-            'isRefund' => in_array($status, array(FlightStatus::BOOK_SUCC, FlightStatus::RSN_SUCC))
+            'isRefund' => in_array($status, array(FlightStatus::BOOK_SUCC, FlightStatus::RSNED))
         );
     }
     

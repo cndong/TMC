@@ -122,8 +122,8 @@ class FlightController extends BossController {
         $rtn .= '</div></div>';
         $rtn .= "<div class='row row-form-margin'><div class='col-sm-2 text-right'>改签信息</div><div class='col-sm-10 form-inline'>";
         $rtn .= '<div class="form-group form-group-sm"><label>航班号</label><input type="text" name="cS2RsnAgree_flightNo" class="form-control" data-format="F_FLIGHT_NO" data-err="航班号错误" size="6" /></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label>出发时间</label><input type="text" name="cS2RsnAgree_departTime" class="c_time form-control" data-format="DATE_HM" data-err="出发时间错误" readonly size="16" /></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label>到达时间</label><input type="text" name="cS2RsnAgree_arriveTime" class="c_time form-control" data-format="DATE_HM" data-err="到达时间错误" readonly size="16" /></div>';
+        $rtn .= '<div class="form-group form-group-sm"><label>出发时间</label><input type="text" name="cS2RsnAgree_departTime" class="c_time form-control" data-flag="beginTime" data-format="DATE_HM" data-err="出发时间错误" readonly size="16" /></div>';
+        $rtn .= '<div class="form-group form-group-sm"><label>到达时间</label><input type="text" name="cS2RsnAgree_arriveTime" class="c_time form-control" data-flag="endTime" id="datePickerEnd" data-format="DATE_HM" data-err="到达时间错误" readonly size="16" /></div>';
         $rtn .= '<div class="form-group form-group-sm"><label>舱位类别</label><select name="cS2RsnAgree_cabinClass" class="form-control" data-format="INTNZ" data-err="请选择舱位类别"><option value="0">----请选择----';
         foreach (DictFlight::$cabinClasses as $cabinClass => $cabinConfig) {
             $rtn .= "<option value='{$cabinClass}'>{$cabinConfig['name']}";
