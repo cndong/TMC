@@ -24,14 +24,14 @@ class CompanyFinanceLog extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('companyID, type, income, payout, finance, info', 'required'),
-            array('companyID, type, income, payout, finance, ctime, utime', 'numerical', 'integerOnly'=>true),
+            array('companyID, type, orderID, income, payout, finance, info', 'required'),
+            array('companyID, type, orderID, income, payout, finance, ctime, utime', 'numerical', 'integerOnly'=>true),
             array('info', 'length', 'max' => 500),
-            array('id, companyID, type, income, payout, finance, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, companyID, type, orderID, income, payout, finance, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
-    public static function create($companyID, $type, $payout, $income, $info) {
+    public static function create($companyID, $type, $orderID, $payout, $income, $info) {
         $company = $companyID;
         if (!($company instanceof Company) && !($company = Company::model()->findByPk($companyID))) {
             return F::errReturn(RC::RC_COM_NOT_EXISTS);
@@ -40,6 +40,7 @@ class CompanyFinanceLog extends QActiveRecord {
         $financeLog = new CompanyFinanceLog();
         $financeLog->companyID = $company->id;
         $financeLog->type = $type;
+        $financeLog->orderID = $orderID;
         $financeLog->payout = $payout;
         $financeLog->income = $income;
         $financeLog->finance = $company->finance;

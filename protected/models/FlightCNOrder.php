@@ -69,7 +69,7 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     public static function concatPassenger($passenger) {
-        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex');
+        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
         $attributes = F::arrayGetByKeys($passenger, $fields);
         
         return implode(',', $attributes);
@@ -85,7 +85,7 @@ class FlightCNOrder extends QActiveRecord {
     }
     
     public static function parsePassenger($passenger) {
-        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex');
+        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
         $passenger = explode(',', $passenger);
         
         return array_combine($fields, $passenger);
@@ -97,7 +97,7 @@ class FlightCNOrder extends QActiveRecord {
         $passengers = explode('|', $passengers);
         foreach ($passengers as $passenger) {
             $passenger = self::parsePassenger($passenger);
-            $rtn[UserPassenger::getPassengerKey($passenger)] = $passenger;
+            $rtn[$passenger['id']] = $passenger;
         }
         
         return $rtn;
@@ -106,7 +106,12 @@ class FlightCNOrder extends QActiveRecord {
     public static function classifyPassengers($passengers) {
         $rtn = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
         $keys = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex');
+        $tmp = False;
         foreach ($passengers as $passenger) {
+            if (!$tmp && ((is_object($passenger) && isset($passenger->id)) || (is_array($passenger) && isset($passenger['id'])))) {
+                $keys[] = 'id';
+                $tmp = True;
+            }
             $rtn[$passenger['type']][UserPassenger::getPassengerKey($passenger)] = F::arrayGetByKeys($passenger, $keys);
         }
     
@@ -218,7 +223,6 @@ class FlightCNOrder extends QActiveRecord {
         }
     
         //检测常用乘客人
-        $passengers = array(); //用于统计价格
         foreach ($params['passengers'] as $k => $passenger) {
             $isUseID = isset($passenger['passengerID']);
             if (!$isUseID) {
@@ -234,14 +238,14 @@ class FlightCNOrder extends QActiveRecord {
                 }
             } else {
                 if ($tmpPassenger = UserPassenger::model()->findByAttributes($tmp, 'deleted=:deleted', array(':deleted' => UserPassenger::DELETED_F))) {
-                    $tmp = array('passengerID' => $tmpPassenger->id);
+                    $passenger = $tmpPassenger;
+                } else {
+                    $passenger = $tmp;
                 }
             }
-            $passengers[] = $passenger;
-            $params['passengers'][$k] = $tmp;
+            $params['passengers'][$k] = $passenger;
         }
-        $params['passengersSave'] = self::concatPassengers($passengers);
-        $passengers = self::classifyPassengers($passengers);
+        $passengers = self::classifyPassengers($params['passengers']);
     
         //检测往返航程、航段 array('routeKey' => 'ax8ands', 'segments' => array(array(...)));
         $params['segmentNum'] = $totalOrderPrice = $totalTicketPrice = $totalAirportTaxPrice = $totalOilTaxPrice = $totalInsurePrice = 0;
@@ -375,13 +379,15 @@ class FlightCNOrder extends QActiveRecord {
                 $params['invoiceAddressObj'] = $res['data'];
             }
     
+            $passengers = array();
             foreach ($params['passengers'] as $index => $passenger) {
-                if (!isset($passenger['passengerID'])) {
+                if (!is_object($passenger)) {
                     if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
                         throw new Exception($res['rc']);
                     }
-                    $params['passengers'][$index] = array('passengerID' => $res['data']->id);
+                    $passenger = $res['data'];
                 }
+                $passengers[] = $passenger;
             }
     
             $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'segmentNum', 'passengerNum', 'reason'));
@@ -389,7 +395,7 @@ class FlightCNOrder extends QActiveRecord {
             $attributes['contactName'] = $params['contacterObj']->name;
             $attributes['contactMobile'] = $params['contacterObj']->mobile;
             $attributes['invoiceAddress'] = !$params['isInvoice'] ? '' : $params['invoiceAddressObj']->getDescription();
-            $attributes['passengers'] = $params['passengersSave'];
+            $attributes['passengers'] = self::concatPassengers($passengers);
             $attributes['status'] = $params['isPrivate'] ? FlightStatus::WAIT_PAY : FlightStatus::WAIT_CHECK;
             
             $order = new FlightCNOrder();
@@ -680,8 +686,8 @@ class FlightCNOrder extends QActiveRecord {
             $segmentParams = $params['segments'][$segment->id];
             $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('flightNo', 'craftType', 'craftCode')));
             $ticketAttributes['segmentID'] = $segment->id;
-            foreach ($passengers as $passengerKey => $passenger) {
-                if (empty($segmentParams[$passengerKey]) || !($passengerParams = F::checkParams($segmentParams[$passengerKey], $this->_getCS2BookSuccFormats()))) {
+            foreach ($passengers as $passengerID => $passenger) {
+                if (empty($segmentParams[$passengerID]) || !($passengerParams = F::checkParams($segmentParams[$passengerID], $this->_getCS2BookSuccFormats()))) {
                     return F::errReturn(RC::RC_VAR_ERROR);
                 }
             
@@ -711,9 +717,9 @@ class FlightCNOrder extends QActiveRecord {
             $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
             $company = Company::model()->findByPk($this->companyID);
             if (
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $userTAOPrice, 0, $info)) ||
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->insurePrice, 0, $info)) ||
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->invoicePrice, 0, $info))
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $this->id, $userTAOPrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->id, $this->insurePrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->id, $this->invoicePrice, 0, $info))
             ) {
                 return $res;
             }
@@ -902,8 +908,8 @@ class FlightCNOrder extends QActiveRecord {
             $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
             $company = Company::model()->findByPk($this->companyID);
             if (
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $insurePrice, 0, $info))
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $this->id, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->id, $insurePrice, 0, $info))
             ) {
                 return $res;
             }
@@ -981,7 +987,7 @@ class FlightCNOrder extends QActiveRecord {
         
         if (!$this->isPrivate) {
             $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name, 'passengers' => implode('、', $passengers));
-            if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, 0, $totalRefundPrice, $info))) {
+            if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, $this->id, 0, $totalRefundPrice, $info))) {
                 return $res;
             }
         }

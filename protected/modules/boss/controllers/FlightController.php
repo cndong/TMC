@@ -56,8 +56,7 @@ class FlightController extends BossController {
                 $segmentPassengerHtml = '';
                 $marginClass = $segmentNum++ >= 1 ? ' row-form-margin' : '';
                 $rtn .= "<div class='row{$marginClass}'><div class='col-sm-12 text-center text-info'>{$cities[$segment->departCityCode]['cityName']}-{$cities[$segment->arriveCityCode]['cityName']}</div></div>";
-                foreach ($passengers as $passenger) {
-                    $passengerKey = UserPassenger::getPassengerKey($passenger);
+                foreach ($passengers as $passengerID => $passenger) {
                     $ticketTypeStr = DictFlight::$ticketTypes[$passenger['type']]['str'];
                     $ticketTypeName = DictFlight::$ticketTypes[$passenger['type']]['name'];
                     $ticketPrice = $segment[$ticketTypeStr . 'Price'] / 100;
@@ -65,12 +64,12 @@ class FlightController extends BossController {
                     $oilTax = $segment[$ticketTypeStr . 'OilTax'] / 100;
                     
                     $rtn .= "<div class='row row-form-margin'><div class='col-sm-2 text-right'>{$passenger['name']}({$ticketTypeName})</div><div class='col-sm-10 form-inline'>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>PNR</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerKey}][smallPNR]' data-format='F_PNR' data-err='{$passenger['name']}({$ticketTypeName})PNR错误' size='5' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>票价</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerKey}][ticketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})票价错误' value='{$ticketPrice}' size='5' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>实付票价</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerKey}][realTicketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})实付票价错误' value='{$ticketPrice}' size='5' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>机建</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerKey}][airportTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})机建错误' value='{$airportTax}' size='2' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm hidden'><label>燃油</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerKey}][oilTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})燃油错误' value='{$oilTax}' size='2' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>票号</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerKey}][ticketNo]' data-format='F_TICKET_NO' data-err='{$passenger['name']}({$ticketTypeName})票号错误' size='14' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>PNR</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][smallPNR]' data-format='F_PNR' data-err='{$passenger['name']}({$ticketTypeName})PNR错误' size='5' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>票价</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][ticketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})票价错误' value='{$ticketPrice}' size='5' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>实付票价</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][realTicketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})实付票价错误' value='{$ticketPrice}' size='5' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>机建</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][airportTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})机建错误' value='{$airportTax}' size='2' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm hidden'><label>燃油</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][oilTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})燃油错误' value='{$oilTax}' size='2' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>票号</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][ticketNo]' data-format='F_TICKET_NO' data-err='{$passenger['name']}({$ticketTypeName})票号错误' size='14' /></div>";
                     $rtn .= '</div></div>';
                 }
             } 
