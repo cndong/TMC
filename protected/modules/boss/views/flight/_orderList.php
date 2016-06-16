@@ -4,16 +4,16 @@
 <table class="table table-striped table-bordered table-hover">
     <thead>
         <tr>
-            <th class="text-center" width="13%">订单信息</th>
+            <th class="text-center" width="15%">订单信息</th>
             <th class="text-center" width="5%">因公</th>
             <th class="text-center" width="5%">往返</th>
             <th class="text-center" width="10%">联系人</th>
             <th class="text-center" width="5%">价格</th>
-            <th class="text-center" width="12%">用户信息</th>
+            <th class="text-center" width="15%">用户信息</th>
             <th class="text-center" width="15%">状态</th>
-            <th class="text-center" width="7%">客服</th>
-            <th class="text-center" width="20%">操作</th>
-            <th class="text-center" width="8%">退款成功</th>
+            <th class="text-center" width="10%">客服</th>
+            <th class="text-center" width="10%">操作</th>
+            <th class="text-center" width="10%">退款成功</th>
         </tr>
     </thead>
     <tbody>
@@ -28,7 +28,7 @@
             <td class="text-center"><?php echo FlightStatus::getAdminDes($data->status); ?></td>
             <td class="text-center"><?php echo empty($data->operaterID) ? '无' : $data->operater->nickname; ?></td>
             <td rowspan="3" class="text-center">
-                <div class="btn-group btn-group-sm">
+                <p><button class="c_order_detail btn btn-sm btn-primary" data-order-id="<?php echo $data->id; ?>">查看</button></p>
                 <?php
                     $counter = 0;
                     foreach (FlightStatus::getAdminHdStatus($data->status) as $toStatus) {
@@ -39,7 +39,7 @@
                         $toStatusConfig = FlightStatus::$flightStatus[$toStatus];
                         $btnColor = empty($toStatusConfig['btnColor']) ? 'info' : $toStatusConfig['btnColor'];
                         $btn = empty($toStatusConfig['btn']) ? '接单' : $toStatusConfig['btn'];
-                        echo '<button class="c_change_status btn btn-' . $btnColor . '" data-is-handle="1" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $btn . '</button>';
+                        echo '<p><button class="c_change_status btn btn-sm btn-' . $btnColor . '" data-is-handle="1" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $btn . '</button><p>';
                     }
                     
                     foreach (FlightStatus::getAdminOpStatus($data->status) as $toStatus) {
@@ -49,15 +49,12 @@
                         $counter++;
                         $toStatusConfig = FlightStatus::$flightStatus[$toStatus];
                         $btnColor = empty($toStatusConfig['btnColor']) ? 'info' : $toStatusConfig['btnColor'];
-                        echo '<button class="c_change_status btn btn-' . $btnColor . '" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $toStatusConfig['btn'] . '</button>';
+                        echo '<p><button class="c_change_status btn btn-sm btn-' . $btnColor . '" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $toStatusConfig['btn'] . '</button></p>';
                     }
-                    
-                    echo $counter <= 0 ? '无' : '';
                 ?>
-                </div>
             </td>
             <td rowspan="3" class="text-center">
-                <?php echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . FlightStatus::RFDED . '" data-status-str="' . FlightStatus::$flightStatus[FlightStatus::RFDED]['str'] . '">退款成功</button>' : '无'; ?>
+                <?php echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-sm btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . FlightStatus::RFDED . '" data-status-str="' . FlightStatus::$flightStatus[FlightStatus::RFDED]['str'] . '">退款成功</button>' : '无'; ?>
             </td>
         </tr>
         <tr>

@@ -44,8 +44,8 @@ foreach ($routeTypes as $routeType) {
             echo '<td>', empty($ticket->smallPNR) ? '--' : $ticket->smallPNR, '</td>';
             echo '<td>', empty($ticket->ticketNo) ? '--' : $ticket->ticketNo, '</td>';
             echo '<td>', $ticket->ticketPrice / 100, '/', $ticket->realTicketPrice / 100, '</td>';
-            echo '<td>', $ticket->airportTax / 100, '/', $ticket->airportTax / 100, '</td>';
-            echo '<td>', $ticket->oilTax / 100, '/', $ticket->oilTax / 100, '</td>';
+            echo '<td>', $ticket->airportTax / 100, '</td>';
+            echo '<td>', $ticket->oilTax / 100, '</td>';
             echo '<td>', $ticket->resignHandlePrice / 100, '/', $ticket->realResignHandlePrice / 100, '</td>';
             echo '<td>', $ticket->refundHandlePrice / 100, '/', $ticket->realRefundHandlePrice / 100, '</td>';
             echo '<td>', $ticket->refundPrice / 100, '</td>';
