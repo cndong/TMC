@@ -285,7 +285,7 @@ $(function() {
 				layer.open({
 					title: "订单详情",
 					content: _$.getOrderDetailHtml($(this).attr("data-order-id")),
-					area: "80%"
+					area: ["80%", "80%"]
 				});
 			});
 		}
