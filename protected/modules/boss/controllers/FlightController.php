@@ -129,7 +129,7 @@ class FlightController extends BossController {
             $rtn .= "<option value='{$cabinClass}'>{$cabinConfig['name']}";
         }
         $rtn .= '</select></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label class="checkbox-inline"><input type="checkbox" name="cS2RsnAgree_isInsured" value="1" />购买保险</label></div>';
+        $rtn .= '<div class="form-group form-group-sm"><label class="checkbox-inline"><input type="checkbox" name="cS2RsnAgree_isInsured" value="1" /><b class="text-danger">购买保险</b></label></div>';
         $rtn .= '</div></div>';
         
         return $rtn;
