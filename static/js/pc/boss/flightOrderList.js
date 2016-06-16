@@ -125,9 +125,12 @@ $(function() {
 				var ticketID = $(this).val();
 				var ticketPrice = $(this).attr("data-ticket-price");
 				var passenger = $(this).attr("data-passenger");
+				var segmentID = $(this).attr("data-segment-id");
 				var rowID = 'cS2RsnAgreeRow_' + ticketID;
 				var diffPriceID = 'cS2RsnAgreeDiffPrice_' + ticketID;
 				if (isChecked) {
+					$(".c_select_ticket[data-segment-id!='" + segmentID + "']").prop("checked", false);
+					
 					$("[name='cS2RsnAgree_flightNo']").val($(this).attr("data-flight-no"));
 					$("[name='cS2RsnAgree_departTime']").val($(this).attr("data-depart-time"));
 					$("[name='cS2RsnAgree_arriveTime']").val($(this).attr("data-arrive-time"));

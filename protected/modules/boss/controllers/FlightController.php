@@ -110,7 +110,7 @@ class FlightController extends BossController {
                     $ticketPrice = $ticket->ticketPrice / 100;
                     $airportTax = $ticket->airportTax / 100;
                     $oilTax = $ticket->oilTax / 100;
-                    $segmentHtml .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[{$ticket->id}]' data-passenger='{$passenger['name']}({$ticketType})' data-flight-no='{$ticket->flightNo}' data-cabin-class='{$ticket->cabinClass}' data-depart-time='{$departTime}' data-arrive-time='{$arriveTime}' data-is-insured='{$ticket->isInsured}' data-ticket-price='{$ticketPrice}' data-airport-tax='{$airportTax}' data-oil-tax='{$oilTax}' />{$passenger['name']}({$ticketType})</label>";
+                    $segmentHtml .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[{$ticket->id}]' data-segment-id='{$ticket->segmentID}' data-passenger='{$passenger['name']}({$ticketType})' data-flight-no='{$ticket->flightNo}' data-cabin-class='{$ticket->cabinClass}' data-depart-time='{$departTime}' data-arrive-time='{$arriveTime}' data-is-insured='{$ticket->isInsured}' data-ticket-price='{$ticketPrice}' data-airport-tax='{$airportTax}' data-oil-tax='{$oilTax}' />{$passenger['name']}({$ticketType})</label>";
                 }
                 $segmentHtml .= '</div>';
                 
