@@ -129,7 +129,7 @@ $(function() {
 				var rowID = 'cS2RsnAgreeRow_' + ticketID;
 				var diffPriceID = 'cS2RsnAgreeDiffPrice_' + ticketID;
 				if (isChecked) {
-					$(".c_select_ticket[data-segment-id!='" + segmentID + "']").prop("checked", false);
+					$(".c_select_ticket[data-segment-id!='" + segmentID + "']").prop("checked", false).change();
 					
 					$("[name='cS2RsnAgree_flightNo']").val($(this).attr("data-flight-no"));
 					$("[name='cS2RsnAgree_departTime']").val($(this).attr("data-depart-time"));
