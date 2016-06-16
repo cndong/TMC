@@ -953,7 +953,7 @@ class FlightCNOrder extends QActiveRecord {
             }
         }
         
-        $rtnStatus = $isCanResgin ? FlightStatus::BOOK_SUCC : ($isCanRefund ? FlightStatus::RSN_SUCC : FlightStatus::RFD_AGREE);
+        $rtnStatus = $isCanResgin ? FlightStatus::BOOK_SUCC : ($isCanRefund ? FlightStatus::RSNED : FlightStatus::RFD_AGREE);
         return F::corReturn(array('params' => array('status' => $rtnStatus)));
     }
     
@@ -992,14 +992,19 @@ class FlightCNOrder extends QActiveRecord {
             }
         }
         
-        $criteria = new CDbCriteria();
-        $criteria->compare('orderID', $this->id);
-        $criteria->addInCondition('status', array(FlightStatus::RFDED));
-        if (FlightCNTicket::model()->count($criteria) == $this->passengerNum * count($this->segments)) {
-            return F::corReturn(array('params' => array('status' => FlightStatus::RFDED)));
+        $classifyTickets = self::classifyTickets(FlightCNTicket::model()->findAllByAttributes(array('orderID' => $this->id)));
+        $isCanResgin = $isCanRefund = False;
+        foreach ($classifyTickets as $status => $tickets) {
+            if (in_array($status, FlightStatus::getCanResignTicketStatus())) {
+                $isCanResgin = True;
+            } elseif (in_array($status, FlightStatus::getCanRefundTicketStatus())) {
+                $isCanRefund = True;
+            }
         }
         
-        return F::corReturn();
+        $rtnStatus = $isCanResgin ? FlightStatus::BOOK_SUCC : ($isCanRefund ? FlightStatus::RSNED : FlightStatus::RFDED);
+        
+        return F::corReturn(array('params' => array('status' => $rtnStatus)));
     }
     
     //对公-审核成功-邮件机票组
