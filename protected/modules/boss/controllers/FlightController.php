@@ -1,6 +1,18 @@
 <?php
 class FlightController extends BossController {
     public function actionOrderList() {
+        $searchTypes = array(
+            'orderID' => '订单ID',
+            'userID' => '用户ID',
+            'companyID' => '企业ID',
+            'operaterID' => '客服ID'
+        );
+        $_GET['searchType'] = !empty($_GET['searchType']) && isset($searchTypes[$_GET['searchType']]) ? $_GET['searchType'] : False;
+        if ($_GET['searchType']) {
+            $_GET[$_GET['searchType']] = empty($_GET['searchValue']) ? '' : $_GET['searchValue'];
+        }
+        $_GET['status'] = empty($_GET['status']) ? array() : array($_GET['status']);
+        
         $data = FlightCNOrder::search($_GET, True);
         $dataProvider = new CActiveDataProvider('FlightCNOrder', array(
             'criteria' => $data['criteria'],
@@ -10,6 +22,7 @@ class FlightController extends BossController {
         ));
         
         $this->setRenderParams('breadCrumbs', array('飞机票', '订单列表'));
+        $this->setRenderParams('searchTypes', $searchTypes);
         $this->render('orderList', array('dataProvider' => $dataProvider, 'params' => $data['params']));
     }
     
@@ -76,12 +89,12 @@ class FlightController extends BossController {
                     $oilTax = $segment[$ticketTypeStr . 'OilTax'] / 100;
                     
                     $rtn .= "<div class='row row-form-margin'><div class='col-sm-2 text-right'>{$passenger['name']}({$ticketTypeName})</div><div class='col-sm-10 form-inline'>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>PNR</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][smallPNR]' data-format='F_PNR' data-err='{$passenger['name']}({$ticketTypeName})PNR错误' size='5' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>票价</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][ticketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})票价错误' value='{$ticketPrice}' size='5' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>实付票价</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][realTicketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})实付票价错误' value='{$ticketPrice}' size='5' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>机建</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][airportTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})机建错误' value='{$airportTax}' size='2' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm hidden'><label>燃油</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][oilTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})燃油错误' value='{$oilTax}' size='2' /></div>";
-                    $rtn .= "<div class='form-group form-group-sm'><label>票号</label><input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][ticketNo]' data-format='F_TICKET_NO' data-err='{$passenger['name']}({$ticketTypeName})票号错误' size='14' /></div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>PNR</label> <input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][smallPNR]' data-format='F_PNR' data-err='{$passenger['name']}({$ticketTypeName})PNR错误' size='5' /> </div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>票价</label> <input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][ticketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})票价错误' value='{$ticketPrice}' size='5' /> </div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>实付票价</label> <input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][realTicketPrice]' data-format='FLOATNZ' data-err='{$passenger['name']}({$ticketTypeName})实付票价错误' value='{$ticketPrice}' size='5' /> </div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>机建</label> <input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][airportTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})机建错误' value='{$airportTax}' size='2' /> </div>";
+                    $rtn .= "<div class='form-group form-group-sm hidden'><label>燃油</label> <input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][oilTax]' data-format='FLOAT' data-err='{$passenger['name']}({$ticketTypeName})燃油错误' value='{$oilTax}' size='2' /> </div>";
+                    $rtn .= "<div class='form-group form-group-sm'><label>票号</label> <input type='text' class='form-control' name='cS2BookSucc_segments[{$segment->id}][{$passengerID}][ticketNo]' data-format='F_TICKET_NO' data-err='{$passenger['name']}({$ticketTypeName})票号错误' size='14' /> </div>";
                     $rtn .= '</div></div>';
                 }
             } 
@@ -113,7 +126,7 @@ class FlightController extends BossController {
                     $ticketPrice = $ticket->ticketPrice / 100;
                     $airportTax = $ticket->airportTax / 100;
                     $oilTax = $ticket->oilTax / 100;
-                    $segmentHtml .= "<label class='checkbox-inline'><input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[{$ticket->id}]' data-segment-id='{$ticket->segmentID}' data-passenger='{$passenger['name']}({$ticketType})' data-flight-no='{$ticket->flightNo}' data-cabin-class='{$ticket->cabinClass}' data-depart-time='{$departTime}' data-arrive-time='{$arriveTime}' data-is-insured='{$ticket->isInsured}' data-ticket-price='{$ticketPrice}' data-airport-tax='{$airportTax}' data-oil-tax='{$oilTax}' />{$passenger['name']}({$ticketType})</label>";
+                    $segmentHtml .= "<label class='checkbox-inline'> <input type='checkbox' class='c_select_ticket' value='{$ticket->id}' name='cS2RsnAgree_ticketIDs[{$ticket->id}]' data-segment-id='{$ticket->segmentID}' data-passenger='{$passenger['name']}({$ticketType})' data-flight-no='{$ticket->flightNo}' data-cabin-class='{$ticket->cabinClass}' data-depart-time='{$departTime}' data-arrive-time='{$arriveTime}' data-is-insured='{$ticket->isInsured}' data-ticket-price='{$ticketPrice}' data-airport-tax='{$airportTax}' data-oil-tax='{$oilTax}' />{$passenger['name']}({$ticketType})</label>";
                 }
                 $segmentHtml .= '</div>';
                 
@@ -124,15 +137,15 @@ class FlightController extends BossController {
         }
         $rtn .= '</div></div>';
         $rtn .= "<div class='row row-form-margin'><div class='col-sm-2 text-right'>改签信息</div><div class='col-sm-10 form-inline'>";
-        $rtn .= '<div class="form-group form-group-sm"><label>航班号</label><input type="text" name="cS2RsnAgree_flightNo" class="form-control" data-format="F_FLIGHT_NO" data-err="航班号错误" size="6" /></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label>出发时间</label><input type="text" name="cS2RsnAgree_departTime" class="c_time form-control" data-flag="beginTime" data-format="DATE_HM" data-err="出发时间错误" readonly size="16" /></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label>到达时间</label><input type="text" name="cS2RsnAgree_arriveTime" class="c_time form-control" data-flag="endTime" id="datePickerEnd" data-format="DATE_HM" data-err="到达时间错误" readonly size="16" /></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label>舱位类别</label><select name="cS2RsnAgree_cabinClass" class="form-control" data-format="INTNZ" data-err="请选择舱位类别"><option value="0">----请选择----';
+        $rtn .= '<div class="form-group form-group-sm"><label>航班号</label> <input type="text" name="cS2RsnAgree_flightNo" class="form-control" data-format="F_FLIGHT_NO" data-err="航班号错误" size="6" /> </div>';
+        $rtn .= '<div class="form-group form-group-sm"><label>出发时间</label> <input type="text" name="cS2RsnAgree_departTime" class="c_time form-control" data-flag="beginTime" data-format="DATE_HM" data-err="出发时间错误" readonly size="16" /> </div>';
+        $rtn .= '<div class="form-group form-group-sm"><label>到达时间</label> <input type="text" name="cS2RsnAgree_arriveTime" class="c_time form-control" data-flag="endTime" id="datePickerEnd" data-format="DATE_HM" data-err="到达时间错误" readonly size="16" /> </div>';
+        $rtn .= '<div class="form-group form-group-sm"><label>舱位类别</label> <select name="cS2RsnAgree_cabinClass" class="form-control" data-format="INTNZ" data-err="请选择舱位类别"><option value="0">----请选择----';
         foreach (DictFlight::$cabinClasses as $cabinClass => $cabinConfig) {
             $rtn .= "<option value='{$cabinClass}'>{$cabinConfig['name']}";
         }
-        $rtn .= '</select></div>';
-        $rtn .= '<div class="form-group form-group-sm"><label class="checkbox-inline"><input type="checkbox" name="cS2RsnAgree_isInsured" value="1" /><b class="text-danger">购买保险</b></label></div>';
+        $rtn .= '</select> </div>';
+        $rtn .= '<div class="form-group form-group-sm"><label class="checkbox-inline"> <input type="checkbox" name="cS2RsnAgree_isInsured" value="1" /><b class="text-danger">购买保险</b></label> </div>';
         $rtn .= '</div></div>';
         
         return $rtn;
@@ -159,10 +172,10 @@ class FlightController extends BossController {
             $realResignHandlePrice = $ticket->resignHandlePrice / 100;
             
             $rtn .= "<div class='row row-form-margin'><div class='col-sm-2 text-right'>{$passengerName}</div><div class='col-sm-10 form-inline'>";
-            $rtn .= "<div class='form-group form-group-sm'><label>PNR</label><input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][smallPNR]' class='form-control' data-format='F_PNR' data-err='{$passengerName}PNR错误' value='{$ticket->smallPNR}' size='6' /></div>";
-            $rtn .= "<div class='form-group form-group-sm'><label>实际票价</label><input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][realTicketPrice]' class='form-control' data-format='FLOATNZ' data-err='{$passengerName}实际票价错误' value='{$realTicketPrice}' size='6' /></div>";
-            $rtn .= "<div class='form-group form-group-sm'><label>实际手续费</label><input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][realResignHandlePrice]' class='form-control' data-format='FLOAT' data-err='{$passengerName}实际手续费错误' value='{$realResignHandlePrice}' size='6' /></div>";
-            $rtn .= "<div class='form-group form-group-sm'><label>票号</label><input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][ticketNo]' class='form-control' data-format='F_TICKET_NO' data-err='{$passengerName}票号错误' value='{$ticket->ticketNo}' size='15' /></div>";
+            $rtn .= "<div class='form-group form-group-sm'><label>PNR</label> <input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][smallPNR]' class='form-control' data-format='F_PNR' data-err='{$passengerName}PNR错误' value='{$ticket->smallPNR}' size='6' /> </div>";
+            $rtn .= "<div class='form-group form-group-sm'><label>实际票价</label> <input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][realTicketPrice]' class='form-control' data-format='FLOATNZ' data-err='{$passengerName}实际票价错误' value='{$realTicketPrice}' size='6' /> </div>";
+            $rtn .= "<div class='form-group form-group-sm'><label>实际手续费</label> <input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][realResignHandlePrice]' class='form-control' data-format='FLOAT' data-err='{$passengerName}实际手续费错误' value='{$realResignHandlePrice}' size='6' /> </div>";
+            $rtn .= "<div class='form-group form-group-sm'><label>票号</label> <input type='text' name='cS2RsnSucc_tickets[{$ticket->id}][ticketNo]' class='form-control' data-format='F_TICKET_NO' data-err='{$passengerName}票号错误' value='{$ticket->ticketNo}' size='15' /> </div>";
             $rtn .= '</div></div>';
         }
         

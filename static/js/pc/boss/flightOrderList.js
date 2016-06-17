@@ -32,7 +32,13 @@ $(function() {
 					if (typeof(_$[endFunc]) != "undefined") {
 						_$[endFunc]();
 					} else {
-						_$.reload();
+						if (!isHandle) {
+							_$.reload();
+						} else {
+							$("[name='searchType']").val("orderID");
+							$("[name='searchValue']").val(params["orderID"]);
+							$("[name='searchForm']").submit();
+						}
 					}
 				}
 			}, "json");
@@ -138,11 +144,11 @@ $(function() {
 					$("[name='cS2RsnAgree_isInsured']").prop("checked", $(this).attr("data-is-insured") == "1");
 					
 					var html = '<div class="row row-form-margin" id="' + rowID + '"><div class="col-sm-2 text-right">' + passenger + '</div><div class="col-sm-10 form-inline">';
-					html += '<div class="form-group form-group-sm"><label>票价</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][ticketPrice]" value="' + ticketPrice + '" data-format="FLOATNZ" data-err="' + passenger + '票价错误" data-ticket-price="' + ticketPrice + '" data-ticket-id="' + ticketID + '" class="k_change_price form-control" size="5" /></div>';
-					html += '<div class="form-group form-group-sm hidden"><label>机建</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][airportTax]" value="' + $(this).attr("data-airport-tax") + '" data-format="FLOAT" data-err="' + passenger + '机建费错误"  class="form-control" size="5" /></div>';
-					html += '<div class="form-group form-group-sm hidden"><label>燃油</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][oilTax]" value="' + $(this).attr("data-oil-tax") + '" data-format="FLOAT" data-err="' + passenger + '燃油费错误"  class="form-control" size="5" /></div>';
-					html += '<div class="form-group form-group-sm"><label>差价</label><input id=' + diffPriceID + ' type="text" value="0" class="form-control" size="5" readonly /></div>';
-					html += '<div class="form-group form-group-sm"><label>手续费</label><input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][resignHandlePrice]" data-format="FLOAT" data-err="' + passenger + '手续费错误" class="form-control" size="5" /></div>';
+					html += '<div class="form-group form-group-sm"><label>票价</label> <input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][ticketPrice]" value="' + ticketPrice + '" data-format="FLOATNZ" data-err="' + passenger + '票价错误" data-ticket-price="' + ticketPrice + '" data-ticket-id="' + ticketID + '" class="k_change_price form-control" size="5" /> </div>';
+					html += '<div class="form-group form-group-sm hidden"><label>机建</label> <input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][airportTax]" value="' + $(this).attr("data-airport-tax") + '" data-format="FLOAT" data-err="' + passenger + '机建费错误"  class="form-control" size="5" /> </div>';
+					html += '<div class="form-group form-group-sm hidden"><label>燃油</label> <input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][oilTax]" value="' + $(this).attr("data-oil-tax") + '" data-format="FLOAT" data-err="' + passenger + '燃油费错误"  class="form-control" size="5" /> </div>';
+					html += '<div class="form-group form-group-sm"><label>差价</label> <input id=' + diffPriceID + ' type="text" value="0" class="form-control" size="5" readonly /> </div>';
+					html += '<div class="form-group form-group-sm"><label>手续费</label> <input type="text" name="cS2RsnAgree_tickets[' + ticketID + '][resignHandlePrice]" data-format="FLOAT" data-err="' + passenger + '手续费错误" class="form-control" size="5" /> </div>';
 					html += '</div></div>';
 					
 					$(this).parents(".row").parent().append(html);
@@ -160,7 +166,6 @@ $(function() {
 				} else {
 					WdatePicker({dateFmt:'yyyy-MM-dd HH:mm', minDate: '#F{$(\'.c_time\').eq(0).val()}'});
 				}
-					
 			});
 		},
 		cS2RsnAgreeParams: function(obj) {
@@ -215,8 +220,8 @@ $(function() {
 				var isChecked = $(this).prop("checked");
 				if (isChecked) {
 					var html = '<div class="row row-form-margin" id="' + rowID + '"><div class="col-sm-4 text-right">' + passenger + '</div><div class="col-sm-6 form-inline">';
-					html += '<div class="form-group form-group-sm"><label>手续费</label><input type="text" name="cS2RfdAgree_tickets[' + ticketID + '][refundHandlePrice]" data-format="FLOAT" data-err="' + passenger + '手续费错误" class="form-control" size="5" /></div>';
-					html += '<div class="form-group form-group-sm"><label>实际手续费</label><input type="text" name="cS2RfdAgree_tickets[' + ticketID + '][realRefundHandlePrice]" data-format="FLOAT" data-err="' + passenger + '实际手续费错误" class="form-control" size="5" /></div>';
+					html += '<div class="form-group form-group-sm"><label>手续费</label> <input type="text" name="cS2RfdAgree_tickets[' + ticketID + '][refundHandlePrice]" data-format="FLOAT" data-err="' + passenger + '手续费错误" class="form-control" size="5" /> </div>';
+					html += '<div class="form-group form-group-sm"><label>实际手续费</label> <input type="text" name="cS2RfdAgree_tickets[' + ticketID + '][realRefundHandlePrice]" data-format="FLOAT" data-err="' + passenger + '实际手续费错误" class="form-control" size="5" /> </div>';
 					html += '</div></div>';
 					$(this).parents(".row").parent().append(html);
 				} else {
@@ -250,7 +255,7 @@ $(function() {
 				var isChecked = $(this).prop("checked");
 				if (isChecked) {
 					var html = '<div class="row row-form-margin" id="' + rowID + '"><div class="col-sm-4 text-right">' + passenger + '</div><div class="col-sm-6 form-inline">';
-					html += '<div class="form-group form-group-sm"><input type="text" name="cS2Rfded_tickets[' + ticketID + ']" data-format="FLOAT" data-err="' + passenger + '金额错误" value="' + $(this).attr("data-refund-price") + '" class="form-control" size="5" /></div>';
+					html += '<div class="form-group form-group-sm"> <input type="text" name="cS2Rfded_tickets[' + ticketID + ']" data-format="FLOAT" data-err="' + passenger + '金额错误" value="' + $(this).attr("data-refund-price") + '" class="form-control" size="5" /> </div>';
 					html += '</div></div>';
 					$(this).parents(".row").parent().append(html);
 				} else {
@@ -297,9 +302,24 @@ $(function() {
 					area: ["80%", "80%"]
 				});
 			});
+		},
+		bindSearchClick: function() {
+			$(".c_search_time").focus(function() {
+				if ($(this).attr("data-flag") == "beginDate") {
+					WdatePicker({dateFmt:'yyyy-MM-dd', maxDate: '%y-%M-%d %H:%m'}); 
+				} else {
+					WdatePicker({dateFmt:'yyyy-MM-dd', minDate: '#F{$(\'.c_search_time\').eq(0).val()}'});
+				}
+			});
+			$(".c_search_all").click(function() {
+				$("[data-default-value]").each(function() {
+					$(this).val($(this).attr("data-default-value"));
+				});
+			});
 		}
 	});
 	
 	_$.bindChangeStatusClick();
 	_$.bindOrderDetailClick();
+	_$.bindSearchClick();
 });

@@ -472,7 +472,7 @@ class FlightCNOrder extends QActiveRecord {
     
         $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
         $rtn['params'] = F::checkParams($params, array(
-            'orderID' => '!' . ParamsFormat::INTNZ . '--0', 'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0',
+            'orderID' => '!' . ParamsFormat::INTNZ . '--0', 'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0', 'operaterID' => '!' . ParamsFormat::INTNZ . '--0',
             'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE,
         ));
     
@@ -482,7 +482,7 @@ class FlightCNOrder extends QActiveRecord {
         if (!empty($params['orderID'])) {
             $criteria->compare('t.id', $params['orderID']);
         } else {
-            foreach (array('userID', 'departmentID', 'companyID') as $type) {
+            foreach (array('userID', 'departmentID', 'companyID', 'operaterID') as $type) {
                 if (!empty($rtn['params'][$type])) {
                     $criteria->compare('t.' . $type, $params[$type]);
                 }
