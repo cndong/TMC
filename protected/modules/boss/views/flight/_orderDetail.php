@@ -64,7 +64,7 @@ foreach ($routeTypes as $routeType) {
 }
 ?>
 <?php if (!empty($finances)) { ?>
-<div class="panel panel-danger">
+<div class="panel panel-success">
     <div class="panel-heading text-center">交易记录</div>
     <div class="panel-body">
         <table class="table table-striped table-bordered table-hover">
@@ -91,7 +91,7 @@ foreach ($routeTypes as $routeType) {
 </div>
 <?php } ?>
 <?php if (!empty($logs)) { ?>
-<div class="panel panel-danger">
+<div class="panel panel-warning">
     <div class="panel-heading text-center">操作记录</div>
     <div class="panel-body">
         <table class="table table-striped table-bordered table-hover">
