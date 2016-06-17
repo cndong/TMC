@@ -6,7 +6,6 @@ class ProviderCNBOOKING{
         curl_setopt($ch, CURLOPT_URL, QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['WSDL_URL']);
         $postParams = array('xmlRequest'=>self::getRequestXML($method, $params));
         Q::log($postParams, 'Provider.CNBOOKING.Request');
-        //var_dump($postParams);
         if($postParams){
             curl_setopt($ch, CURLOPT_POST,count($postParams)) ;
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postParams));
@@ -24,8 +23,7 @@ class ProviderCNBOOKING{
             $ret['Data'] = is_object($ret['Data']) ? (array) $ret['Data'] : $ret['Data'];
             if(!$ret['MessageInfo']['Code'] = '30000') Q::log($ret, 'Provider.CNBOOKING.Error');
             return $ret;
-        }
-        return false;
+        }else return false;
     }
     
     public static function addXMLShell($actionName, $xml) {
@@ -44,7 +42,7 @@ class ProviderCNBOOKING{
          <Signature>RU4wMDAwMDFFMTBBREMzOTQ5QkE1OUFCQkU1NkUwNTdGMjBGODgzRTM2OWI0NjljLTUxYjItNDNjZC05Njc3LTkzNGNhMTdmMjY1MQ==</Signature>
      </IdentityInfo>
      <ScrollingInfo>
-        <DisplayReq>30</DisplayReq>
+        <DisplayReq>40</DisplayReq>
         <PageItems>10</PageItems>
         <PageNo>1</PageNo>
      </ScrollingInfo>
@@ -75,52 +73,15 @@ return <<<EOF
 EOF;
     }
     
-    public static function getInitActionPushCompleteXML($order) {
+    public static function getRoomSearchXML($params) {
         return <<<EOF
-<DriverID>{$order->driver->id}</DriverID>
-<DistanceLength>0</DistanceLength>
-<TimeLength>0</TimeLength>
-<Expenditure>
-    <Item>
-        <Name>总计费</Name>
-        <Amount>{$order->price}</Amount>
-        <Unit>元</Unit>
-    </Item>
-</Expenditure>
+<CountryId>{$params['CountryId']}</CountryId>
+<ProvinceId>{$params['ProvinceId']}</ProvinceId>
+<CityId>{$params['CityId']}</CityId>
+<HotelId>{$params['HotelId']}</HotelId>
+<RoomId></RoomId>
+<Lang>GB</Lang>
 EOF;
     }
     
-    public static function getInitActionPushVehicelStatus($order) {
-        return <<<EOF
-<DriverID>{$order->driver->id}</DriverID>
-<VehicelStatus>1</VehicelStatus>
-EOF;
-    }
-    
-    public static function response($code, $sequenceID, $dateTime, $xml = '') {
-        Q::log('自己的返回:' . $xml);
-        
-        $signture = self::getSignture($sequenceID, $dateTime, strlen($xml));
-        
-        $sequenceID = Q::getUniqueID();
-        $dateTime = date('Y-m-d H:i:s', Q_TIME);
-        $providerID = ProviderXC::M_ID;
-        $msg = $code == 'OK' ? '成功' : '失败';
-        
-        return <<<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-    <Response>
-        <Head>
-            <Version>1</Version>
-            <SequenceId>{$sequenceID}</SequenceId>
-            <Timestamp>{$dateTime}</Timestamp>
-            <Signture>{$signture}</Signture>
-            <ProviderID>{$providerID}</ProviderID>
-            <MsgCode>{$code}</MsgCode>
-            <Message>{$msg}</Message>
-        </Head>
-        <body>{$xml}</body>
-    </Response>
-EOF;
-    }
 }

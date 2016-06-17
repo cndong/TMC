@@ -2,23 +2,24 @@
 class DataHotelCity {
     public static function getCities() {
         $cacheKey = KeyManager::getHotelCitiesKey();
-        if (!($cities = Yii::app()->cache->get($cacheKey))) {
-            $xmlString= file_get_contents(Q::getDataDocFile('hotelCity.xml'));
-            $hotelCityXml = simplexml_load_string($xmlString);
-            $hotelCity = array();
+        if (!($hotelCitys = Yii::app()->cache->get($cacheKey))) {
+            $hotelCitys = array();
             /*
-              array (
-                'cityCode' => 'BJS',
-                'cityName' => '北京',
-                'citySpell' => 'beijing',
-                'cityShortSpell' => 'bj',
-                'firstChar' => 'B',
-              ),
-             */
-            $countrys = (array) $hotelCityXml->Data->Countrys;
+             array (
+                     'cityCode' => 'BJS',
+                     'cityName' => '北京',
+                     'citySpell' => 'beijing',
+                     'cityShortSpell' => 'bj',
+                     'firstChar' => 'B',
+             ),
+            */
+            $xmlString= file_get_contents(Q::getDataDocFile('hotelCity.xml'));
+            $cityXml = simplexml_load_string($xmlString);
+            $countrys = (array) $cityXml->Data->Countrys;
             foreach ($countrys as $country){
                  foreach ($country as $countryItem){
                      $countryItem = (array) $countryItem;
+                     //大陆内
                      if(!in_array($countryItem['@attributes']['CountryId'], array('0001','0002','0003','0004'))) break;
                      if(isset($countryItem['Province'])){
                         foreach ($countryItem['Province'] as $province){
@@ -28,24 +29,24 @@ class DataHotelCity {
                                 foreach ($province['City'] as $city){
                                     $city = (array) $city;
                                     if(isset($city['CityId'])){
-                                        $hotelCity[$city['CityId']] = self::rendCity($city);
+                                        $hotelCitys[$city['CityId']] = self::rendCity($city);
                                     }
                                     if(isset($city['@attributes']) && isset($city['@attributes']['CityId'])){
-                                        $hotelCity[$city['@attributes']['CityId']] = self::rendCity($city);
+                                        $hotelCitys[$city['@attributes']['CityId']] = self::rendCity($city);
                                     }
                                 }
                             }else {
                                if(isset($province['@attributes']) && isset($province['@attributes']['CityId'])){
-                                        $hotelCity[$province['@attributes']['CityId']] = self::rendCity($province);
+                                        $hotelCitys[$province['@attributes']['CityId']] = self::rendCity($province);
                                }
                             }
                         }
                      }
                  }
             }
-            Yii::app()->cache->set($cacheKey, $hotelCity);
+            Yii::app()->cache->set($cacheKey, $hotelCitys);
         }
-        return $cities;
+        return $hotelCitys;
     }
     
     public static function rendCity($city){
