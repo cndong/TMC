@@ -27,7 +27,7 @@
                         <option value="0">--搜索类别--
                         <?php 
                         $searchValue = '';
-                        foreach ($this->getRenderParams('searchTypes') as $searchType => $searchName) {
+                        foreach ($searchTypes as $searchType => $searchName) {
                             $selected = '';
                             if (!empty($params[$searchType])) {
                                 $selected = ' selected';
@@ -55,7 +55,7 @@
                     <button type="submit" class="c_search_all btn btn-sm btn-primary">全部</button>
                 </form>
             </div>
-            <?php $this->createListView($dataProvider, array('viewData' => array('params' => $params))); ?>
+            <?php $this->createListView($dataProvider); ?>
         </div>
     </div>
 </div>

@@ -7,13 +7,14 @@ class FlightController extends BossController {
             'companyID' => '企业ID',
             'operaterID' => '客服ID'
         );
-        $_GET['searchType'] = !empty($_GET['searchType']) && isset($searchTypes[$_GET['searchType']]) ? $_GET['searchType'] : False;
-        if ($_GET['searchType']) {
-            $_GET[$_GET['searchType']] = empty($_GET['searchValue']) ? '' : $_GET['searchValue'];
+        $searchParams = $_GET;
+        $searchParams['searchType'] = !empty($searchParams['searchType']) && isset($searchTypes[$searchParams['searchType']]) ? $searchParams['searchType'] : False;
+        if ($searchParams['searchType']) {
+            $searchParams[$searchParams['searchType']] = empty($searchParams['searchValue']) ? '' : $searchParams['searchValue'];
         }
-        $_GET['status'] = empty($_GET['status']) ? array() : array($_GET['status']);
+        $searchParams['status'] = empty($searchParams['status']) ? array() : array($searchParams['status']);
         
-        $data = FlightCNOrder::search($_GET, True);
+        $data = FlightCNOrder::search($searchParams, True);
         $dataProvider = new CActiveDataProvider('FlightCNOrder', array(
             'criteria' => $data['criteria'],
             'pagination' => array(
@@ -22,8 +23,7 @@ class FlightController extends BossController {
         ));
         
         $this->setRenderParams('breadCrumbs', array('飞机票', '订单列表'));
-        $this->setRenderParams('searchTypes', $searchTypes);
-        $this->render('orderList', array('dataProvider' => $dataProvider, 'params' => $data['params']));
+        $this->render('orderList', array('dataProvider' => $dataProvider, 'params' => $data['params'], 'searchTypes' => $searchTypes));
     }
     
     public function actionChangeStatus() {
