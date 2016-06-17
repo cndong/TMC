@@ -480,6 +480,7 @@ class FlightCNOrder extends QActiveRecord {
         $criteria->with = array_keys(self::model()->relations());
         $criteria->order = 't.id DESC';
         foreach (array('orderID', 'userID', 'departmentID', 'companyID', 'operaterID') as $type) {
+            $type = $type == 'orderID' ? 'id' : $type;
             if (!empty($rtn['params'][$type])) {
                 $criteria->compare('t.' . $type, $params[$type]);
             }
