@@ -5,13 +5,19 @@ class DataHotelCity {
         if (!($hotelCitys = Yii::app()->cache->get($cacheKey))) {
             $hotelCitys = array();
             /*
-             array (
-                     'cityCode' => 'BJS',
-                     'cityName' => '北京',
-                     'citySpell' => 'beijing',
-                     'cityShortSpell' => 'bj',
-                     'firstChar' => 'B',
-             ),
+             array( '1101'=>
+                 array (
+                         'cityCode' => '1101',
+                         'cityName' => '南京',
+                         'citySpell' => 'nanjing',
+                         'cityShortSpell' => 'nj',
+                         'firstChar' => 'N',
+                         
+                         'CountryId' => '0001',
+                         'CountryName' => '中国大陆',
+                         'ProvinceId' => '江苏',
+                         'ProvinceName' => '1100',
+                 ),),
             */
             $xmlString= file_get_contents(Q::getDataDocFile('hotelCity.xml'));
             $cityXml = simplexml_load_string($xmlString);
@@ -19,25 +25,27 @@ class DataHotelCity {
             foreach ($countrys as $country){
                  foreach ($country as $countryItem){
                      $countryItem = (array) $countryItem;
+                     $countrySelect = array( 'CountryId' => $countryItem['@attributes']['CountryId'], 'CountryName' => $countryItem['@attributes']['CountryName']);
                      //大陆内
                      if(!in_array($countryItem['@attributes']['CountryId'], array('0001','0002','0003','0004'))) break;
                      if(isset($countryItem['Province'])){
                         foreach ($countryItem['Province'] as $province){
                             $province = (array) $province;
+                            if(isset($province['ProvinceId'])) $provinceSelect = array( 'ProvinceId' => $province['ProvinceId'], 'ProvinceName' => $province['ProvinceName']);
+                             if(isset($province['@attributes']) && isset($province['@attributes']['ProvinceId'])) $provinceSelect = array( 'ProvinceId' => $province['@attributes']['ProvinceId'], 'ProvinceName' => $province['@attributes']['ProvinceName']);
                             if(isset($province['City'])){
                                 $province['City'] = (array) $province['City'];
                                 foreach ($province['City'] as $city){
                                     $city = (array) $city;
-                                    if(isset($city['CityId'])){
-                                        $hotelCitys[$city['CityId']] = self::rendCity($city);
-                                    }
-                                    if(isset($city['@attributes']) && isset($city['@attributes']['CityId'])){
-                                        $hotelCitys[$city['@attributes']['CityId']] = self::rendCity($city);
+                                    if(isset($city['CityId'])) { // !!!
+                                        $hotelCitys[$city['CityId']] = array_merge(self::rendCity($city), $countrySelect, $provinceSelect);
+                                    }else if(isset($city['@attributes']) && isset($city['@attributes']['CityId'])){
+                                        $hotelCitys[$city['@attributes']['CityId']] = array_merge(self::rendCity($city), $countrySelect, $provinceSelect);
                                     }
                                 }
                             }else {
-                               if(isset($province['@attributes']) && isset($province['@attributes']['CityId'])){
-                                        $hotelCitys[$province['@attributes']['CityId']] = self::rendCity($province);
+                               if(isset($province['@attributes']) && isset($province['@attributes']['CityId'])){ // !!!
+                                   $hotelCitys[$province['@attributes']['CityId']] = array_merge(self::rendCity($province), $countrySelect, $provinceSelect);
                                }
                             }
                         }

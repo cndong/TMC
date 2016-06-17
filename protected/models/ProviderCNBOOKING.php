@@ -1,7 +1,11 @@
 <?php
 class ProviderCNBOOKING{
-    //$ret['Data'] => array|'暂无数据'
     public static function request($method, $params=array()) {
+        $return = array(
+                'rc' => RC::RC_ERROR,
+                'msg' => '',
+                'data' => array()
+        );
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['WSDL_URL']);
         $postParams = array('xmlRequest'=>self::getRequestXML($method, $params));
@@ -16,14 +20,37 @@ class ProviderCNBOOKING{
         if (curl_getinfo($ch, CURLINFO_HTTP_CODE) !== 200) {
             $ret = @curl_exec($ch);
         }
-        Q::log($ret, 'Provider.CNBOOKING.Response');
+        //Q::log($ret, 'Provider.CNBOOKING.Response');
         if($ret){
             $ret = (array)simplexml_load_string($ret);
+            /*
+             array(3) {
+                      ["ActionName"]=>
+                      string(11) "HotelSearch"
+                      ["MessageInfo"]=>
+                                      array(2) {
+                                        ["Code"]=>
+                                        string(5) "30000"
+                                        ["Description"]=>
+                                        string(12) "操作成功"
+                                      }
+                      ["Data"]=>
+                              array(1) {
+                                ["Hotels"]=>
+                                array(2) {
+                      $ret['Data'] => array|'暂无数据'          
+            */
             $ret['MessageInfo'] = (array) $ret['MessageInfo'];
-            $ret['Data'] = is_object($ret['Data']) ? (array) $ret['Data'] : $ret['Data'];
-            if(!$ret['MessageInfo']['Code'] = '30000') Q::log($ret, 'Provider.CNBOOKING.Error');
-            return $ret;
-        }else return false;
+            if($ret['MessageInfo']['Code'] != '30000') {
+                $return['rc'] = $ret['MessageInfo']['Code'];
+                $return['msg'] = $ret['MessageInfo']['Description'];
+                Q::log($ret, 'Provider.CNBOOKING.Error');
+            }else {
+                $return['rc'] = RC::RC_SUCCESS;
+                $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
+            }
+        }
+        return $return;
     }
     
     public static function addXMLShell($actionName, $xml) {
