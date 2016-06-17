@@ -6,11 +6,12 @@
         <tr>
             <th class="text-center" width="15%">订单信息</th>
             <th class="text-center" width="5%">因公</th>
+            <th class="text-center" width="5%">保险</th>
             <th class="text-center" width="5%">往返</th>
-            <th class="text-center" width="10%">联系人</th>
+            <th class="text-center" width="8%">联系人</th>
             <th class="text-center" width="5%">价格</th>
             <th class="text-center" width="15%">用户信息</th>
-            <th class="text-center" width="15%">状态</th>
+            <th class="text-center" width="12%">状态</th>
             <th class="text-center" width="10%">客服</th>
             <th class="text-center" width="10%">操作</th>
             <th class="text-center" width="10%">退款成功</th>
@@ -21,6 +22,7 @@
         <tr>
             <td rowspan="3" class="text-center"><?php echo "<a href='javascript:;' class='c_order_detail' data-order-id='{$data->id}'>{$data->id}</a>", '<br />', date('m-d H:i:s', $data->ctime), '<br />', Merchant::$merchants[$data->merchantID]['name']; ?><br /></td>
             <td class="text-center"><?php echo $data->isPrivate ? '否' : '是'; ?></td>
+            <td class="text-center"><?php echo $data->isInsured ? '有' : '无'; ?></td>
             <td class="text-center"><?php echo $data->isRound ? '是' : '否'; ?></td>
             <td class="text-center"><?php echo $data->contactName, '<br />', $data->contactMobile; ?></td>
             <td class="text-center"><?php echo $data->orderPrice / 100; ?></td>
@@ -58,7 +60,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 <?php 
                     $cities = DataAirport::getCNCities();
                     $classifyPassengers = FlightCNOrder::classifyPassengers(FlightCNOrder::parsePassengers($data->passengers));
@@ -79,7 +81,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 <?php 
                     foreach ($classifyPassengers as $ticketType => $passengers) {
                         if (!empty($passengers)) {
