@@ -7,7 +7,7 @@
             <div class="panel-heading">
                 <form class="form-inline" name="searchForm">
                     <span>订单列表</span>
-                    <input name="orderID" type="text" class="form-control input-sm" size="6" value="<?php echo $params['orderID']; ?>" data-default-value="" />
+                    <input name="orderID" type="text" class="form-control input-sm" size="6" value="<?php echo empty($params['orderID']) ? '' : $params['orderID']; ?>" data-default-value="" />
                     <label>起始时间</label>
                     <input name="beginDate" type="text" data-flag="beginDate" class="c_search_time form-control input-sm" size="10" value="<?php echo $params['beginDate']; ?>" data-default-value="" />
                     <label>结束时间</label>

@@ -479,29 +479,26 @@ class FlightCNOrder extends QActiveRecord {
         $criteria = new CDbCriteria();
         $criteria->with = array_keys(self::model()->relations());
         $criteria->order = 't.id DESC';
-        if (!empty($params['orderID'])) {
-            $criteria->compare('t.id', $params['orderID']);
-        } else {
-            foreach (array('userID', 'departmentID', 'companyID', 'operaterID') as $type) {
-                if (!empty($rtn['params'][$type])) {
-                    $criteria->compare('t.' . $type, $params[$type]);
-                }
+        foreach (array('orderID', 'userID', 'departmentID', 'companyID', 'operaterID') as $type) {
+            if (!empty($rtn['params'][$type])) {
+                $criteria->compare('t.' . $type, $params[$type]);
             }
-            if (!empty($params['status'])) {
-                if (!is_array($params['status'])) {
-                    $params['status'] = array($params['status']);
-                }
-                if (F::checkParams($params, array('status' => ParamsFormat::F_STATUS_ARRAY))) {
-                    $rtn['params']['status'] = $params['status'];
-                    $criteria->addInCondition('t.status', $rtn['params']['status']);
-                }
-            }
-            if (isset($params['isPrivate'])) {
-                $rtn['params']['isPrivate'] = intval($params['isPrivate']);
-                $criteria->compare('t.isPrivate', $rtn['params']);
-            }
-            $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
         }
+        if (!empty($params['status'])) {
+            if (!is_array($params['status'])) {
+                $params['status'] = array($params['status']);
+            }
+            if (F::checkParams($params, array('status' => ParamsFormat::F_STATUS_ARRAY))) {
+                $rtn['params']['status'] = $params['status'];
+                $criteria->addInCondition('t.status', $rtn['params']['status']);
+            }
+        }
+        if (isset($params['isPrivate'])) {
+            $rtn['params']['isPrivate'] = intval($params['isPrivate']);
+            $criteria->compare('t.isPrivate', $rtn['params']);
+        }
+        $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
+        
         $rtn['criteria'] = $criteria;
         if ($isGetCriteria) {
             return $rtn;
