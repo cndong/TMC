@@ -53,6 +53,12 @@ return array(
                     'categories' => 'dberror.*',
                     'logFile' => 'dberror.log',
                 ),
+                array(
+                        'class' => 'CFileLogRoute',
+                        'levels' => 'error, warning',
+                        'categories' => 'Provider.CNBOOKING.*',
+                        'logFile' => 'Provider.CNBOOKING.log',
+                ),
                 /*
                 array(
                     'class' => 'CWebLogRoute',

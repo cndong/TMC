@@ -24,4 +24,10 @@ class HotelController extends ApiController {
         $hotel = ProviderCNBOOKING::request('HotelSearch', array('CountryId'=>'0001','ProvinceId'=>'1100','CityId'=>'1101'));
         $this->corAjax($hotel);
     }
+    
+    public function actionRoomSearch() {
+        $hotel = ProviderCNBOOKING::request('RoomSearch', array('CountryId'=>'0001','ProvinceId'=>'1100','CityId'=>'1101', 'HotelId'=>6843));
+        $this->corAjax($hotel);
+    }
+    
 }
