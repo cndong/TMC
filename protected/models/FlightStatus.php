@@ -103,7 +103,7 @@ class FlightStatus {
             'adminOpStatus' => array(self::RSN_AGREE, self::RSN_REFUSE)
         ),
         self::RSN_AGREE => array(
-            'des' => array('user' => '正在改签'),
+            'des' => array('user' => '正在改签', '已同意改签'),
             'str' => 'RsnAgree',
             'adminOpStatus' => array(self::RSN_SUCC),
             'btn' => '同意改签',
@@ -116,7 +116,7 @@ class FlightStatus {
             'btnColor' => 'danger'
         ),
         self::RSN_RSNEDING => array(
-            'des' => array('user' => '正在改签')
+            'des' => array('user' => '正在改签', '正在改签(票)')
         ),
         self::RSN_NED_PAY => array(
             'des' => array('user' => '改签中，需支付差额'),
