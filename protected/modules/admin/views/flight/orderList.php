@@ -5,7 +5,7 @@
     <div class="col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <form class="form-inline" name="searchForm">
+                <form class="form-inline" name="searchForm" action="<?php echo $this->createUrl('orderList'); ?>">
                     <span>订单列表</span>
                     <input name="orderID" type="text" class="form-control input-sm" size="6" value="<?php echo empty($params['orderID']) ? '' : $params['orderID']; ?>" data-default-value="" />
                     <label>起始时间</label>

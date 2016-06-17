@@ -2,26 +2,11 @@
 <?php $this->registerLayerJs(); ?>
 <?php $this->registerQmyJs(); ?>
 <?php $this->registerDatePickerJs(); ?>
-<!--div class="row">
-    <div class="col-sm-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">订单搜索</div>
-            <div class="panel-body">
-                <form class="form-inline">
-                    <div class="form-group form-group-sm">
-                        <label>订单ID</label>
-                        <input type="text" class="form-control" name="orderID" />
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div-->
 <div class="row">
     <div class="col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <form class="form-inline" name="searchForm">
+                <form class="form-inline" name="searchForm" action="<?php echo $this->createUrl('orderList'); ?>">
                     <span>订单列表</span>
                     <select name="searchType" class="form-control input-sm" data-default-value="0">
                         <option value="0">--搜索类别--
