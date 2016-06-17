@@ -69,12 +69,12 @@ foreach ($routeTypes as $routeType) {
     <div class="panel-body">
         <table class="table table-striped table-bordered table-hover">
             <tr>
-                <th>类型</th>
-                <th>存入</th>
-                <th>支出</th>
-                <th>余额</th>
-                <th>备注</th>
-                <th>时间</th>
+                <th width="10%">类型</th>
+                <th width="10%">存入</th>
+                <th width="10%">支出</th>
+                <th width="10%">余额</th>
+                <th width="45%">备注</th>
+                <th width="15%">时间</th>
             </tr>
             <?php foreach ($finances as $finance) { ?>
             <tr>
