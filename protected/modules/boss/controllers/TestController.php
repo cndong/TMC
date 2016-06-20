@@ -1,6 +1,8 @@
 <?php
 class TestController extends QController {
     public function actionTaobao() {
+        var_dump(ProviderT::pGetStopList('beijing', 'shanghai', 'aa'));exit;
+        var_dump(ProviderT::getStationList());exit;
         $order = FlightCNOrder::model()->findByPk(9);
         var_dump($order->getTicketsWithRouteType());exit;
         var_dump(FlightCNOrder::createOrder($_POST));

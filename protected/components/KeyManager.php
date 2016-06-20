@@ -32,6 +32,18 @@ class KeyManager {
         return 'FlightCNFlightList' . $departCityCode . $arriveCityCode . $departDate . $flightNo;
     }
     
+    public static function getTrainStationListKey() {
+        return 'TrainStationList';
+    }
+    
+    public static function getTrainListKey($departStationCode, $arriveStationCode, $departDate) {
+        return 'TrainList' . $departStationCode . $arriveStationCode . $departDate;
+    }
+    
+    public static function getTrainStopListKey($departStationCode, $arriveStationCode, $trainNo) {
+        return 'TrainStopList' . $departStationCode . $arriveStationCode . $trainNo;
+    }
+    
     public static function getHotelCitiesKey() {
         return 'HotelCities';
     }

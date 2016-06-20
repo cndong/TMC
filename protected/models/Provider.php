@@ -1,9 +1,9 @@
 <?php
 class Provider {
-    const PROVIDER_QMY = 1;
+    const PROVIDER_Q = 1;
     
     public static $providersConfigDefault = array(
-        self::PROVIDER_QMY => array('name' => '去买呀', 'str' => 'QMY')
+        self::PROVIDER_Q => array('name' => '去买呀', 'str' => 'Q')
     );
     public static $providersConfig = array(); //子类只需重定义此属性即可
     

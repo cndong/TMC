@@ -183,12 +183,14 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $res = FlightCNOrder::search($_GET, False);
-        if (empty($res['data'])) {
+        if (!($user = User::model()->findByPk($params['userID'])) || !($order = FlightCNOrder::model()->findByPk($params['orderID'])) || $order->departmentID != $user->departmentID) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $order = current($res['data']);
+        if (($order->userID != $user->id) && (!$user->isReviewer)) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+        
         $cities = ProviderF::getCNCityList(); 
         $airports = ProviderF::getCNAirportList();
         $airlines = ProviderF::getAirlineList();
