@@ -25,10 +25,8 @@ class HotelController extends ApiController {
     }
     
     public function actionHotelList() {
- /*        $res = ProviderF::getCNFlightList($_GET);
-        $rtn = F::isCorrect($res) ? $res['data'] : array();
-    
-        $this->corAjax($rtn); */
+        $rtn = Hotel::search($_GET);
+        $this->corAjax($rtn); 
     }
     
     public function actionHotelSearch() {

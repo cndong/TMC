@@ -48,6 +48,7 @@ class ProviderCNBOOKING{
             }else {
                 $return['rc'] = RC::RC_SUCCESS;
                 $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
+                if(!is_object($ret['Data'])) Q::log($ret, 'Provider.CNBOOKING.Response.Data.None');
             }
         }
         return $return;
