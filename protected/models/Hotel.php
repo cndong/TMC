@@ -34,6 +34,8 @@ class Hotel extends QActiveRecord {
                 'star' => '!' . ParamsFormat::INTNZ . '--0', 
                 'lon' => '!' . ParamsFormat::FLOATNZ . '--0', 
                 'lat' => '!' . ParamsFormat::FLOATNZ . '--0',
+                'pageSize' => '!' . ParamsFormat::INTNZ . '--10',
+                'page' => '!' . ParamsFormat::INTNZ . '--2',
         ));
        if(!$params) return $return;
        
@@ -45,6 +47,14 @@ class Hotel extends QActiveRecord {
         }
         if($params['lon'] && $params['lat'])
         $criteria->order = ' ACOS(SIN(('.$params['lat'].' * 3.1415) / 180 ) *SIN((lat * 3.1415) / 180 ) +COS(('.$params['lat'].' * 3.1415) / 180 ) * COS((lat * 3.1415) / 180 ) *COS(('.$params['lon'].' * 3.1415) / 180 - (lon * 3.1415) / 180 ) ) * 6380 asc';
+        
+        //分页
+        $count = self::model()->count($criteria);
+        $pager = new CPagination($count);
+        $pager->pageSize = $params['pageSize'];
+        $_GET['page'] = $params['page'];
+        $pager->applyLimit($criteria);
+        
         $hotels = self::model()->findAll($criteria);
         foreach ($hotels as $hotel) {
              $hotel = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));

@@ -22,12 +22,11 @@ class HotelController extends AdminController {
                     else 
                         foreach ($hotels['Hotel'] as $key => $hotel){
                             $this->_UpdateHotelSave($hotel);
-                            if($i>15) break;
+                            if($i>12) break;
                             $i++;
                         }
                 }else Q::log($res, 'Hotel._UpdateHotel.Error.Hotel');
             }
-            break;
         }
     }
     
