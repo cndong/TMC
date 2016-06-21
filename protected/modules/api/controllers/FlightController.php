@@ -191,7 +191,9 @@ class FlightController extends ApiController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $cities = ProviderF::getCNCityList(); 
+        $order->routes = $order->getRoutes();
+        
+        $cities = ProviderF::getCNCityList();
         $airports = ProviderF::getCNAirportList();
         $airlines = ProviderF::getAirlineList();
         

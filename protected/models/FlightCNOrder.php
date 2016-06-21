@@ -508,7 +508,7 @@ class FlightCNOrder extends QActiveRecord {
         $orders = F::arrayAddField(self::model()->findAll($criteria), 'id');
         foreach ($orders as $orderID => $order) {
             if ($isWithRoute) {
-                $orders[$orderID]->routes = $order->getRoutes($order);
+                $orders[$orderID]->routes = $order->getRoutes();
             }
         }
         $rtn['data'] = $orders;
