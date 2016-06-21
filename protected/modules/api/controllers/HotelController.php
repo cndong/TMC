@@ -61,7 +61,7 @@ class HotelController extends ApiController {
             $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg');
             $hotel['image'] = $images[rand(0, 1)];
             $hotel['lowPrice'] = rand(100, 500);
-            $return[] = $hotel;
+            $rtn[] = $hotel;
         }
         $this->corAjax(array('hotelList'=>$rtn)); 
     }
@@ -79,8 +79,9 @@ class HotelController extends ApiController {
         if(!$hotel) $this->errAjax(RC::RC_H_HOTEL_NOT_EXISTS);
         else{
             $hotel = $hotel->attributes;
+            $hotel['rooms'] = array();
             $city = DataHotelCity::getCity($hotel['cityId']);
-            $res = ProviderCNBOOKING::request('RatePlanSearch',
+            if(F::isCorrect($res= ProviderCNBOOKING::request('RatePlanSearch',
                     array(
                             'CountryId' => $city['CountryId'],
                             'ProvinceId' => $city['ProvinceId'],
@@ -88,11 +89,10 @@ class HotelController extends ApiController {
                             'HotelId' => $params['hotelId'],
                             'CheckIn' => $params['checkIn'],
                             'CheckOut' => $params['checkOut']
-                    ));
-            $hotel['rooms'] = array();
-            if(F::isCorrect($res) && $res['data']){
-                if(is_array($res['data']['Hotels']) && is_array($res['data']['Rooms'])){
-                    $hotel['rooms'] = $res['data']['Rooms'];
+                    ))) && $res['data']){
+                if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
+                    $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    $hotel['rooms'] = F::changeArrKey($rooms);
                 }
             }
             $this->corAjax(array('hotelDetail'=>$hotel));

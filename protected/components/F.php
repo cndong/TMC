@@ -464,4 +464,18 @@ class F {
         
         return strtr($template, $tr);
     }
+    
+    public static  function changeArrKey($array, $do='lcfirst'){
+   		if(!is_array($array)) return $array;
+   		$tempArray=array();
+   		foreach ($array as $key=>$value){
+   			$key=$do($key);
+   			if(is_array($value)){
+   				$value=self::changeArrKey($value);
+   			}
+   			$tempArray[$key]=$value;
+   		}
+   		return $tempArray;
+   }
+    
 }
