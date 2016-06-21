@@ -85,11 +85,12 @@ EOF;
     }
     
     public static function getHotelSearchXML($params) {
+        $hotelId = isset($params['HotelId']) ? $params['HotelId'] : '';
         return <<<EOF
 <CountryId>{$params['CountryId']}</CountryId>
 <ProvinceId>{$params['ProvinceId']}</ProvinceId>
 <CityId>{$params['CityId']}</CityId>
-<HotelId></HotelId>
+<HotelId>{$hotelId}</HotelId>
 <Lang>GB</Lang>
 EOF;
 return <<<EOF
@@ -102,14 +103,39 @@ EOF;
     }
     
     public static function getRoomSearchXML($params) {
+        $roomId = isset($params['RoomId']) ? $params['RoomId'] : '';
         return <<<EOF
 <CountryId>{$params['CountryId']}</CountryId>
 <ProvinceId>{$params['ProvinceId']}</ProvinceId>
 <CityId>{$params['CityId']}</CityId>
 <HotelId>{$params['HotelId']}</HotelId>
-<RoomId></RoomId>
+<RoomId>{$roomId}</RoomId>
 <Lang>GB</Lang>
 EOF;
     }
     
+    public static function getRatePlanSearchXML($params) {
+        $roomId = isset($params['RoomId']) ? $params['RoomId'] : '';
+        $ratePlanId = isset($params['RatePlanId']) ? $params['RatePlanId'] : '';
+        return <<<EOF
+    <CountryId>{$params['CountryId']}</CountryId>
+    <ProvinceId>{$params['ProvinceId']}</ProvinceId>
+    <CityId>{$params['CityId']}</CityId>
+    <HotelId>{$params['HotelId']}</HotelId>
+    <RoomId>{$roomId}</RoomId>
+    <RatePlanId>{$ratePlanId}</RatePlanId>
+    <StayDateRange>
+      <CheckIn>{$params['CheckIn']}</CheckIn>
+      <CheckOut>{$params['CheckOut']}</CheckOut>
+    </StayDateRange>
+    <GuestInfo>
+      <AdultCount></AdultCount>
+      <ChildCount></ChildCount>
+      <ChildAges></ChildAges>
+    </GuestInfo>
+    <Currency></Currency>
+    <Lang>GB</Lang>
+    <RatePlanOnly></RatePlanOnly>
+EOF;
+    }
 }

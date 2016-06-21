@@ -84,6 +84,8 @@ class RC {
     const RC_SMS_CODE_NOT_EXISTS = 100506;
     const RC_SMS_CODE_NOT_CORRECT = 100507;
     
+    const RC_H_HOTEL_NOT_EXISTS= 100601;
+    
     public static function getMsg($status) {
         $config = array(
             self::RC_ERROR => '未知错误',
@@ -132,7 +134,10 @@ class RC {
             self::RC_SMS_INTERVAL_ERROR => '短信发送技能正在冷却',
             self::RC_SMS_CODE_HAD_SENDED => '验证码已发送',
             self::RC_SMS_CODE_NOT_EXISTS => '验证码不存在',
-            self::RC_SMS_CODE_NOT_CORRECT => '验证码错误'
+            self::RC_SMS_CODE_NOT_CORRECT => '验证码错误',
+                
+            self::RC_H_HOTEL_NOT_EXISTS => '酒店不存在',
+                
         );
     
         return isset($config[$status]) ? $config[$status] : '服务器异常，请稍后再试(' . $status . ')';

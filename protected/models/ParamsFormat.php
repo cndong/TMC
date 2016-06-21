@@ -53,7 +53,7 @@ class ParamsFormat {
     const SEX = 'array("Dict", "isSex")';
     const SMS_CODE = '/^\d{6}$/';
     const SMS_SIGN = 'array("SMS", "isSMSSign")';
-    const HOTEL_ID = '/^[0-9]{4}$/';
+    const HOTEL_CITY_ID = '/^[0-9]{4}$/';
     const HOTEL_STAR = '/^[0-9]{6}$/';
     
     public static function isDate($str) {

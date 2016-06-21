@@ -55,7 +55,6 @@ class HotelController extends AdminController {
         if(!$hotel->save()){
             echo " {$hotel->hotelId}_Failed ";
             Q::log(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel._UpdateHotel.Save.Error');
-            return false;
         }else {
             echo " {$hotel->hotelId}_OK ";
             Q::log($hotel->hotelId, 'Hotel._UpdateHotel.Save.OK');

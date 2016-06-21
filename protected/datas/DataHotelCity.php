@@ -73,5 +73,9 @@ class DataHotelCity {
         return array('cityCode'=>$cityId, 'cityName'=>$cityName, 'citySpell'=>$pingyin, 'cityShortSpell'=>$cityShortSpell, 'firstChar'=>$firstChar);
     }
     
+    public static function getCity($cityId) {
+        $cityList = self::getCities();
+        return isset($cityList[$cityId]) ? $cityList[$cityId] : false;
+    }
 }
 ?>
