@@ -5,11 +5,12 @@
     <thead>
         <tr>
             <th class="text-center" width="15%">订单信息</th>
-            <th class="text-center" width="10%">往返</th>
-            <th class="text-center" width="10%">价格</th>
-            <th class="text-center" width="15%">联系人</th>
+            <th class="text-center" width="8%">往返</th>
+            <th class="text-center" width="8%">价格</th>
+            <th class="text-center" width="13%">联系人</th>
             <th class="text-center" width="10%">用户信息</th>
             <th class="text-center" width="20%">部门</th>
+            <th class="text-center" width="8%">审批人</th>
             <th class="text-center" width="20%">状态</th>
         </tr>
     </thead>
@@ -21,11 +22,12 @@
             <td class="text-center"><?php echo $data->orderPrice / 100; ?></td>
             <td class="text-center"><?php echo $data->contactName, '<br />', $data->contactMobile; ?></td>
             <td class="text-center"><?php echo $data->user->name; ?></td>
-            <td class="text-center"><?php echo $data->department->name; ?></td>            
+            <td class="text-center"><?php echo $data->department->name; ?></td>
+            <td class="text-center"><?php echo !empty($data->reviewerID) ? $data->reviewer->name : '无'; ?></td>
             <td class="text-center"><?php echo FlightStatus::getUserDes($data->status); ?></td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="7">
                 <?php 
                     $cities = DataAirport::getCNCities();
                     $classifyPassengers = FlightCNOrder::classifyPassengers(FlightCNOrder::parsePassengers($data->passengers));
@@ -46,7 +48,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="7">
                 <?php 
                     foreach ($classifyPassengers as $ticketType => $passengers) {
                         if (!empty($passengers)) {

@@ -31,6 +31,7 @@ class FlightCNOrder extends QActiveRecord {
             'company' => array(self::BELONGS_TO, 'Company', 'companyID'),
             'segments' => array(self::HAS_MANY, 'FlightCNSegment', 'orderID'),
             'tickets' => array(self::HAS_MANY, 'FlightCNTicket', 'orderID'),
+            'reviewer' => array(self::BELONGS_TO, 'User', 'reviewerID'),
             'operater' => array(self::BELONGS_TO, 'BossAdmin', 'operaterID')
         );
     }
