@@ -45,6 +45,7 @@ class BController extends QController {
             'pager' => array(
                 'cssFile' => False,
                 'header' => '',
+                'maxButtonCount' => 5,
                 'firstPageLabel' => '首页',
                 'prevPageLabel' => '上一页',
                 'nextPageLabel' => '下一页',
