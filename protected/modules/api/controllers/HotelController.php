@@ -49,10 +49,8 @@ class HotelController extends ApiController {
         
         //分页
         $count = Hotel::model()->count($criteria);
-        $pager = new CPagination($count);
-        $pager->pageSize = $params['pageSize'];
-        $_GET['page'] = $params['page'];
-        $pager->applyLimit($criteria);
+        $criteria->limit = $params['pageSize'];
+        $criteria->offset = ($params['page']-1)*$criteria->limit;
         
         $rtn = array();
         $hotels = Hotel::model()->findAll($criteria);
