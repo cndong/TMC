@@ -66,7 +66,7 @@
                     $classifyPassengers = FlightCNOrder::classifyPassengers(FlightCNOrder::parsePassengers($data->passengers));
                     foreach ($data->segments as $segment) {
                         echo '<span class="pull-left text-danger">';
-                        echo "【航段】{$cities[$segment->departCityCode]['cityName']}({$segment->departCityCode})-{$cities[$segment->arriveCityCode]['cityName']}({$segment->arriveCityCode})";
+                        echo "【航段】{$cities[$segment->departCityCode]['cityName']}({$segment->departAirportCode})-{$cities[$segment->arriveCityCode]['cityName']}({$segment->arriveAirportCode})";
                         echo "【航班】{$segment->flightNo}, {$segment->cabin}";
                         foreach ($classifyPassengers as $ticketType => $passengers) {
                             if (!empty($passengers)) {
