@@ -105,8 +105,11 @@ class HotelController extends ApiController {
                     //去除[]  breakfastType description
                     foreach ($rooms as &$room){
                         if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
-                            unset($room['RatePlans']['RatePlan']['Description']);
-                            unset($room['RatePlans']['RatePlan']['BreakfastType']);
+                            if($room['RatePlans']['RatePlanCount'] == 1) $room['RatePlans']['RatePlan'] = array($room['RatePlans']['RatePlan']);
+                            foreach ($room['RatePlans']['RatePlan'] as &$ratePlan){
+                                unset($ratePlan['Description']);
+                                unset($ratePlan['BreakfastType']);
+                            }
                         }
                     }
                     //PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
