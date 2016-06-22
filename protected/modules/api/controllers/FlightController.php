@@ -200,7 +200,7 @@ class FlightController extends ApiController {
         $rtn = $this->_getFlags($order->status);
         $rtn['contacterName'] = $order->contactName;
         $rtn['contacterMobile'] = $order->contactMobile;
-        $rtn['passengers'] = array_values(FlightCNOrder::parsePassengers($order->passengers));
+        $rtn['passengers'] = array_values(UserPassenger::parsePassengers($order->passengers));
         $rtn = array_merge($rtn, F::arrayGetByKeys($order, array('id', 'orderPrice', 'reason', 'ctime')));
         $rtn['status'] = FlightStatus::getUserDes($order['status']);
         foreach (array('departRoute', 'returnRoute') as $routeType) {
@@ -224,7 +224,7 @@ class FlightController extends ApiController {
                 $tmp = array_merge($tmp, F::arrayGetByKeys($segment, array('departTime', 'arriveTime', 'flightNo', 'cabinClassName')));
                 
                 foreach ($segment->tickets as $ticket) {
-                    $tmpTicket = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $tmpTicket = UserPassenger::parsePassenger($ticket->passenger);
                     $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('ticketNo', 'departTime', 'arriveTime', 'flightNo', 'cabinClassName')));
                     $tmpTicket['departTerm'] = $ticket->departTerm == '--' ? '' : $ticket->departTerm;
                     $tmpTicket['arriveTerm'] = $ticket->arriveTerm == '--' ? '' : $ticket->arriveTerm;

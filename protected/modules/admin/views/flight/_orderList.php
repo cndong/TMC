@@ -30,7 +30,7 @@
             <td colspan="7">
                 <?php 
                     $cities = DataAirport::getCNCities();
-                    $classifyPassengers = FlightCNOrder::classifyPassengers(FlightCNOrder::parsePassengers($data->passengers));
+                    $classifyPassengers = FlightCNOrder::classifyPassengers(UserPassenger::parsePassengers($data->passengers));
                     foreach ($data->segments as $segment) {
                         echo '<span class="pull-left text-danger">';
                         echo "【航段】{$cities[$segment->departCityCode]['cityName']}({$segment->departCityCode})-{$cities[$segment->arriveCityCode]['cityName']}({$segment->arriveCityCode})";

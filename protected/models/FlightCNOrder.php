@@ -69,41 +69,6 @@ class FlightCNOrder extends QActiveRecord {
         return False;
     }
     
-    public static function concatPassenger($passenger) {
-        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
-        $attributes = F::arrayGetByKeys($passenger, $fields);
-        
-        return implode(',', $attributes);
-    }
-    
-    public static function concatPassengers($passengers) {
-        $rtn = array();
-        foreach ($passengers as $passenger) {
-            $rtn[] = self::concatPassenger($passenger);
-        }
-        
-        return implode('|', $rtn);
-    }
-    
-    public static function parsePassenger($passenger) {
-        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
-        $passenger = explode(',', $passenger);
-        
-        return array_combine($fields, $passenger);
-    }
-    
-    public static function parsePassengers($passengers) {
-        $rtn = array();
-        
-        $passengers = explode('|', $passengers);
-        foreach ($passengers as $passenger) {
-            $passenger = self::parsePassenger($passenger);
-            $rtn[$passenger['id']] = $passenger;
-        }
-        
-        return $rtn;
-    }
-    
     public static function classifyPassengers($passengers) {
         $rtn = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
         $keys = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex');
@@ -396,7 +361,7 @@ class FlightCNOrder extends QActiveRecord {
             $attributes['contactName'] = $params['contacterObj']->name;
             $attributes['contactMobile'] = $params['contacterObj']->mobile;
             $attributes['invoiceAddress'] = !$params['isInvoice'] ? '' : $params['invoiceAddressObj']->getDescription();
-            $attributes['passengers'] = self::concatPassengers($passengers);
+            $attributes['passengers'] = UserPassenger::concatPassengers($passengers);
             $attributes['status'] = $params['isPrivate'] ? FlightStatus::WAIT_PAY : FlightStatus::WAIT_CHECK;
             
             $order = new FlightCNOrder();
@@ -677,7 +642,7 @@ class FlightCNOrder extends QActiveRecord {
         $ticketAttributes['isInsured'] = $this->isInsured;
         
         $userTAOPrice = 0;
-        $passengers = self::parsePassengers($this->passengers);
+        $passengers = UserPassenger::parsePassengers($this->passengers);
         foreach ($this->segments as $segment) {
             if (empty($params['segments'][$segment->id]) || !is_array($params['segments'][$segment->id])) {
                 return F::errReturn(RC::RC_VAR_ERROR);
@@ -696,7 +661,7 @@ class FlightCNOrder extends QActiveRecord {
                 $ticketAttributes['oilTax'] = $passengerParams['oilTax'] * 100;
                 $ticketAttributes['realTicketPrice'] = $passengerParams['realTicketPrice'] * 100;
                 $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($passengerParams, array('bugPNR', 'smallPNR', 'ticketNo')));
-                $ticketAttributes['passenger'] = self::concatPassenger($passenger);
+                $ticketAttributes['passenger'] = UserPassenger::concatPassenger($passenger);
                 $ticketAttributes['insurePrice'] = $this->insurePrice / $this->passengerNum;
                 $ticketAttributes['resignHandlePrice'] = $ticketAttributes['refundHandlePrice'] = $ticketAttributes['realResignHandlePrice'] = $ticketAttributes['realRefundHandlePrice'] = $ticketAttributes['refundPrice'] = $ticketAttributes['payPrice'] = 0;
                 $ticketAttributes = array_merge($ticketAttributes, F::arrayGetByKeys($segment, array('cabin', 'cabinClass', 'cabinClassName', 'departTime', 'arriveTime', 'departTerm', 'arriveTerm')));
@@ -731,7 +696,7 @@ class FlightCNOrder extends QActiveRecord {
     private function _cS2BookSuccAfter() {
         //短信通知
         $airports = ProviderF::getCNAirportList();
-        $passengers = implode(',', F::arrayGetField(self::parsePassengers($this->passengers), 'name'));
+        $passengers = implode(',', F::arrayGetField(UserPassenger::parsePassengers($this->passengers), 'name'));
         $routes = $this->getRoutes();
         $routeTypes = $this->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
         foreach ($routeTypes as $routeType) {
@@ -812,7 +777,7 @@ class FlightCNOrder extends QActiveRecord {
                 return F::errReturn(RC::RC_STATUS_ERROR);
             }
             
-            $passenger = self::parsePassenger($ticket->passenger);
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
             $segmentID = $segmentID == 0 ? $ticket->segmentID : $segmentID; //只允许改签一个航段
             if ($ticket->segmentID != $segmentID) {
                 return F::errReturn(RC::RC_F_RESIGN_ONLY_ONE_SEGMENT);
@@ -900,7 +865,7 @@ class FlightCNOrder extends QActiveRecord {
             $insurePrice += $ticket->insurePrice;
             $rsnPrice += $ticket->payPrice;
             
-            $passenger = self::parsePassenger($ticket->passenger);
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
             $logPassengers[] = $passenger['name'];
         }
         
@@ -974,7 +939,7 @@ class FlightCNOrder extends QActiveRecord {
             if (!in_array($ticket->status, FlightStatus::getCanRefundedTicketStatus())) {
                 return F::errReturn(RC::RC_STATUS_ERROR);
             }
-            $passenger = self::parsePassenger($ticket->passenger);
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
             $passengers[] = $passenger['name'];
             
             $refundPrice = $refundPrice * 100;

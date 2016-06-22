@@ -37,7 +37,7 @@ foreach ($routeTypes as $routeType) {
             </tr>
 <?php
         foreach ($segment->tickets as $ticket) {
-            $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
             echo '<tr>';
             echo "<td>{$passenger['name']}</td>";
             echo '<td>', DictFlight::$ticketTypes[$passenger['type']]['name'], '</td>';

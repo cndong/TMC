@@ -72,7 +72,7 @@ class FlightController extends BossController {
     private function _cS2BookSuccHtml($order) {
         $rtn = '';
         $routes = $order->getRoutes();
-        $passengers = FlightCNOrder::parsePassengers($order->passengers);
+        $passengers = UserPassenger::parsePassengers($order->passengers);
         $routeTypes = $order->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
         $segmentNum = 0;
         $cities = ProviderF::getCNCityList();
@@ -119,7 +119,7 @@ class FlightController extends BossController {
                         continue;
                     }
                     $ticketNum++;
-                    $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $passenger = UserPassenger::parsePassenger($ticket->passenger);
                     $ticketType = DictFlight::$ticketTypes[$passenger['type']]['name'];
                     $departTime = date('Y-m-d H:i', $ticket->departTime);
                     $arriveTime = date('Y-m-d H:i', $ticket->arriveTime);
@@ -165,7 +165,7 @@ class FlightController extends BossController {
                 $rtn .= "<div class='row'><div class='col-sm-12 text-danger text-center'>{$cities[$segments[$ticket->segmentID]['departCityCode']]['cityName']}-{$cities[$segments[$ticket->segmentID]['arriveCityCode']]['cityName']}</div></div>";
             }
         
-            $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
             $ticketType = DictFlight::$ticketTypes[$passenger['type']]['name'];
             $passengerName = "{$passenger['name']}({$ticketType})";
             $realTicketPrice = $ticket->ticketPrice / 100;
@@ -198,7 +198,7 @@ class FlightController extends BossController {
                     }
                     
                     $ticketNum++;
-                    $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+                    $passenger = UserPassenger::parsePassenger($ticket->passenger);
                     $ticketTypeName = DictFlight::$ticketTypes[$passenger['type']]['name'];
                     $passengerName = "{$passenger['name']}($ticketTypeName)";
                     
@@ -223,7 +223,7 @@ class FlightController extends BossController {
         $tickets = empty($classifyTickets[FlightStatus::RFD_AGREE]) ? array() : $classifyTickets[FlightStatus::RFD_AGREE];
         $ticketNum = 0;
         foreach ($tickets as $ticket) {
-            $passenger = FlightCNOrder::parsePassenger($ticket->passenger);
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
             $ticketTypeName = DictFlight::$ticketTypes[$passenger['type']]['name'];
             $passengerName = "{$passenger['name']}($ticketTypeName)";
             $refundPrice = ($ticket->ticketPrice + $ticket->airportTax + $ticket->oilTax - $ticket->refundHandlePrice) / 100;

@@ -30,6 +30,46 @@ class UserPassenger extends QActiveRecord {
         return $this->$key;
     }
     
+    public static function concatPassenger($passenger, $businessID = 0) {
+        $fields = array('name', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
+        $attributes = F::arrayGetByKeys($passenger, $fields);
+        if (isset($passenger['type'])) {
+            $attributes['type'] = $passenger['type'];
+        } elseif (!empty($businessID)) {
+            $attributes['type'] = $passenger[Dict::$businesses[$businessID]['str'] . 'Type'];
+        }
+        
+        return implode(',', $attributes);
+    }
+    
+    public static function concatPassengers($passengers) {
+        $rtn = array();
+        foreach ($passengers as $passenger) {
+            $rtn[] = self::concatPassenger($passenger);
+        }
+    
+        return implode('|', $rtn);
+    }
+    
+    public static function parsePassenger($passenger) {
+        $fields = array('name' , 'type', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
+        $passenger = explode(',', $passenger);
+    
+        return array_combine($fields, $passenger);
+    }
+    
+    public static function parsePassengers($passengers) {
+        $rtn = array();
+    
+        $passengers = explode('|', $passengers);
+        foreach ($passengers as $passenger) {
+            $passenger = self::parsePassenger($passenger);
+            $rtn[$passenger['id']] = $passenger;
+        }
+    
+        return $rtn;
+    }
+    
     public static function getPassengerKey($passenger) {
         $rtn = array();
         foreach (array('name', 'cardNo', 'type') as $k) {
