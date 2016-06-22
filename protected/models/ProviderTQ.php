@@ -30,6 +30,10 @@ class ProviderTQ extends ProviderT {
             return F::errReturn(F::getCurlError($res));
         }
         
+        if (!F::isCorrect($res['data'])) {
+            return $res['data'];
+        }
+        
         return F::corReturn($res['data']['data']);
     }
     
