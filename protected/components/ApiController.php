@@ -44,7 +44,7 @@ class ApiController extends QController {
     public function beforeAction($action) {
         Q::log($_REQUEST, 'Api.Request');
         
-        if ($this->_isCheckAuth($action)) {
+        if (!Q::isLocalEnv() && $this->_isCheckAuth($action)) {
             if (!F::isCorrect($res = $this->_checkAuth($_REQUEST))) {
                 $this->onAjax($res);
             }
