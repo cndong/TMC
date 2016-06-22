@@ -62,6 +62,10 @@ class ProviderTQ extends ProviderT {
                     $trainInfo['duration'] *= 60;
                     $trainInfo['departTime'] = strtotime($trainInfo['departDate'] . ' ' . $trainInfo['departTime']);
                     $trainInfo['arriveTime'] = $trainInfo['departTime'] + $trainInfo['duration'];
+                    
+                    foreach ($trainInfo['seats'] as &$seat) {
+                        $seat['seatPrice'] *= 100;
+                    }
                 }
                 
                 Yii::app()->cache->set($cacheKey, $data, 60 * 5);
