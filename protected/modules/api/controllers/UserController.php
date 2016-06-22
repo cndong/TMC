@@ -127,18 +127,25 @@ class UserController extends ApiController {
     }
     
     private function _getPassengerAttributes($passenger) {
-        return F::arrayGetByKeys($passenger, array('id', 'name', 'type', 'cardType', 'cardNo', 'birthday', 'sex'));
+        return F::arrayGetByKeys($passenger, array('id', 'name', 'cardType', 'cardNo', 'birthday', 'sex'));
     }
     
     public function actionPassengerList() {
-        if (!F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ))) {
+        if (!($tmp = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'businessID' => '!' . ParamsFormat::BUSINESS_ID . '--' . Dict::BUSINESS_FLIGHT)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
         $rtn = array();
-        $passengers = UserPassenger::model()->findAllByAttributes(array('userID' => $_GET['userID'], 'deleted' => UserContacter::DELETED_F));
+        $type = Dict::$businesses[$tmp['businessID']]['str'] . 'Type';
+        $criteria = new CDbCriteria();
+        $criteria->compare('userID', $_GET['userID']);
+        $criteria->compare('deleted', UserPassenger::DELETED_F);
+        $criteria->addInCondition($type, array_keys(Dict::getPassengerTypesByBusiness($tmp['businessID'])));
+        $passengers = UserPassenger::model()->findAll($criteria);
         foreach ($passengers as $passenger) {
-            $rtn[] = $this->_getPassengerAttributes($passenger);
+            $tmp = $this->_getPassengerAttributes($passenger);
+            $tmp['type'] = $passenger[$type];
+            $rtn[] = $tmp;
         }
         
         $this->corAjax(array('passengerList' => $rtn));
@@ -148,8 +155,12 @@ class UserController extends ApiController {
         if (!F::isCorrect($res = UserPassenger::createPassenger($_POST))) {
             $this->onAjax($res);
         }
+
+        $businessID = F::checkParams($_POST, array('businessID' => ParamsFormat::BUSINESS_ID)) ? $_POST['businessID'] : Dict::BUSINESS_FLIGHT;
+        $rtn = $this->_getPassengerAttributes($res['data']);
+        $rtn['type'] = $res['data']->getTypeByBusiness($businessID);
         
-        $this->corAjax($this->_getPassengerAttributes($res['data']));
+        $this->corAjax($rtn);
     }
     
     public function actionModifyPassenger() {
@@ -165,7 +176,11 @@ class UserController extends ApiController {
             $this->onAjax($res);
         }
         
-        $this->corAjax($this->_getPassengerAttributes($passenger));
+        $businessID = F::checkParams($_POST, array('businessID' => ParamsFormat::BUSINESS_ID)) ? $_POST['businessID'] : Dict::BUSINESS_FLIGHT;
+        $rtn = $this->_getPassengerAttributes($passenger);
+        $rtn['type'] = $passenger->getTypeByBusiness($businessID);
+        
+        $this->corAjax($this->_getPassengerAttributes($rtn));
     }
     
     public function actionDeletePassenger() {

@@ -9,12 +9,12 @@ class UserPassenger extends QActiveRecord {
 
     public function rules() {
         return array(
-            array('userID, name, type', 'required'),
-            array('userID, type, cardType, sex, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('userID, name, flightType, trainType, busType', 'required'),
+            array('userID, flightType, trainType, busType, cardType, sex, deleted, ctime, utime', 'numerical', 'integerOnly' => True),
             array('name', 'length', 'max' => 50),
             array('cardNo', 'length', 'max' => 25),
             array('birthday', 'length', 'max' => 10),
-            array('id, userID, name, type, cardType, cardNo, birthday, sex, deleted, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, userID, name, flightType, trainType, busType, cardType, cardNo, birthday, sex, deleted, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -22,6 +22,12 @@ class UserPassenger extends QActiveRecord {
         return array(
             'user' => array(self::BELONGS_TO, 'User', 'userID')
         );
+    }
+    
+    public function getTypeByBusiness($businessID) {
+        $key = Dict::$businesses[$businessID]['str'] . 'Type';
+        
+        return $this->$key;
     }
     
     public static function getPassengerKey($passenger) {
@@ -40,7 +46,8 @@ class UserPassenger extends QActiveRecord {
             'cardType' => ParamsFormat::CARD_TYPE,
             'cardNo' => ParamsFormat::CARD_NO,
             'birthday' => ParamsFormat::DATE,
-            'sex' => ParamsFormat::SEX
+            'sex' => ParamsFormat::SEX,
+            'businessID' => '!' . ParamsFormat::BUSINESS_ID . '--' . Dict::BUSINESS_FLIGHT
         );
         if ($isCreate) {
             $rtn['userID'] = ParamsFormat::INTNZ;
@@ -54,11 +61,17 @@ class UserPassenger extends QActiveRecord {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
+        foreach (Dict::$businesses as $businessID => $businessConfig) {
+            $params[$businessConfig['str'] . 'Type'] = $businessID == $params['businessID'] ? $params['type'] : Dict::PASSENGER_TYPE_ADULT;
+        }
+        $businessID = $params['businessID'];
+        unset($params['businessID'], $params['type']);
+        
         if (!User::model()->findByPk($params['userID'])) {
             return F::errReturn(RC::RC_USER_NOT_EXISTS);
         }
         
-        if (self::model()->findByAttributes(F::arrayGetByKeys($params, array('userID', 'cardNo', 'name', 'type')), 'deleted=:deleted', array(':deleted' => self::DELETED_F))) {
+        if (self::model()->findByAttributes(F::arrayGetByKeys($params, array('userID', 'cardNo', 'name', Dict::$businesses[$businessID]['str'] . 'Type')), 'deleted=:deleted', array(':deleted' => self::DELETED_F))) {
             return F::errReturn(RC::RC_PASSENGER_HAD_EXISTS);
         }
         
@@ -76,10 +89,14 @@ class UserPassenger extends QActiveRecord {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
     
-        if ($params == F::arrayGetByKeys($this, array_keys($params))) {
-            return F::corReturn();
+        $params[Dict::$businesses[$params['businessID']]['str'] . 'Type'] = $params['type'];
+        $businessID = $params['businessID'];
+        unset($params['businessID'], $params['type']);
+        
+        if (self::model()->findByAttributes(F::arrayGetByKeys($params, array('userID', 'cardNo', 'name', Dict::$businesses[$businessID]['str'] . 'Type')), 'deleted=:deleted', array(':deleted' => self::DELETED_F))) {
+            return F::errReturn(RC::RC_PASSENGER_HAD_EXISTS);
         }
-    
+        
         $this->attributes = $params;
         if (!$this->save()) {
             return F::errReturn(RC::RC_PASSENGER_MODIFY_ERROR);

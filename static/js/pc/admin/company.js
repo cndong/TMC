@@ -127,6 +127,51 @@ $(function() {
 				var createType = $(this).attr("data-create-type");
 				_$.open(createType, {url: "/admin/company/" + createType}, $(this));
 			});
+		},
+		modifyUserHtml: function(obj) {
+			var userID = obj.attr("data-user-id");
+			var html = '<input type="hidden" name="modifyUser_userID" value="' + userID + '" />';
+			$.ajax({
+				url: "/admin/company/ajaxGetModifyUserHtml",
+				data: {userID: userID},
+				dataType: "json",
+				async: false,
+				success: function(data) {
+					if (!data.rc) {
+						data = data.data;
+						html += '<div class="row"><label class="col-sm-3 control-label text-right">所属部门</label><div class="col-sm-6"><select class="form-control input-sm" data-format="INTNZ" data-err="请选择所属部门" name="modifyUser_departmentID"><option value="0">----请选择----';
+						for (var i in data.departmentList) {
+							var department = data.departmentList[i];
+							var selected = department["id"] == data.user["departmentID"] ? " selected" : "";
+							html += '<option value="' + department["id"] + '"' + selected + '>' + department["name"];
+						}
+						html += '</select></div></div>';
+						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工姓名</label><div class="col-sm-6"><input class="form-control" type="text" data-err="员工姓名不能为空!|员工姓名错误" data-format="!TEXTZ|TEXTNZ" name="modifyUser_name" value="' + data["user"]["name"] + '" /></div></div>';
+						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工密码</label><div class="col-sm-6"><input class="form-control" type="password" data-err="员工密码不能为空!|员工密码错误" data-format="!TEXTZ|TEXTNZ" name="modifyUser_password" value="' + data["user"]["password"] + '" /></div></div>';
+						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工角色</label><div class="col-sm-6"><select class="form-control input-sm" data-format="INTNZ" data-err="请选择员工角色" name="modifyUser_roleIDs"><option value="0">----请选择----';
+						for (var i in data.roleList) {
+							var role = data.roleList[i];
+							var selected = _$.inArray(role["id"], data.user["roleIDs"]) ? " selected" : "";
+							html += '<option value="' + role["id"] + '"' + selected + '>' + role["name"];
+						}
+						html += '</select></div></div>';
+						var isReviewerChecked = data.user["isReviewer"] == "1" ? " checked": "";
+						var isNotReviewerChecked = data.user["isReviewer"] == "0" ? " checked": "";
+						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">是否审核</label><div class="col-sm-6"><label class="radio-inline"><input type="radio" value="1" name="modifyUser_isReviewer"' + isReviewerChecked + ' />审核人</label><label class="radio-inline"><input type="radio" value="0" name="modifyUser_isReviewer"' + isNotReviewerChecked + ' />非审核人</label></div></div>';
+					} else {
+						html += '<div class="row"><label class="col-sm-12">获取数据失败</label></div>';
+					}
+				}
+			});
+			
+			return html;
+		},
+		modifyUserParams: function(obj) {
+			var field = "modifyUser_";
+			return _$.collectParams("input[name^='" + field + "']:text,input[name^='" + field + "']:password,input[name^='" + field + "']:hidden,select[name^='" + field + "'],input:checked", field, _$.createTips);
+		},
+		modifyUserOver: function() {
+			_$.reload();
 		}
 	});
 	
@@ -141,6 +186,7 @@ $(function() {
 		
 		_$.createBindClick();
 	});
+	
 	$(".c_user").click(function() {
 		var companyID = $(this).attr("data-company-id");
 		var companyName = $(this).attr("data-company-name");
@@ -153,5 +199,9 @@ $(function() {
 		layer.open({content: html, title: false, btn: 0});
 		
 		_$.createBindClick();
+	});
+	
+	$(".c_user_modify").click(function() {
+		_$.open("modifyUser", {url: "/admin/company/modifyUser"}, $(this));
 	});
 });

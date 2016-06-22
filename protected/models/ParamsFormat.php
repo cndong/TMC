@@ -35,6 +35,7 @@ class ParamsFormat {
     const ORDER_ID_U = '/^[A-Z0-9]{15}$/';
     const M_ORDER_ID = '/^\w{5,32}$/';
     const SORT_DIRECTION = 'array("ParamsFormat", "isSortDirection")';
+    const BUSINESS_ID = 'array("Dict", "isBusinessID")';
     const F_CN_CITY_CODE = 'array("DictFlight", "isCNCityCode")';
     const F_CN_AIRPORT_CODE = 'array("DictFlight", "isCNAirportCode")';
     const F_AIRLINE_TCODE = '/^[A-Z]{2}$/';

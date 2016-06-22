@@ -10,11 +10,15 @@ class Dict {
     const BUSINESS_BUS = 3;
     const BUSINESS_HOTEL = 4;
     public static $businesses = array(
-        self::BUSINESS_FLIGHT => array('name' => '飞机票'),
-        self::BUSINESS_TRAIN => array('name' => '火车票'),
-        self::BUSINESS_BUS => array('name' => '汽车票'),
-        self::BUSINESS_HOTEL => array('name' => '酒店'),
+        self::BUSINESS_FLIGHT => array('name' => '飞机票', 'str' => 'flight'),
+        self::BUSINESS_TRAIN => array('name' => '火车票', 'str' => 'train'),
+        self::BUSINESS_BUS => array('name' => '汽车票', 'str' => 'bus'),
+        self::BUSINESS_HOTEL => array('name' => '酒店', 'str' => 'hotel'),
     );
+    
+    public static function isBusinessID($businessID) {
+        return isset(self::$businesses[$businessID]);
+    }
     
     const TRIP_TYPE_ONEWAY = 1;
     const TRIP_TYPE_ROUND = 2;
@@ -50,7 +54,7 @@ class Dict {
         ),
         self::PASSENGER_TYPE_BABY => array(
             'name' => '婴儿票',
-            'business' => array(self::BUSINESS_FLIGHT)
+            'business' => array(self::BUSINESS_FLIGHT => array())
         ),
         self::PASSENGER_TYPE_STUDENT => array(
             'name' => '学生票',

@@ -21,7 +21,7 @@
             <td class="text-center"><?php echo $data->company->name; ?></td>
             <td class="text-center"><?php echo date('Y-m-d H:i:s', $data->ctime); ?></td>
             <td class="text-center">
-                --
+                <p><button class="c_user_modify btn btn-sm btn-info" data-user-id="<?php echo $data->id; ?>">修改</button></p>
                 <!--button data-user-id="<?php echo $data->id; ?>" class="c_reviewer btn btn-<?php echo $data->isReviewer ? 'danger' : 'success'; ?>"><?php echo $data->isReviewer ? '取消审核' : '设为审核'; ?></button-->
             </td>
         </tr>

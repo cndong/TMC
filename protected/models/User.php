@@ -102,6 +102,34 @@ class User extends QActiveRecord {
         return F::corReturn($user);
     }
     
+    private function _getModifyUserFormats() {
+        return array(
+            'name' => ParamsFormat::TEXTNZ,
+            'departmentID' => ParamsFormat::INTNZ,
+            'password' => ParamsFormat::TEXTNZ,
+            'roleIDs' => ParamsFormat::INTNZ,
+            'isReviewer' => ParamsFormat::BOOL
+        );
+    }
+    
+    public function modify($params) {
+        if (!($params = F::checkParams($params, $this->_getModifyUserFormats()))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        if ($params['password'] != $this->password) {
+            $params['password'] = self::getHashPassword($params['password'], $this->ctime);
+        }
+        
+        $this->attributes = $params;
+        if (!$this->save()) {
+            Q::logModel($this);
+            return F::errReturn(RC::RC_MODEL_UPDATE_ERROR);
+        }
+        
+        return F::corReturn();
+    }
+    
     public function toggleRewiewer() {
         $this->isReviewer = $this->isReviewer ? Dict::STATUS_FALSE : Dict::STATUS_TRUE;
         if (!$this->save()) {
