@@ -106,7 +106,11 @@ class HotelController extends ApiController {
                     foreach ($rooms as &$room){
                         if(isset($room['Rates']) && $room['Rates']['RateCount']){
                             if($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatuCount']==1){
-                                $room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] = array($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] );
+                                $room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] = array($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu']);
+                            }
+                            //测试count 正式要去掉
+                            foreach ($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
+                                $priceAndStatu['Count'] = rand(0,1);
                             }
                         }
                     }
