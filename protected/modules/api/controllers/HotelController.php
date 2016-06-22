@@ -76,7 +76,19 @@ class HotelController extends ApiController {
         $hotel = Hotel::model()->findByPK($params['hotelId']);
         if(!$hotel) $this->errAjax(RC::RC_H_HOTEL_NOT_EXISTS);
         else{
-            $hotel = $hotel->attributes;
+             $hotel = $hotel->attributes;
+             
+             //图片
+             $imagesRand = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg');
+             $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' => $imagesRand[rand(0, 1)]);
+             $hotel['images'] = json_decode($hotel['images'] ,true);
+             $hotel['images'] = $hotel['images'] ? $hotel['images'] : array(); 
+             array_unshift($hotel['images'], $mainImage);
+             
+             //地标
+             $hotel['landmarks'] = json_decode($hotel['landmarks'] ,true);
+             $hotel['landmarks'] = $hotel['landmarks'] ? $hotel['landmarks'] : array();
+             
             $hotel['rooms'] = array();
             $city = DataHotelCity::getCity($hotel['cityId']);
             if(F::isCorrect($res= ProviderCNBOOKING::request('RatePlanSearch',
@@ -90,6 +102,15 @@ class HotelController extends ApiController {
                     ))) && $res['data']){
                 if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
                     $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    //PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
+                    foreach ($rooms as &$room){
+                        if(isset($room['Rates']) && $room['Rates']['RateCount']){
+                            if($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatuCount']==1){
+                                $room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] = array($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] );
+                            }
+                        }
+                    }
+                    
                     $hotel['rooms'] = F::changeArrKey($rooms);
                 }
             }
