@@ -2,7 +2,7 @@
 <?php $this->registerLayerJs(); ?>
 <?php $this->registerQmyJs(); ?>
 <div class="row">
-    <div class="col-lg-10">
+    <div class="col-lg-11">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <form class="form-inline" action="<?php echo $this->createUrl('userList'); ?>">

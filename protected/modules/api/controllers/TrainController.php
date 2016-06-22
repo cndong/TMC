@@ -24,21 +24,25 @@ class TrainController extends ApiController {
     }
     
     public function actionTrainList() {
-        if (!F::checkParams($_GET, array('departStationCode' => ParamsFormat::T_STATION_CODE, 'arriveStationCode' => ParamsFormat::T_STATION_CODE, 'departDate' => ParamsFormat::DATE))) {
-            $this->errAjax(RC::RC_VAR_ERROR);
+        if (!F::isCorrect($res = ProviderT::getTrainList($_GET))) {
+            $this->onAjax($res);
         }
         
-        $trainList = ProviderT::getTrainList($_GET['departStationCode'], $_GET['arriveStationCode'], $_GET['departDate']);
-        $this->corAjax(array('trainList' => $trainList));
+        $rtn = array();
+        foreach ($res['data'] as $trainInfo) {
+            $trainInfo['seats'] = array_values($trainInfo['seats']);
+            $rtn[] = $trainInfo;
+        }
+        
+        $this->corAjax(array('trainList' => $rtn));
     }
     
     public function actionStopList() {
-        if (!F::checkParams($_GET, array('departStationCode' => ParamsFormat::T_STATION_CODE, 'arriveStationCode' => ParamsFormat::T_STATION_CODE, 'trainNo' => ParamsFormat::T_TRAIN_NO))) {
-            $this->errAjax(RC::RC_VAR_ERROR);
+        if (!F::isCorrect($res = ProviderT::getStopList($_GET))) {
+            $this->onAjax($res);
         }
         
-        $stopList = ProviderT::getStopList($_GET['departStationCode'], $_GET['arriveStationCode'], $_GET['trainNo']);
-        $this->corAjax(array('stopList' => $stopList));
+        $this->corAjax(array('stopList' => $res['data']));
     }
     
     public function actionBook() {

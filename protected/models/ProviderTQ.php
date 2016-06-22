@@ -52,20 +52,24 @@ class ProviderTQ extends ProviderT {
         return $data;
     }
     
-    public function pGetTrainList($departStationCode, $arriveStationCode, $departDate, $isReload = False) {
-        $cacheKey = KeyManager::getTrainListKey($departStationCode, $arriveStationCode, $departDate);
+    public function pGetTrainList($params, $isReload = False) {
+        $cacheKey = KeyManager::getTrainListKey($params['departStationCode'], $params['arriveStationCode'], $params['departDate']);
         if ($isReload || !($data = Yii::app()->cache->get($cacheKey))) {
             $data = array();
-            if (F::isCorrect($res = $this->_request('trainList', array('departStationCode' => $departStationCode, 'arriveStationCode' => $arriveStationCode, 'departDate' => $departDate)))) {
-                $data = $res['data']['trainList'];
-                foreach ($data as &$trainInfo) {
+            if (F::isCorrect($res = $this->_request('trainList', $params))) {
+                $trainList = $res['data']['trainList'];
+                foreach ($trainList as $trainInfo) {
                     $trainInfo['duration'] *= 60;
                     $trainInfo['departTime'] = strtotime($trainInfo['departDate'] . ' ' . $trainInfo['departTime']);
                     $trainInfo['arriveTime'] = $trainInfo['departTime'] + $trainInfo['duration'];
                     
-                    foreach ($trainInfo['seats'] as &$seat) {
+                    $seats = array();
+                    foreach ($trainInfo['seats'] as $seat) {
                         $seat['seatPrice'] *= 100;
+                        $seats[$seat['seatType']] = $seat;
                     }
+                    
+                    $data[$trainInfo['trainNo']] = $trainInfo;
                 }
                 
                 Yii::app()->cache->set($cacheKey, $data, 60 * 5);
@@ -75,11 +79,11 @@ class ProviderTQ extends ProviderT {
         return $data;
     }
     
-    public function pGetStopList($departStationCode, $arriveStationCode, $trainNo, $isReload = False) {
-        $cacheKey = KeyManager::getTrainStopListKey($departStationCode, $arriveStationCode, $trainNo);
+    public function pGetStopList($params, $isReload = False) {
+        $cacheKey = KeyManager::getTrainStopListKey($params['departStationCode'], $params['arriveStationCode'], $params['trainNo']);
         if ($isReload || !($data = Yii::app()->cache->get($cacheKey))) {
             $data = array();
-            if (F::isCorrect($res = $this->_request('stopList', array('departStationCode' => $departStationCode, 'arriveStationCode' => $arriveStationCode, 'trainNo' => $trainNo)))) {
+            if (F::isCorrect($res = $this->_request('stopList', $params))) {
                 $data = $res['data']['passStationList'];
                 
                 Yii::app()->cache->set($cacheKey, $data);
