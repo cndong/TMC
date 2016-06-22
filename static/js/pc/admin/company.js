@@ -146,8 +146,8 @@ $(function() {
 							html += '<option value="' + department["id"] + '"' + selected + '>' + department["name"];
 						}
 						html += '</select></div></div>';
-						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工姓名</label><div class="col-sm-6"><input class="form-control" type="text" data-err="员工姓名不能为空!|员工姓名错误" data-format="!TEXTZ|TEXTNZ" name="modifyUser_name" value="' + data["user"]["name"] + '" /></div></div>';
-						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工密码</label><div class="col-sm-6"><input class="form-control" type="password" data-err="员工密码不能为空!|员工密码错误" data-format="!TEXTZ|TEXTNZ" name="modifyUser_password" value="' + data["user"]["password"] + '" /></div></div>';
+						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工姓名</label><div class="col-sm-6"><input class="form-control input-sm" type="text" data-err="员工姓名不能为空!|员工姓名错误" data-format="!TEXTZ|TEXTNZ" name="modifyUser_name" value="' + data["user"]["name"] + '" /></div></div>';
+						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工密码</label><div class="col-sm-6"><input class="form-control input-sm" type="password" data-err="员工密码不能为空!|员工密码错误" data-format="!TEXTZ|TEXTNZ" name="modifyUser_password" value="' + data["user"]["password"] + '" /></div></div>';
 						html += '<div class="row row-form-margin"><label class="col-sm-3 control-label text-right">员工角色</label><div class="col-sm-6"><select class="form-control input-sm" data-format="INTNZ" data-err="请选择员工角色" name="modifyUser_roleIDs"><option value="0">----请选择----';
 						for (var i in data.roleList) {
 							var role = data.roleList[i];

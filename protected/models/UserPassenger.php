@@ -30,22 +30,23 @@ class UserPassenger extends QActiveRecord {
         return $this->$key;
     }
     
-    public static function concatPassenger($passenger, $businessID = 0) {
-        $fields = array('name', 'cardType', 'cardNo', 'birthday', 'sex', 'id');
-        $attributes = F::arrayGetByKeys($passenger, $fields);
+    public static function concatPassenger($passenger, $businessID = Dict::BUSINESS_FLIGHT) {
+        $fields = array('cardType', 'cardNo', 'birthday', 'sex', 'id');
+        $attributes['name'] = $passenger['name'];
         if (isset($passenger['type'])) {
             $attributes['type'] = $passenger['type'];
-        } elseif (!empty($businessID)) {
+        } else {
             $attributes['type'] = $passenger[Dict::$businesses[$businessID]['str'] . 'Type'];
         }
+        $attributes = array_merge($attributes, F::arrayGetByKeys($passenger, $fields));
         
         return implode(',', $attributes);
     }
     
-    public static function concatPassengers($passengers) {
+    public static function concatPassengers($passengers, $businessID = Dict::BUSINESS_FLIGHT) {
         $rtn = array();
         foreach ($passengers as $passenger) {
-            $rtn[] = self::concatPassenger($passenger);
+            $rtn[] = self::concatPassenger($passenger, $businessID);
         }
     
         return implode('|', $rtn);
@@ -69,14 +70,23 @@ class UserPassenger extends QActiveRecord {
     
         return $rtn;
     }
-    
-    public static function getPassengerKey($passenger) {
-        $rtn = array();
-        foreach (array('name', 'cardNo', 'type') as $k) {
-            $rtn[] = is_object($passenger) ? $passenger->$k : $passenger[$k];
+
+    public static function classifyPassengers($passengers, $businessID = Dict::BUSINESS_FLIGHT) {
+        $rtn = array_fill_keys(array_keys(DictFlight::$ticketTypes), array());
+        $keys = array('name', 'cardType', 'cardNo', 'birthday', 'sex');
+        $tmp = False;
+        foreach ($passengers as $passenger) {
+            if (!$tmp && ((is_object($passenger) && isset($passenger->id)) || (is_array($passenger) && isset($passenger['id'])))) {
+                $keys[] = 'id';
+                $tmp = True;
+            }
+            $type = is_object($passenger) ? (Dict::$businesses[$businessID]['str'] . 'Type') : (isset($passenger['type']) ? 'type' : Dict::$businesses[$businessID]['str'] . 'Type');
+            $attributes = F::arrayGetByKeys($passenger, $keys);
+            $attributes['type'] = $passenger[$type];
+            $rtn[$passenger[$type]][] = $attributes;
         }
-        
-        return implode('_', $rtn);
+    
+        return $rtn;
     }
     
     public static function getCreateOrModifyFormats($isCreate) {
