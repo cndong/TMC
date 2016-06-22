@@ -28,7 +28,8 @@ class TrainController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $this->corAjax(ProviderT::getTrainList($_GET['departStationCode'], $_GET['arriveStationCode'], $_GET['departDate']));
+        $trainList = ProviderT::getTrainList($_GET['departStationCode'], $_GET['arriveStationCode'], $_GET['departDate']);
+        $this->corAjax(array('trainList' => $trainList));
     }
     
     public function actionStopList() {
@@ -36,7 +37,8 @@ class TrainController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $this->corAjax(ProviderT::getStopList($_GET['departStationCode'], $_GET['arriveStationCode'], $_GET['trainNo']));
+        $stopList = ProviderT::getStopList($_GET['departStationCode'], $_GET['arriveStationCode'], $_GET['trainNo']);
+        $this->corAjax(array('stopList' => $stopList));
     }
     
     public function actionBook() {
