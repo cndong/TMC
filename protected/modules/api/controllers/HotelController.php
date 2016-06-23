@@ -102,6 +102,7 @@ class HotelController extends ApiController {
                     ))) && $res['data']){
                 if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
                     $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    
                     //去除[]  breakfastType description
                     foreach ($rooms as &$room){
                         if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
@@ -112,16 +113,24 @@ class HotelController extends ApiController {
                             }
                         }
                     }
-                    //PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
+                    
+                    //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
                     foreach ($rooms as &$room){
                         if(isset($room['Rates']) && $room['Rates']['RateCount']){
-                            if($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatuCount']==1){
-                                $room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] = array($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu']);
+                            
+                            if($room['Rates']['RateCount']==1){
+                                $room['Rates']['Rate'] = array($room['Rates']['Rate']);
                             }
-                            //测试count 正式要去掉
-                            foreach ($room['Rates']['Rate']['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
-                                $priceAndStatu['Count'] = rand(0,1);
+                            foreach ($room['Rates']['Rate'] as &$rate) {
+                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1){
+                                    $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
+                                }
+                                //测试count 正式要去掉
+                                foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
+                                    $priceAndStatu['Count'] = rand(0,1);
+                                }
                             }
+                            
                         }
                     }
                     
