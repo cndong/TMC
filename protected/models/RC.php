@@ -78,7 +78,8 @@ class RC {
     const RC_T_TRAIN_NOT_EXISTS = 100501;
     const RC_T_SEAT_NOT_EXISTS = 100502;
     const RC_T_SEAT_PRICE_ERROR = 100503;
-    const RC_T_PRICE_ERROR = 100504;
+    const RC_T_TRAIN_INFO_ERROR = 100504;
+    const RC_T_PRICE_ERROR = 100505;
     
     const RC_B_BUS_NOT_EXISTS = 100601;
     
