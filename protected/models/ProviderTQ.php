@@ -69,6 +69,7 @@ class ProviderTQ extends ProviderT {
                         $seats[$seat['seatType']] = $seat;
                     }
                     
+                    $trainInfo['seats'] = $seats;
                     $data[$trainInfo['trainNo']] = $trainInfo;
                 }
                 

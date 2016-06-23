@@ -77,7 +77,6 @@ class TrainOrder extends QActiveRecord {
                 $tmp = array('contacterID' => $contacter->id);
             }
         }
-        
         $params['contacter'] = $tmp;
         
         //检测地址
@@ -139,6 +138,7 @@ class TrainOrder extends QActiveRecord {
         }
         $passengers = UserPassenger::classifyPassengers($params['passengers'], Dict::BUSINESS_TRAIN);
         
+        $totalTicketPrice = $totalInsurePrice = 0;
         $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
         foreach ($routeTypes as $routeType) {
             if (!($tmp = F::checkParams($params[$routeType], array(
@@ -150,98 +150,40 @@ class TrainOrder extends QActiveRecord {
             }
             
             $routesParams = F::arrayGetByKeys($tmp, array('departStationCode', 'arriveStationCode', 'departDate'));
-            if (!F::isCorrect($res = ProviderT::getTrainList($routesParams, True))) {
+            if (!F::isCorrect($res = ProviderT::getTrainList($routesParams))) {
                 return $res;
             }
             
-            //检测有无此航程
-            if (empty($res['data']['routes'][$tmp['routeKey']]) || count($res['data']['routes'][$tmp['routeKey']]['segments']) != count($tmp['segments'])) {
-                return F::errReturn(RC::RC_F_ROUTE_NOT_EXISTS);
+            if (empty($res['data'][$tmp['trainNo']])) {
+                return F::errReturn(RC::RC_T_TRAIN_NOT_EXISTS);
             }
             
-            $realSegments = $res['data']['routes'][$tmp['routeKey']]['segments'];
-            $realCarftMap = $res['data']['craftMap'];
-            //检测此航程的航段信息是否正确
-            foreach ($tmp['segments'] as $segmentIndex => $segment) {
-                $params['segmentNum']++;
-            
-                if ($realSegments[$segmentIndex]['flightKey'] != ProviderF::getFlightKey($segment['departCityCode'], $segment['arriveCityCode'], $segment['flightNo'])) {
-                    return F::errReturn(RC::RC_F_SEGMENT_ERROR);
-                }
-            
-                $segmentParams = F::arrayGetByKeys($segment, array('departCityCode', 'arriveCityCode', 'flightNo'));
-                $segmentParams['departDate'] = date('Y-m-d', $segment['departTime']);
-                if (!F::isCorrect($res = ProviderF::getCNFlightDetail($segmentParams, True))) {
-                    return $res;
-                }
-            
-                $flightKey = ProviderF::getFlightKey($segment['departCityCode'], $segment['arriveCityCode'], $segment['flightNo']);
-                if (empty($res['data']['flights'][$flightKey])) {
-                    return F::errReturn(RC::RC_F_INFO_CHANGED);
-                }
-            
-                $keys = array(
-                    'flightNo', 'departCityCode', 'arriveCityCode', 'departAirportCode', 'arriveAirportCode', 'departTime', 'arriveTime',
-                    'airlineCode', 'craftCode', 'adultAirportTax', 'adultOilTax', 'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyOilTax'
-                );
-                $realSegment = $res['data']['flights'][$flightKey];
-                if (F::arrayGetByKeys($segment, $keys) != F::arrayGetByKeys($realSegment, $keys)) {
-                    return F::errReturn(RC::RC_F_INFO_CHANGED);
-                }
-                if (!isset($realSegment['cabins'][$segment['cabinInfo']['cabin']])) {
-                    return F::errReturn(RC::RC_F_NO_SUCH_CABIN);
-                }
-            
-                $keys = array('cabin', 'cabinClass', 'adultPrice', 'childPrice', 'babyPrice');
-                $realCabin = $realSegment['cabins'][$segment['cabinInfo']['cabin']];
-                if (F::arrayGetByKeys($segment['cabinInfo'], $keys) != F::arrayGetByKeys($realCabin, $keys)) {
-                    return F::errReturn(RC::RC_F_INFO_CHANGED);
-                }
-            
-                if ((!is_numeric($realCabin['cabinNum']) && $realCabin['cabinNum'] != 'A') || (is_numeric($realCabin['cabinNum']) && intval($realCabin['cabinNum']) < count($params['passengers']))) {
-                    return F::errReturn(RC::RC_F_CABIN_NUM_ERROR);
-                }
-            
-                //只要有一个是强制表现的就所有航段都购买保险，若要分开则不判断此步并修改totalInsurePrice计算方式，按照($realCabin['isforceInsure'] || $params['isInsured'])计算
-                if ($realCabin['isForceInsure'] && !$params['isInsured']) {
-                    return F::errReturn(RC::RC_MUST_INSURE);
-                }
-                $modifySegment = &$params[$routeType]['segments'][$segmentIndex];
-                $modifySegment['departTerm'] = $realSegment['departTerm'];
-                $modifySegment['arriveTerm'] = $realSegment['arriveTerm'];
-                $modifySegment['cabinInfo']['cabinClassName'] = $realCabin['cabinClassName'];
-                $modifySegment['craftType'] = DictFlight::CRAFT_LARGE;
-                $modifySegment['isBack'] = $routeType == 'returnRoute' ? Dict::STATUS_TRUE : Dict::STATUS_FALSE;
-                foreach ($realCarftMap as $craftTypeStr => $craftCodes) {
-                    if (in_array($segment['craftCode'], $craftCodes)) {
-                        $modifySegment['craftType'] = DictFlight::getCraftTypeByStr($craftTypeStr);
-                        break;
-                    }
-                }
-                $modifySegment = CMap::mergeArray($modifySegment, array_fill_keys(array('orderPrice', 'ticketPrice', 'airportTaxPrice', 'oilTaxPrice', 'insurePrice', 'invoicePrice'), 0));
-                foreach (DictFlight::$ticketTypes as $ticketType => $ticketTypeConfig) {
-                    $totalTicketPrice += count($passengers[$ticketType]) * $segment['cabinInfo'][$ticketTypeConfig['str'] . 'Price'];
-                    $totalInsurePrice += intval($params['isInsured']) * DictFlight::INSURE_PRICE * count($passengers[$ticketType]);
-                    $totalAirportTaxPrice += count($passengers[$ticketType]) * $segment[$ticketTypeConfig['str'] . 'AirportTax'];
-                    $totalOilTaxPrice += count($passengers[$ticketType]) * $segment[$ticketTypeConfig['str'] . 'OilTax'];
-                }
+            $realTrainInfo = $res['data'][$tmp['trainNo']];
+            if (empty($realTrainInfo['seats'][$tmp['seatType']])) {
+                return F::errReturn(RC::RC_T_SEAT_NOT_EXISTS);
             }
+            
+            $realSeat = $realTrainInfo['seats'][$tmp['seatType']];
+            if ($realSeat['seatPrice'] != $tmp['seatPrice']) {
+                return F::errReturn(RC::RC_T_SEAT_PRICE_ERROR);
+            }
+            
+            $totalTicketPrice += $params['passengerNum'] * $realSeat['seatPrice'];
+            $totalInsurePrice += intval($params['isInsured']) * DictTrain::INSURE_PRICE * $params['passengerNum'];
         }
         
         //检测价格
-        $params['price'] = F::checkParams($params['price'], array_fill_keys(array('orderPrice', 'ticketPrice', 'airportTaxPrice', 'oilTaxPrice', 'insurePrice', 'invoicePrice'), '!' . ParamsFormat::INTNZ . '--0'));
+        $params['price'] = F::checkParams($params['price'], array_fill_keys(array('orderPrice', 'ticketPrice', 'insurePrice', 'invoicePrice'), '!' . ParamsFormat::INTNZ . '--0'));
         $invoicePrice = intval($params['isInvoice']) * Dict::INVOICE_PRICE;
         $tmp = array(
-            'orderPrice' => $totalTicketPrice + $totalAirportTaxPrice + $totalOilTaxPrice + $totalInsurePrice + $invoicePrice,
+            'orderPrice' => $totalTicketPrice + $totalInsurePrice + $invoicePrice,
             'ticketPrice' => $totalTicketPrice,
-            'airportTaxPrice' => $totalAirportTaxPrice,
-            'oilTaxPrice' => $totalOilTaxPrice,
             'insurePrice' => $totalInsurePrice,
             'invoicePrice' =>  $invoicePrice
         );
         foreach ($tmp as $k => $v) {
             if ($v != $params['price'][$k]) {
-                return F::errReturn(RC::RC_F_PRICE_ERROR);
+                return F::errReturn(RC::RC_T_PRICE_ERROR);
             }
         }
         
@@ -252,7 +194,79 @@ class TrainOrder extends QActiveRecord {
         if (!F::isCorrect($res = self::_checkCreateOrderParams($params))) {
             return $res;
         }
+        $params = $res['data'];
         
+        $train = Yii::app()->db->beginTransaction();
+        try {
+            if (!isset($params['contacter']['contacterID'])) {
+                if (!F::isCorrect($res = UserContacter::createContacter($params['contacter']))) {
+                    throw new Exception($res['rc']);
+                }
+                $params['contacterObj'] = $res['data'];
+            }
         
+            if ($params['isInvoice'] && !isset($params['invoiceAddress']['addressID'])) {
+                if (!F::isCorrect($res = UserAddress::createAddress($params['invoiceAddress']))) {
+                    throw new Exception($res['rc']);
+                }
+                $params['invoiceAddressObj'] = $res['data'];
+            }
+        
+            $passengers = array();
+            foreach ($params['passengers'] as $index => $passenger) {
+                if (!is_object($passenger)) {
+                    if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
+                        throw new Exception($res['rc']);
+                    }
+                    $passenger = $res['data'];
+                }
+                $passengers[] = $passenger;
+            }
+        
+            $attributes = F::arrayGetByKeys($params, array('merchantID', 'userID', 'departmentID', 'companyID', 'isPrivate', 'isInsured', 'isInvoice', 'isRound', 'segmentNum', 'passengerNum', 'reason'));
+            $attributes = array_merge($attributes, $params['price']);
+            $attributes['contactName'] = $params['contacterObj']->name;
+            $attributes['contactMobile'] = $params['contacterObj']->mobile;
+            $attributes['invoiceAddress'] = !$params['isInvoice'] ? '' : $params['invoiceAddressObj']->getDescription();
+            $attributes['passengers'] = UserPassenger::concatPassengers($passengers, Dict::BUSINESS_FLIGHT);
+            $attributes['status'] = $params['isPrivate'] ? FlightStatus::WAIT_PAY : FlightStatus::WAIT_CHECK;
+        
+            $order = new FlightCNOrder();
+            $order->attributes = $attributes;
+            if (!$order->save()) {
+                Q::logModel($order);
+                throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+            }
+        
+            $routeTypes = empty($params['isRound']) ? array('departRoute') : array('departRoute', 'returnRoute');
+            foreach ($routeTypes as $routeType) {
+                foreach ($params[$routeType]['segments'] as $segmentIndex => $segment) {
+                    $record = F::arrayGetByKeys($segment, array(
+                        'flightNo', 'departCityCode', 'arriveCityCode', 'departAirportCode', 'arriveAirportCode',
+                        'departTime', 'arriveTime', 'departTerm', 'arriveTerm', 'airlineCode', 'craftCode', 'craftType', 'adultAirportTax', 'adultOilTax',
+                        'childAirportTax', 'childOilTax', 'babyAirportTax', 'babyOilTax', 'isBack'
+                    ));
+        
+                    $record = CMap::mergeArray($record, $segment['cabinInfo']);
+                    $record['orderID'] = $order->id;
+        
+                    $segment = new FlightCNSegment();
+                    $segment->attributes = $record;
+                    if (!$segment->save()) {
+                        Q::logModel($segment);
+                        throw new Exception(RC::RC_MODEL_CREATE_ERROR);
+                    }
+                }
+            }
+        
+            $train->commit();
+        
+            Log::add(Log::TYPE_CN_FLIGHT, $order->id, array('status' => $order->status, 'isSucc' => True));
+        
+            return F::corReturn($order);
+        } catch (Exception $e) {
+            $train->rollback();
+            return F::errReturn($e->getMessage());
+        }
     }
 }

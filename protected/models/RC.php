@@ -75,16 +75,23 @@ class RC {
     const RC_F_CABIN_NUM_ERROR = 100407;
     const RC_F_RESIGN_ONLY_ONE_SEGMENT = 100408;
     
-    const RC_SMS_LOG_NOT_EXISTS = 100501;
-    const RC_SMS_HAD_SENDED = 100501;
-    const RC_SMS_SEND_ERROR = 100502;
-    const RC_SMS_LIMIT_ERROR = 100503;
-    const RC_SMS_INTERVAL_ERROR = 100504;
-    const RC_SMS_CODE_HAD_SENDED = 100505;
-    const RC_SMS_CODE_NOT_EXISTS = 100506;
-    const RC_SMS_CODE_NOT_CORRECT = 100507;
+    const RC_T_TRAIN_NOT_EXISTS = 100501;
+    const RC_T_SEAT_NOT_EXISTS = 100502;
+    const RC_T_SEAT_PRICE_ERROR = 100503;
+    const RC_T_PRICE_ERROR = 100504;
     
-    const RC_H_HOTEL_NOT_EXISTS= 100601;
+    const RC_B_BUS_NOT_EXISTS = 100601;
+    
+    const RC_H_HOTEL_NOT_EXISTS= 100701;
+    
+    const RC_SMS_LOG_NOT_EXISTS = 100801;
+    const RC_SMS_HAD_SENDED = 100801;
+    const RC_SMS_SEND_ERROR = 100802;
+    const RC_SMS_LIMIT_ERROR = 100803;
+    const RC_SMS_INTERVAL_ERROR = 100804;
+    const RC_SMS_CODE_HAD_SENDED = 100805;
+    const RC_SMS_CODE_NOT_EXISTS = 100806;
+    const RC_SMS_CODE_NOT_CORRECT = 100807;
     
     public static function getMsg($status) {
         $config = array(
