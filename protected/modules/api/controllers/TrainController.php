@@ -34,7 +34,7 @@ class TrainController extends ApiController {
             $rtn[] = $trainInfo;
         }
         
-        $this->corAjax(array('trainList' => $rtn));
+        $this->corAjax(array('trainList' => $rtn, 'insurePrice' => DictTrain::INSURE_PRICE));
     }
     
     public function actionStopList() {

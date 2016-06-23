@@ -670,9 +670,9 @@ class FlightCNOrder extends QActiveRecord {
             $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
             $company = Company::model()->findByPk($this->companyID);
             if (
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $this->id, $userTAOPrice, 0, $info)) ||
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->id, $this->insurePrice, 0, $info)) ||
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this->id, $this->invoicePrice, 0, $info))
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $this, $userTAOPrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this, $this->insurePrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this, $this->invoicePrice, 0, $info))
             ) {
                 return $res;
             }
@@ -861,8 +861,8 @@ class FlightCNOrder extends QActiveRecord {
             $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
             $company = Company::model()->findByPk($this->companyID);
             if (
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $this->id, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
-                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this->id, $insurePrice, 0, $info))
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_RESIGN_PRICE, $this, $rsnPrice - $insurePrice, 0, array_merge($info, array('passengers' => implode('、', $logPassengers))))) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this, $insurePrice, 0, $info))
             ) {
                 return $res;
             }
@@ -940,7 +940,7 @@ class FlightCNOrder extends QActiveRecord {
         
         if (!$this->isPrivate) {
             $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name, 'passengers' => implode('、', $passengers));
-            if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, $this->id, 0, $totalRefundPrice, $info))) {
+            if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, $this, 0, $totalRefundPrice, $info))) {
                 return $res;
             }
         }

@@ -80,7 +80,7 @@ class Company extends QActiveRecord {
         return $rtn;
     }
     
-    public function changeFinance($type, $orderID, $payout, $income = 0, $info = array()) {
+    public function changeFinance($type, $order, $payout, $income = 0, $info = array()) {
         $num = $income - $payout;
         if ($num == 0) {
             return F::corReturn();
@@ -102,7 +102,7 @@ class Company extends QActiveRecord {
         }
         
         $this->finance += $num;
-        if (!F::isCorrect($res = CompanyFinanceLog::create($this, $type, $orderID, $payout, $income, $info))) {
+        if (!F::isCorrect($res = CompanyFinanceLog::create($this, $type, $order, $payout, $income, $info))) {
             return $res;
         }
         
