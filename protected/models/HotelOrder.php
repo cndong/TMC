@@ -16,6 +16,7 @@ class HotelOrder extends QActiveRecord {
             array('reason, specialRemark', 'length', 'max' => 64),
             array('checkIn, checkOut', 'length', 'max' => 10),
             array('bookPhone', 'length', 'max' =>11),
+            array('lastCancelTime', 'type', 'type'=>'datetime', 'datetimeFormat'=>'yyyy-MM-dd hh:mm:ss',),
         );
     }
     

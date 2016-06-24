@@ -66,27 +66,26 @@ class ProviderCNBOOKING{
                                         string(12) "操作成功"
                                       }
                       ["Data"]=> array(1) {
-                                ["Hotels"]=>
-                                array(2) {
+                                            ["Hotels"]=>  array(2)
+                                        }
+                                '暂无数据'
                                 
                     ["Data"] => array(2) {
                                  'ReturnCode' => '31001',
                                  'ReturnMessage' => '该字符串未被识别为有效的 DateTime。',
-                      $ret['Data'] => array|'暂无数据'          
             */
             $ret['MessageInfo'] = (array) $ret['MessageInfo'];
-            isset($ret['Data']['ReturnCode']) && Q::log($ret, 'Provider.CNBOOKING.Response.Return');
+            $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
+            is_array($return['data']) && isset($return['data']['ReturnCode']) && Q::log($return, 'Provider.CNBOOKING.Response.Return');
             if($ret['MessageInfo']['Code'] != '30000') {
-                $ret['Data'] = (array) $ret['Data'];
-                $return['rc'] = isset($ret['Data']['ReturnCode']) ? $ret['Data']['ReturnCode'] : $ret['MessageInfo']['Code'];
-                $return['msg'] = isset($ret['Data']['ReturnMessage']) ? $ret['Data']['ReturnMessage'] : $ret['MessageInfo']['Description'];
+                // Code 主要是查询返回的查询结果状态, ReturnCode主要是提交数据交互返回的业务处理状态
+                $return['rc'] = is_array($return['data']) && isset($return['data']['ReturnCode']) ? $return['data']['ReturnCode'] : $ret['MessageInfo']['Code'];
+                $return['msg'] = is_array($return['data']) && isset($return['data']['ReturnCode']) ? $return['data']['ReturnMessage'] : $ret['MessageInfo']['Description'];
                 Q::log($ret, 'Provider.CNBOOKING.Error');
             }else {
                 $return['rc'] = RC::RC_SUCCESS;
-                $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
-                if(!is_object($ret['Data'])) Q::log($ret, 'Provider.CNBOOKING.Response.Data.None');
             }
-        }
+        }Q::log('', 'Provider.CNBOOKING.Response.None');
         return $return;
     }
     
