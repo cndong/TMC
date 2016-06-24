@@ -11,7 +11,7 @@ class HotelOrder extends QActiveRecord {
     
     public function rules() {
         return array(
-            array('merchantID, userID, hotelId, roomId, rateplanId, ctime, utime, status,roomCount,orderAmount', 'numerical', 'integerOnly' => True),
+            array('merchantID, userID, hotelId, roomId, rateplanId, ctime, utime, status,roomCount, orderPrice', 'numerical', 'integerOnly' => True),
             array('hotelName, bookName, guestName, oID', 'length', 'max' => 32),
             array('reason, specialRemark', 'length', 'max' => 64),
             array('checkIn, checkOut', 'length', 'max' => 10),
@@ -25,6 +25,13 @@ class HotelOrder extends QActiveRecord {
 /*         if (!F::isCorrect($res = self::_checkCreateOrderParams($params))) {
             return $res;
         } */
+        if (!($user = User::model()->findByPk($_POST['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            return F::errReturn(RC::RC_USER_NOT_EXISTS);
+        }else{
+            $params['companyID'] = $user->companyID;
+            $params['departmentID'] = $user->departmentID;
+        }
+        
         $return = F::errReturn(RC::RC_ERROR);
         $train = Yii::app()->db->beginTransaction();
         try {
@@ -32,7 +39,8 @@ class HotelOrder extends QActiveRecord {
             $order->attributes = $params;
             isset($params['lastCancelTime']) && $params['lastCancelTime'] && $order->lastCancelTime = date('Y-m-d H:i:s', strtotime($params['lastCancelTime']));
             $order->save();
-            if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
+            $return = F::corReturn(array('orderId'=>$order->id));
+          /*   if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
                     array(
                             'HotelId' => $_POST['hotelId'],
                             'RoomId' => $_POST['roomId'],
@@ -62,7 +70,7 @@ class HotelOrder extends QActiveRecord {
             if(F::isCorrect($return)){
                 $train->commit();
                 Log::add(Log::TYPE_HOTEL, $order->id, array('status' => $order->status, 'isSucc' => True));
-            }else $train->rollback();
+            }else $train->rollback(); */
             return $return;
         } catch (Exception $e) {
             $train->rollback();

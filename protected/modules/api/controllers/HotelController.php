@@ -144,13 +144,13 @@ class HotelController extends ApiController {
     public function actionPreBookingCheck() {
         if(F::isCorrect($res= ProviderCNBOOKING::request('PreBookingCheck',
                 array(
-                        'HotelId' => $_GET['hotelId'],
-                        'RoomId' => $_GET['roomId'],
-                        'RateplanId' => $_GET['rateplanId'],
-                        'CheckIn' => $_GET['checkIn'],
-                        'CheckOut' => $_GET['checkOut'],
+                        'HotelId' => $_POST['hotelId'],
+                        'RoomId' => $_POST['roomId'],
+                        'RateplanId' => $_POST['rateplanId'],
+                        'CheckIn' => $_POST['checkIn'],
+                        'CheckOut' => $_POST['checkOut'],
                         'RoomCount' => 1,
-                        'OrderAmount' => $_GET['orderAmount'],
+                        'OrderAmount' => $_POST['orderAmount'],
                 ))) && $res['data']){
             if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::PREBOOKINGCHECK_SUCCESS){
                 $this->corAjax();
@@ -161,6 +161,7 @@ class HotelController extends ApiController {
     public function actionBooking() {
 /*         $_POST =  array(
                     'hotelId' => 1106,
+                    'hotelName'=>'北京西苑饭店',
                     'roomId' => 127663,
                     'rateplanId' => 1184,
                     'checkIn' => '2016-07-20',
@@ -171,7 +172,7 @@ class HotelController extends ApiController {
                     'bookPhone' => '15952016956',
                     'guestName' => '测试_王本',
                     'reason'=>'去上海',
-                    'lastCancelTime'=>'2016-07-22',
+                    'lastCancelTime'=>'',
                     'merchantID'=>30,
                     'userID'=>5,
             );  */
@@ -186,7 +187,6 @@ class HotelController extends ApiController {
                         'page' => '!' . ParamsFormat::INTNZ . '--1',
                 ))))
             $this->errAjax(RC::RC_VAR_ERROR);
-        $rtn = array();
         
         $criteria = new CDbCriteria();
         $criteria->order = 'id desc';
@@ -208,4 +208,48 @@ class HotelController extends ApiController {
         $this->corAjax(array('orderList' => $rtn));
     }
     
+    public function actionReviewOrderList() {
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($_GET['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+    
+        $rtn = array();
+        if ($user->isReviewer) {
+            $criteria = new CDbCriteria();
+            $criteria->order = 'id desc';
+            $criteria->compare('departmentID', $user->departmentID);
+            $criteria->compare('status', HotelStatus::WAIT_CHECK);
+            $orders = HotelOrder::model()->findAll($criteria);
+            foreach ($orders as $order) {
+                $tmp = F::arrayGetByKeys($order, array('id', 'hotelName', 'checkIn', 'checkOut', 'roomCount', 'orderPrice', 'ctime'));
+                $tmp['status'] = HotelStatus::getUserDes($order['status']);
+                $rtn[] = $tmp;
+            }
+        }
+    
+        $this->corAjax(array('reviewOrderList' => $rtn));
+    }
+    
+    public function actionOrderDetail() {
+        if (!($params = F::checkParams($_GET,
+                array(
+                    'orderId' => ParamsFormat::INTNZ,
+                ))))
+            $this->errAjax(RC::RC_VAR_ERROR);
+        
+        $order = HotelOrder::model()->findByPk($params['orderId']);
+        if (!$order)$this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        $order->lastCancelTime == '0000-00-00 00:00:00' && $order->lastCancelTime = '';
+        $this->corAjax(array('orderDetail' => array_merge(
+                                                                        $order->attributes,
+                                                                        array(
+                                                                                'status' => HotelStatus::getUserDes($order['status']),
+                                                                                'isCancel' => HotelStatus::getUserCando($order['status'], HotelStatus::CANCELED),
+                                                                                'isRefund' => HotelStatus::getUserCando($order['status'], HotelStatus::APPLY_RFD),
+        ))));
+    }
 }

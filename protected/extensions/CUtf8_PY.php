@@ -81,7 +81,7 @@ class CUtf8_PY {
                         $result = $py;
                     }
                     if(!$result) {
-                        var_dump($iWORD) ;
+                        //var_dump($iWORD) ;
                     }
                     return $result;
                 }
