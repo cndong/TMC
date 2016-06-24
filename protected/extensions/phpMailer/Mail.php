@@ -223,29 +223,34 @@ class Mail{
 	
 	public static function getTPL($tpl,$content){
         $result = array();
-        $body = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
+        $filghtbody = "订单: <a href='http://tmc.qumaipiao.com/boss/flight/orderList/orderID/{$content['orderID']}'>{$content['orderID']}</a>";
         $email = 'g-flight@sfbm.com'; 
         switch($tpl){
-            case 'CheckSucc':
+            case 'Filght.CheckSucc':
                     $result['Subject'] = "新订单-对公-审核通过-{$content['orderID']}";
-                    $result['Body'] = $body;
+                    $result['Body'] = $filghtbody;
                     $result['To'][0]['email'] = $email;
                     break;
-            case 'Payed':
+            case 'Filght.Payed':
                     $result['Subject'] = "新订单-对私-已支付-{$content['orderID']}";
-                    $result['Body'] = $body;
+                    $result['Body'] = $filghtbody;
                     $result['To'][0]['email'] = $email;
                     break;
-          case 'ApplyRfd':
+          case 'Filght.ApplyRfd':
                     $result['Subject'] = "退票-{$content['orderID']}";
-                    $result['Body'] = $body;
+                    $result['Body'] = $filghtbody;
                     $result['To'][0]['email'] = $email;
                     break;
-          case 'ApplyRsn':
+          case 'Filght.ApplyRsn':
                     $result['Subject'] = "改签-{$content['orderID']}";
-                    $result['Body'] = $body;
+                    $result['Body'] = $filghtbody;
                     $result['To'][0]['email'] = $email;
                     break;
+          case 'Hotel.SyncFailed':
+                  $result['Subject'] = "[报警]酒店订单更新失败, 已提交供应商, 赶快取消供应商订单! {$content['orderID']}";
+                  $result['Body'] = $content['orderID'];
+                  $result['To'][0]['email'] = $email;
+                  break;
         }
         return $result;
 	}

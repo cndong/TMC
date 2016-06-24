@@ -6,6 +6,7 @@ class Log extends QActiveRecord {
     const TYPE_IN_FLIGHT = 2;
     const TYPE_TRAIN = 3;
     const TYPE_BUS = 4;
+    const TYPE_HOTEL = 5;
     
     public static function model($className = __CLASS__) {
         return parent::model($className);

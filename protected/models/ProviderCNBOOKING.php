@@ -31,6 +31,7 @@ class ProviderCNBOOKING{
     
     const PREBOOKINGCHECK_SUCCESS= '31002';
     const BOOKING_SUCCESS= '31004';
+    const BOOKING_SUCCESS_STATUS = 10;  // 订单状态大于等于10是已确认
     
     public static function request($method, $params=array()) {
         $return = array(
