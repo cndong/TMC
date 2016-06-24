@@ -159,22 +159,24 @@ class HotelController extends ApiController {
     }
     
     public function actionBooking() {
-/*         $_POST =  array(
-                        'hotelId' => 1106,
-                        'roomId' => 127663,
-                        'rateplanId' => 1184,
-                        'checkIn' => '2016-07-20',
-                        'checkOut' => '2016-07-22',
-                        'roomCount' => 2,
-                        'orderAmount'=>2240,
-                        'bookName' => '测试_王东',
-                        'bookPhone' => '15952016956',
-                        'guestName' => '测试_王本',
-                        'reason'=>'去上海',
-                        'specialRemark'=>'要干净明亮',
-                ); */
+/*      $_POST =  array(
+                    'hotelId' => 1106,
+                    'roomId' => 127663,
+                    'rateplanId' => 1184,
+                    'checkIn' => '2016-07-20',
+                    'checkOut' => '2016-07-22',
+                    'roomCount' => 2,
+                    'orderAmount'=>2240,
+                    'bookName' => '测试_王东',
+                    'bookPhone' => '15952016956',
+                    'guestName' => '测试_王本',
+                    'reason'=>'去上海',
+                    'specialRemark'=>'要干净明亮',
+                    'lastCancelTime'=>''
+            );  */
         $order = new HotelOrder();
         $order->attributes = $_POST;
+        isset($_POST['lastCancelTime']) && $_POST['lastCancelTime'] && $order->lastCancelTime = date('Y-m-d H:i:s', strtotime($_POST['lastCancelTime']));
         if($order->save()){
             if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
                     array(
@@ -202,7 +204,10 @@ class HotelController extends ApiController {
                         }else $this->errAjax(RC::RC_DB_ERROR);
                 }else $this->errAjax($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
             }
-        }else $this->errAjax(RC::RC_DB_ERROR);
+        }else {
+            Q::log($order->getErrors(), 'dberror.hotel.booking');
+            $this->errAjax(RC::RC_DB_ERROR);
+        }
     }
     
 }
