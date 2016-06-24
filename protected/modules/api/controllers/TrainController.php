@@ -68,4 +68,105 @@ class TrainController extends ApiController {
         
         $this->corAjax(array('orderID' => $res['data']->id));
     }
+    
+    public function actionOrderList() {
+        $defaultBeginDate = date('Y-m-d', strtotime('-1 month'));
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        $rtn = array();
+    
+        $stations = ProviderT::getStationList();
+        $res = TrainOrder::search($params);
+        foreach ($res['data'] as $order) {
+            $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
+            $tmp['departStation'] = $stations[$order->routes['departRoute']->departStationCode]['name'];
+            $tmp['arriveStation'] = $stations[$order->routes['departRoute']->arriveStationCode]['name'];
+            $tmp['departTime'] = $order->routes['departRoute']->departTime;
+            $tmp['status'] = TrainStatus::getUserDes($order['status']);
+            $rtn[] = $tmp;
+        }
+    
+        $this->corAjax(array('orderList' => $rtn));
+    }
+    
+    public function actionReviewOrderList() {
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($_GET['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+    
+        $rtn = array();
+        $stations = ProviderT::getStationList();
+        if ($user->isReviewer) {
+            $res = TrainOrder::search(array('departmentID' => $user->departmentID, 'status' => TrainStatus::$trainStatusGroup['waitCheck']));
+            foreach ($res['data'] as $order) {
+                $tmp = F::arrayGetByKeys($order, array('id', 'orderPrice', 'isRound', 'ctime'));
+                $tmp['departStation'] = $stations[$order->routes['departRoute']['departStationCode']]['name'];
+                $tmp['arriveStation'] = $stations[$order->routes['departRoute']['arriveStationCode']]['name'];
+                $tmp['departTime'] = $order->routes['departRoute']['departTime'];
+                $tmp['status'] = TrainStatus::getUserDes($order['status']);
+                $rtn[] = $tmp;
+            }
+        }
+    
+        $this->corAjax(array('reviewOrderList' => $rtn));
+    }
+    
+    private function _getFlags($status) {
+        return array(
+            'isReview' => $status == TrainStatus::WAIT_CHECK,
+            'isCancel' => in_array($status, array(TrainStatus::WAIT_CHECK, TrainStatus::CHECK_SUCC, TrainStatus::WAIT_PAY)),
+            'isResign' => False, //$status == TrainStatus::BOOK_SUCC,
+            'isPay' => $status == TrainStatus::WAIT_PAY,
+            'isRefund' => in_array($status, array(TrainStatus::BOOK_SUCC, TrainStatus::RSNED))
+        );
+    }
+    
+    public function actionOrderDetail() {
+        if (!($params = F::checkParams($_GET, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($params['userID'])) || !($order = TrainOrder::model()->findByPk($params['orderID'])) || $order->departmentID != $user->departmentID) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+    
+        if (($order->userID != $user->id) && (!$user->isReviewer)) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+    
+        $stations = ProviderT::getStationList();
+        $order->routes = $order->getRoutes();
+    
+        $rtn = $this->_getFlags($order->status);
+        $rtn['contacterName'] = $order->contactName;
+        $rtn['contacterMobile'] = $order->contactMobile;
+        $rtn['passengers'] = array_values(UserPassenger::parsePassengers($order->passengers));
+        $rtn = array_merge($rtn, F::arrayGetByKeys($order, array('id', 'orderPrice', 'reason', 'ctime')));
+        $rtn['status'] = TrainStatus::getUserDes($order['status']);
+        foreach ($order->routes as $routeType => $route) {
+            $tmp = F::arrayGetByKeys($route, array('trainNo', 'departTime', 'arriveTime', 'ticketPrice'));
+            $tmp['seatType'] = DictTrain::$seatTypes[$route->seatType]['name'];
+            $tmp['departStation'] = $stations[$route->departStationCode]['name'];
+            $tmp['arriveStation'] = $stations[$route->arriveStationCode]['name'];
+            $tmp['tickets'] = array();
+            foreach ($order->tickets as $ticket) {
+                $tmpTicket = UserPassenger::parsePassenger($ticket->passenger);
+                $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('trainNo', 'departStationCode', 'arriveStationCode', 'departTime', 'arriveTime', 'ticketPrice')));
+                $tmp['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
+                $tmpTicket['isResign'] = $ticket->status == TrainStatus::RSN_SUCC;
+                $tmpTicket['isRefund'] = in_array($ticket->status, TrainStatus::getRefundingTicketStatus());
+                $tmp['tickets'][] = $tmpTicket;
+            }
+
+            $rtn[$routeType] = $tmp;
+        }
+    
+        $this->corAjax($rtn);
+    }
 }

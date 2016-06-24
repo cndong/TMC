@@ -51,6 +51,7 @@ class ParamsFormat {
     const F_TERM = '/^(--)|(T\d)$/';
     const T_STATION_CODE = '/^[a-z0-9]+$/';
     const T_TRAIN_NO = '/^[A-Z]?\d{1,4}$/';
+    const T_STATUS_ARRAY = 'array("TrainStatus", "isTrainStatusArray")';
     const PASSENGER_TYPE = 'array("Dict", "isPassengerType")';
     const CARD_TYPE = 'array("Dict", "isCardType")';
     const SEX = 'array("Dict", "isSex")';

@@ -20,6 +20,29 @@ class TrainOrder extends QActiveRecord {
         );
     }
     
+    public function relations() {
+        return array(
+            'user' => array(self::BELONGS_TO, 'User', 'userID'),
+            'department' => array(self::BELONGS_TO, 'Department', 'departmentID'),
+            'company' => array(self::BELONGS_TO, 'Company', 'companyID'),
+            'routes' => array(self::HAS_MANY, 'TrainRoute', 'orderID'),
+            'tickets' => array(self::HAS_MANY, 'TrainTicket', 'orderID'),
+            'reviewer' => array(self::BELONGS_TO, 'User', 'reviewerID'),
+            'operater' => array(self::BELONGS_TO, 'BossAdmin', 'operaterID')
+        );
+    }
+    
+    public function getRoutes() {
+        $rtn = array();
+        $stations = ProviderT::getStationList();
+        foreach ($this->routes as $route) {
+            $routeType = $route->isBack ? 'returnRoute' : 'departRoute';
+            $rtn[$routeType] = $route;
+        }
+        
+        return $rtn;
+    }
+    
     private static function _getCreateOrderFormats() {
         return array(
             'merchantID' => ParamsFormat::M_ID,
@@ -271,5 +294,54 @@ class TrainOrder extends QActiveRecord {
             $train->rollback();
             return F::errReturn($e->getMessage());
         }
+    }
+    
+    public static function search($params, $isGetCriteria = False, $isWithRoute = True) {
+        $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
+        
+        $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
+        $rtn['params'] = F::checkParams($params, array(
+            'orderID' => '!' . ParamsFormat::INTNZ . '--0', 'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0', 'operaterID' => '!' . ParamsFormat::INTNZ . '--0',
+            'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE,
+        ));
+        
+        $criteria = new CDbCriteria();
+        $criteria->with = array_keys(self::model()->relations());
+        $criteria->order = 't.id DESC';
+        foreach (array('orderID', 'userID', 'departmentID', 'companyID', 'operaterID') as $type) {
+            if (!empty($rtn['params'][$type])) {
+                $field = $type == 'orderID' ? 'id' : $type;
+                $criteria->compare('t.' . $field, $params[$type]);
+            }
+        }
+        if (!empty($params['status'])) {
+            if (!is_array($params['status'])) {
+                $params['status'] = array($params['status']);
+            }
+            if (F::checkParams($params, array('status' => ParamsFormat::F_STATUS_ARRAY))) {
+                $rtn['params']['status'] = $params['status'];
+                $criteria->addInCondition('t.status', $rtn['params']['status']);
+            }
+        }
+        if (isset($params['isPrivate'])) {
+            $rtn['params']['isPrivate'] = intval($params['isPrivate']);
+            $criteria->compare('t.isPrivate', $rtn['params']);
+        }
+        $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
+        
+        $rtn['criteria'] = $criteria;
+        if ($isGetCriteria) {
+            return $rtn;
+        }
+        
+        $orders = F::arrayAddField(self::model()->findAll($criteria), 'id');
+        foreach ($orders as $orderID => $order) {
+            if ($isWithRoute) {
+                $orders[$orderID]->routes = $order->getRoutes();
+            }
+        }
+        $rtn['data'] = $orders;
+        
+        return $rtn;
     }
 }

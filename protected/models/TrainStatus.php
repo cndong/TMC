@@ -28,7 +28,7 @@ class TrainStatus {
     const RFD_AGREE = 26;//退票操作需要接单、退款操作无需接单
     const RFDED = 27;
     
-    public static $flightStatus = array(
+    public static $trainStatus = array(
         self::WAIT_CHECK => array(
             'des' => array('user' => '待审批'),
             'str' => 'WaitCheck',
@@ -52,7 +52,7 @@ class TrainStatus {
         self::PAYED => array(
             'des' => array('user' => '已支付'),
             'str' => 'Payed',
-            'sysHdStatus' => array(self::BOOKING)
+            'sysHdStatus' => array(self::BOOK_PUSHED)
         ),
         self::CANCELED => array(
             'des' => array('user' => '已取消'),
@@ -180,17 +180,17 @@ class TrainStatus {
         ),
     );
 
-    public static $flightStatusGroup = array(
+    public static $trainStatusGroup = array(
         'waitCheck' => array(self::WAIT_CHECK)
     );
     
-    public static function isFlightStatus($status) {
-        return isset(self::$flightStatus[$status]);
+    public static function isTrainStatus($status) {
+        return isset(self::$trainStatus[$status]);
     }
     
-    public static function isFlightStatusArray($statusArray) {
+    public static function isTrainStatusArray($statusArray) {
         foreach ($statusArray as $status) {
-            if (!self::isFlightStatus($status)) {
+            if (!self::isTrainStatus($status)) {
                 return False;
             }
         }
@@ -199,51 +199,51 @@ class TrainStatus {
     }
     
     public static function isUserOp($fromStatus, $toStatus) {
-        return isset(self::$flightStatus[$fromStatus]['userStatus']) && in_array($toStatus, self::$flightStatus[$fromStatus]['userStatus']);
+        return isset(self::$trainStatus[$fromStatus]['userStatus']) && in_array($toStatus, self::$trainStatus[$fromStatus]['userStatus']);
     }
     
     public static function isAdminHd($fromStatus, $toStatus) {
-        return isset(self::$flightStatus[$fromStatus]['sysHdStatus']) && in_array($toStatus, self::$flightStatus[$fromStatus]['sysHdStatus']);
+        return isset(self::$trainStatus[$fromStatus]['sysHdStatus']) && in_array($toStatus, self::$trainStatus[$fromStatus]['sysHdStatus']);
     }
     
     public static function isAdminOp($fromStatus, $toStatus) {
-        return isset(self::$flightStatus[$fromStatus]['sysOpStatus']) && in_array($toStatus, self::$flightStatus[$fromStatus]['sysOpStatus']);
+        return isset(self::$trainStatus[$fromStatus]['sysOpStatus']) && in_array($toStatus, self::$trainStatus[$fromStatus]['sysOpStatus']);
     }
     
     public static function isOrderStatus($status) {
-        return isset(self::$flightStatus[$status]['isOrder']) ? self::$flightStatus[$status]['isOrder'] : True;
+        return isset(self::$trainStatus[$status]['isOrder']) ? self::$trainStatus[$status]['isOrder'] : True;
     }
     
     public static function isTicketStatus($status) {
-        return isset(self::$flightStatus[$status]['isTicket']) ? self::$flightStatus[$status]['isTicket'] : False;
+        return isset(self::$trainStatus[$status]['isTicket']) ? self::$trainStatus[$status]['isTicket'] : False;
     }
     
     public static function isJumpCheck($status) {
-        return isset(self::$flightStatus[$status]['isJumpCheck']) ? self::$flightStatus[$status]['isJumpCheck'] : False;
+        return isset(self::$trainStatus[$status]['isJumpCheck']) ? self::$trainStatus[$status]['isJumpCheck'] : False;
     }
     
     public static function getUserDes($status) {
-        return self::$flightStatus[$status]['des']['user'];
+        return self::$trainStatus[$status]['des']['user'];
     }
     
     public static function getAdminDes($status) {
-        return isset(self::$flightStatus[$status]['des']['admin']) ? self::$flightStatus[$status]['des']['admin'] : self::getUserDes($status);
+        return isset(self::$trainStatus[$status]['des']['admin']) ? self::$trainStatus[$status]['des']['admin'] : self::getUserDes($status);
     }
     
     public static function getUserStatus($status) {
-        return isset(self::$flightStatus[$status]['userStatus']) ? self::$flightStatus[$status]['userStatus'] : array();
+        return isset(self::$trainStatus[$status]['userStatus']) ? self::$trainStatus[$status]['userStatus'] : array();
     }
     
     public static function getSysHdStatus($status) {
-        return isset(self::$flightStatus[$status]['sysHdStatus']) ? self::$flightStatus[$status]['sysHdStatus'] : array();
+        return isset(self::$trainStatus[$status]['sysHdStatus']) ? self::$trainStatus[$status]['sysHdStatus'] : array();
     }
     
     public static function getSysOpStatus($status) {
-        return isset(self::$flightStatus[$status]['sysOpStatus']) ? self::$flightStatus[$status]['sysOpStatus'] : array();
+        return isset(self::$trainStatus[$status]['sysOpStatus']) ? self::$trainStatus[$status]['sysOpStatus'] : array();
     }
     
     public static function getCheckFunc($status) {
-        return isset(self::$flightStatus[$status]['check']) ? self::$flightStatus[$status]['check'] : False;
+        return isset(self::$trainStatus[$status]['check']) ? self::$trainStatus[$status]['check'] : False;
     }
     
     public static function getCanResignOrderStatus() {
