@@ -140,4 +140,69 @@ class HotelController extends ApiController {
             $this->corAjax(array('hotelDetail'=>$hotel));
         }
     }
+    
+    public function actionPreBookingCheck() {
+        if(F::isCorrect($res= ProviderCNBOOKING::request('PreBookingCheck',
+                array(
+                        'HotelId' => $_GET['hotelId'],
+                        'RoomId' => $_GET['roomId'],
+                        'RateplanId' => $_GET['rateplanId'],
+                        'CheckIn' => $_GET['checkIn'],
+                        'CheckOut' => $_GET['checkOut'],
+                        'RoomCount' => 1,
+                        'OrderAmount' => $_GET['orderAmount'],
+                ))) && $res['data']){
+            if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::PREBOOKINGCHECK_SUCCESS){
+                $this->corAjax();
+            }else $this->errAjax(RC::RC_H_HOTEL_PREBOOKINGCHECK_ERROR);
+        }
+    }
+    
+    public function actionBooking() {
+/*         $_POST =  array(
+                        'hotelId' => 1106,
+                        'roomId' => 127663,
+                        'rateplanId' => 1184,
+                        'checkIn' => '2016-07-20',
+                        'checkOut' => '2016-07-22',
+                        'roomCount' => 2,
+                        'orderAmount'=>2240,
+                        'bookName' => '测试_王东',
+                        'bookPhone' => '15952016956',
+                        'guestName' => '测试_王本',
+                        'reason'=>'去上海',
+                        'specialRemark'=>'要干净明亮',
+                ); */
+        $order = new HotelOrder();
+        $order->attributes = $_POST;
+        if($order->save()){
+            if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
+                    array(
+                            'HotelId' => $_POST['hotelId'],
+                            'RoomId' => $_POST['roomId'],
+                            'RateplanId' => $_POST['rateplanId'],
+                            'CheckIn' => $_POST['checkIn'],
+                            'CheckOut' => $_POST['checkOut'],
+                            'RoomCount' => $_POST['roomCount'],
+                            'OrderAmount' => $_POST['orderAmount'],
+                            'BookName' => $_POST['bookName'],
+                            'BookPhone' => $_POST['bookPhone'],
+                            'GuestName' => $_POST['guestName'],
+                            'SpecialRemark' => isset($params['specialRemark']) ? $params['specialRemark'] : '',
+                            'CustomerOrderId' => $order->id,
+                    ))) && $res['data']){
+                if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::BOOKING_SUCCESS){
+                        $status = 8;
+                        if($res['data']['Order']['OrderStatusId']<10) { // 订单状态大于9都是已确认 mail报警! }
+                            Q::log($res['data']['Order'], 'Api.Hotel.actionBooking.OrderStatusId.error');
+                            $status = 9;
+                        }
+                        if($order->updateByPk($order->getPrimaryKey(), array('status'=>$status, 'oID'=>$res['data']['Order']['OrderId']))){
+                            $this->corAjax(array('orderId'=>$order->id));
+                        }else $this->errAjax(RC::RC_DB_ERROR);
+                }else $this->errAjax($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
+            }
+        }else $this->errAjax(RC::RC_DB_ERROR);
+    }
+    
 }

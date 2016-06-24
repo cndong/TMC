@@ -1,5 +1,37 @@
 <?php
 class ProviderCNBOOKING{
+    /*
+        MessageInfo/CODE
+        30000 操作成功
+        30001 输入 XML 为空
+        30002 XML 格式不正确
+        30003 XML 节点内容不合法
+        30004 Action 不合法
+        30005 接口授权已到期
+        30006 接口未授权
+        30007 安全码(SecurityKey)错误
+        30008 用户名(UserName)错误
+        30009 密码(PassWord)错误
+        30010 传入签名 (Signature)错误
+        
+        Data/ReturnCode
+        31001 预定校验不通过
+        31002 预定校验通过 => PREBOOKINGCHECK_SUCCESS
+        31003 客户信贷额度不足
+        31004 预定成功
+        31005 预定失败
+        31007 修改成功
+        31008 修改失败
+        31009 订单取消成功
+        31010 订单取消失败
+        31011 订单已存在,请勿重复下单
+        31012 酒店或房间已经下架
+        31013 库存不足
+     */
+    
+    const PREBOOKINGCHECK_SUCCESS= '31002';
+    const BOOKING_SUCCESS= '31004';
+    
     public static function request($method, $params=array()) {
         $return = array(
                 'rc' => RC::RC_ERROR,
@@ -27,23 +59,27 @@ class ProviderCNBOOKING{
              array(3) {
                       ["ActionName"]=>
                       string(11) "HotelSearch"
-                      ["MessageInfo"]=>
-                                      array(2) {
+                      ["MessageInfo"]=>array(2) {
                                         ["Code"]=>
                                         string(5) "30000"
                                         ["Description"]=>
                                         string(12) "操作成功"
                                       }
-                      ["Data"]=>
-                              array(1) {
+                      ["Data"]=> array(1) {
                                 ["Hotels"]=>
                                 array(2) {
+                                
+                    ["Data"] => array(2) {
+                                 'ReturnCode' => '31001',
+                                 'ReturnMessage' => '该字符串未被识别为有效的 DateTime。',
                       $ret['Data'] => array|'暂无数据'          
             */
             $ret['MessageInfo'] = (array) $ret['MessageInfo'];
+            isset($ret['Data']['ReturnCode']) && Q::log($ret, 'Provider.CNBOOKING.Response.Return');
             if($ret['MessageInfo']['Code'] != '30000') {
-                $return['rc'] = $ret['MessageInfo']['Code'];
-                $return['msg'] = $ret['MessageInfo']['Description'];
+                $ret['Data'] = (array) $ret['Data'];
+                $return['rc'] = isset($ret['Data']['ReturnCode']) ? $ret['Data']['ReturnCode'] : $ret['MessageInfo']['Code'];
+                $return['msg'] = isset($ret['Data']['ReturnMessage']) ? $ret['Data']['ReturnMessage'] : $ret['MessageInfo']['Description'];
                 Q::log($ret, 'Provider.CNBOOKING.Error');
             }else {
                 $return['rc'] = RC::RC_SUCCESS;
@@ -136,6 +172,58 @@ EOF;
     <Currency></Currency>
     <Lang>GB</Lang>
     <RatePlanOnly></RatePlanOnly>
+EOF;
+    }
+    
+    public static function getPreBookingCheckXML($params) {
+        return <<<EOF
+    <HotelId>{$params['HotelId']}</HotelId>
+    <RoomId>{$params['RoomId']}</RoomId>
+    <RateplanId>{$params['RateplanId']}</RateplanId>
+    <CheckIn>{$params['CheckIn']}</CheckIn>
+    <CheckOut>{$params['CheckOut']}</CheckOut>
+    <RoomCount>{$params['RoomCount']}</RoomCount>
+    <Currency>CNY</Currency>
+    <OrderAmount>{$params['OrderAmount']}</OrderAmount>
+EOF;
+    }
+    
+    public static function getBookingXML($params) {
+        $specialRemark = isset($params['SpecialRemark']) ? $params['SpecialRemark'] : '';
+        return <<<EOF
+        <HotelId>{$params['HotelId']}</HotelId>
+        <RoomId>{$params['RoomId']}</RoomId>
+        <RateplanId>{$params['RateplanId']}</RateplanId>
+            <CheckIn>{$params['CheckIn']}</CheckIn>
+            <CheckOut>{$params['CheckOut']}</CheckOut>
+            <RoomCount>{$params['RoomCount']}</RoomCount>
+            <Currency>CNY</Currency>
+            <OrderAmount>{$params['OrderAmount']}</OrderAmount>
+    <BookInfo>
+      <BookName>{$params['BookName']}</BookName>
+      <BookPhone>{$params['BookPhone']}</BookPhone>
+    </BookInfo>
+    <GuestInfo>
+      <GuestName>{$params['GuestName']}</GuestName>
+      <GuestPhone>
+      </GuestPhone>
+      <GuestFax>
+      </GuestFax>
+      <GuestType>
+      </GuestType>
+      <CardTypeId>
+      </CardTypeId>
+      <CardNum>
+      </CardNum>
+    </GuestInfo>
+    <SpecialRemark>{$specialRemark}</SpecialRemark>
+    <Reserve>
+      <Reserve1>
+      </Reserve1>
+      <Reserve2>
+      </Reserve2>
+    </Reserve>
+    <CustomerOrderId>{$params['CustomerOrderId']}</CustomerOrderId>
 EOF;
     }
 }
