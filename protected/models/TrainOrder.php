@@ -1,5 +1,7 @@
 <?php
 class TrainOrder extends QActiveRecord {
+    private $_collectParams = array();
+    
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
@@ -261,7 +263,7 @@ class TrainOrder extends QActiveRecord {
             $attributes['contactMobile'] = $params['contacterObj']->mobile;
             $attributes['invoiceAddress'] = !$params['isInvoice'] ? '' : $params['invoiceAddressObj']->getDescription();
             $attributes['passengers'] = UserPassenger::concatPassengers($passengers, Dict::BUSINESS_TRAIN);
-            $attributes['status'] = $params['isPrivate'] ? FlightStatus::WAIT_PAY : FlightStatus::WAIT_CHECK;
+            $attributes['status'] = $params['isPrivate'] ? TrainStatus::WAIT_PAY : TrainStatus::WAIT_CHECK;
         
             $order = new TrainOrder();
             $order->attributes = $attributes;
@@ -343,5 +345,134 @@ class TrainOrder extends QActiveRecord {
         $rtn['data'] = $orders;
         
         return $rtn;
+    }
+    
+    private function _setCollectParams($status, $params, $isMerge = True) {
+        $this->_collectParams[$status] = $isMerge ? CMap::mergeArray($this->_collectParams, $params) : $params;
+    }
+    
+    private function _getCollectParams($status) {
+        return isset($this->_collectParams[$status]) ? $this->_collectParams[$status] : array();
+    }
+    
+    public function changeStatus($status, $params = array(), $condition = '', $conditionParams = array()) {
+        if (!TrainStatus::isTrainStatus($status)) {
+            return F::errReturn(RC::RC_STATUS_NOT_EXISTS);
+        }
+    
+        $isUserOp = $isSysHd = $isSysOp = False;
+        if (!TrainStatus::isJumpCheck($status)) {
+            $isUserOp = TrainStatus::isUserOp($this->status, $status);
+            $isSysHd = TrainStatus::isSysHd($this->status, $status);
+            $isSysOp = TrainStatus::isSysOp($this->status, $status);
+            if (!($isUserOp || $isSysHd || $isSysOp)) {
+                return F::errReturn(RC::RC_STATUS_NOT_OP);
+            }
+    
+            if (($isSysHd || $isSysOp) && empty($params['operaterID'])) {
+                return F::errReturn(RC::RC_STATUS_NO_OPERATER);
+            }
+    
+            if ($func = TrainStatus::getCheckFunc($status)) {
+                if (!$this->$func()) {
+                    return F::errReturn(RC::RC_STATUS_NOT_MATCH_CHECK);
+                }
+            }
+        }
+    
+        $toStatusConfig = TrainStatus::$trainStatus[$status];
+        $trans = Yii::app()->db->beginTransaction();
+        try {
+            $res = F::$return;
+            $beforeMethodName = '_cS2' . $toStatusConfig['str'] . 'Before';
+            $methodName = '_cS2' . $toStatusConfig['str'];
+            $afterMethodName = '_cS2' . $toStatusConfig['str'] . 'After';
+    
+            $params['status'] = $status;
+            $tmp = $isSysHd || $isSysOp ? array('status' => $status, 'operaterID' => $params['operaterID']) : array('status' => $status);
+            $tmp = array('params' => $tmp, 'condition' => '', 'conditionParams' => array());
+            if (method_exists($this, $beforeMethodName)) {
+                if (F::isCorrect($res = $this->$beforeMethodName($params, $condition, $conditionParams))) {
+                    if (!empty($res['data']) && is_array($res['data'])) {
+                        $tmp = CMap::mergeArray($tmp, $res['data']);
+                    }
+                }
+            }
+    
+            if (F::isCorrect($res)) {
+                $func = method_exists($this, $methodName) ? $methodName : '_changeStatus';
+                if (F::isCorrect($res = $this->$func($tmp['params'], $condition, $conditionParams)) && method_exists($this, $afterMethodName)) {
+                    $res = $this->$afterMethodName();
+                }
+            }
+    
+            $func = F::isCorrect($res) ? 'commit' : 'rollback';
+            $trans->$func();
+        } catch (Exception $e) {
+            Q::log($e->getMessage(), 'dberror.changeStatus');
+    
+            $trans->rollback();
+            $res = F::errReturn(RC::RC_DB_ERROR);
+        }
+    
+        $this->_setCollectParams($status, array(), False);
+        Log::add(Log::TYPE_CN_FLIGHT, $this->id, array('status' => $this->status, 'isSucc' => F::isCorrect($res), 'params' => $params, 'res' => $res));
+    
+        return $res;
+    }
+    
+    private function _changeStatus($sets, $condition = '', $conditionParams = array()) {
+        $newSets = $sets;
+        $sets = array();
+        foreach ($newSets as $k => $v) {
+            if ($this->hasAttribute($k)) {
+                $sets[$k] = $v;
+            }
+        }
+    
+        $sets['utime'] = Q_TIME;
+        if (TrainStatus::isSysOp($this->status, $sets['status'])) {
+            $condition .= empty($condition) ? '' : ' AND';
+            $condition .= ' operaterID=:operaterID';
+            $conditionParams[':operaterID'] = $sets['operaterID'];
+        }
+    
+        $condition .= empty($condition) ? '' : ' AND';
+        $condition .= ' status=:status';
+        $conditionParams[':status'] = $this->status;
+        if (!self::model()->updateByPk($this->id, $sets, $condition, $conditionParams)) {
+            return F::errReturn(RC::RC_STATUS_CHANGE_ERROR);
+        }
+    
+        $this->setAttributes($sets);
+    
+        return F::corReturn();
+    }
+    
+    private function _checkBefore($params) {
+        if (empty($params['reviewerID'])) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+    
+        $rtn = array();
+        if (!($params['reviewerID'] instanceof User)) {
+            if (!($params['reviewerID'] = User::model()->findByPk($params['reviewerID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+                return F::errReturn(RC::RC_USER_NOT_EXISTS);
+            }
+        }
+    
+        if (!$params['reviewerID']->isReviewer || $this->departmentID != $params['reviewerID']->departmentID) {
+            return F::errReturn(RC::RC_HAVE_NO_REVIEW_PRIVILEGE);
+        }
+    
+        return F::corReturn(array('params' => array('reviewerID' => $params['reviewerID']->id)));
+    }
+    
+    private function _cS2CheckFailBefore($params) {
+        return $this->_checkBefore($params);
+    }
+    
+    private function _cS2CheckSuccBefore($params) {
+        return $this->_checkBefore($params);
     }
 }

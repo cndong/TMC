@@ -147,7 +147,7 @@ class TrainController extends ApiController {
         $rtn['contacterName'] = $order->contactName;
         $rtn['contacterMobile'] = $order->contactMobile;
         $rtn['passengers'] = array_values(UserPassenger::parsePassengers($order->passengers));
-        $rtn = array_merge($rtn, F::arrayGetByKeys($order, array('id', 'orderPrice', 'reason', 'ctime')));
+        $rtn = array_merge($rtn, F::arrayGetByKeys($order, array('id', 'orderPrice', 'invoicePrice', 'insurePrice', 'reason', 'ctime')));
         $rtn['status'] = TrainStatus::getUserDes($order['status']);
         foreach ($order->routes as $routeType => $route) {
             $tmp = F::arrayGetByKeys($route, array('trainNo', 'departTime', 'arriveTime', 'ticketPrice'));
@@ -157,7 +157,7 @@ class TrainController extends ApiController {
             $tmp['tickets'] = array();
             foreach ($order->tickets as $ticket) {
                 $tmpTicket = UserPassenger::parsePassenger($ticket->passenger);
-                $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('trainNo', 'departStationCode', 'arriveStationCode', 'departTime', 'arriveTime', 'ticketPrice')));
+                $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('trainNo', 'departStationCode', 'arriveStationCode', 'departTime', 'arriveTime', 'ticketPrice', 'ticketInfo', 'ticketNo')));
                 $tmp['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
                 $tmpTicket['isResign'] = $ticket->status == TrainStatus::RSN_SUCC;
                 $tmpTicket['isRefund'] = in_array($ticket->status, TrainStatus::getRefundingTicketStatus());
@@ -168,5 +168,39 @@ class TrainController extends ApiController {
         }
     
         $this->corAjax($rtn);
+    }
+    
+    public function actionReview() {
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ, 'status' => ParamsFormat::BOOL)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+    
+        if (!($order = TrainOrder::model()->findByPk($params['orderID']))) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+    
+        $status = $params['status'] ? TrainStatus::CHECK_SUCC : TrainStatus::CHECK_FAIL;
+    
+        $this->onAjax($order->changeStatus($status, array('reviewerID' => $user)));
+    }
+    
+    public function actionCancel() {
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderID' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+    
+        if (!($order = TrainOrder::model()->findByPk($params['orderID'])) || $order->userID != $user->id) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+    
+        $this->onAjax($order->changeStatus(TrainStatus::CANCELED));
     }
 }

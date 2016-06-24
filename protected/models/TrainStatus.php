@@ -202,11 +202,11 @@ class TrainStatus {
         return isset(self::$trainStatus[$fromStatus]['userStatus']) && in_array($toStatus, self::$trainStatus[$fromStatus]['userStatus']);
     }
     
-    public static function isAdminHd($fromStatus, $toStatus) {
+    public static function isSysHd($fromStatus, $toStatus) {
         return isset(self::$trainStatus[$fromStatus]['sysHdStatus']) && in_array($toStatus, self::$trainStatus[$fromStatus]['sysHdStatus']);
     }
     
-    public static function isAdminOp($fromStatus, $toStatus) {
+    public static function isSysOp($fromStatus, $toStatus) {
         return isset(self::$trainStatus[$fromStatus]['sysOpStatus']) && in_array($toStatus, self::$trainStatus[$fromStatus]['sysOpStatus']);
     }
     
