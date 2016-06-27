@@ -31,6 +31,7 @@ class ProviderCNBOOKING{
     
     const PREBOOKINGCHECK_SUCCESS= '31002';
     const BOOKING_SUCCESS= '31004';
+    const BOOKING_CANCEL_SUCCESS= '31009';
     const BOOKING_SUCCESS_STATUS = 10;  // 订单状态大于等于10是已确认
     
     public static function request($method, $params=array()) {
@@ -78,15 +79,13 @@ class ProviderCNBOOKING{
             $ret['MessageInfo'] = (array) $ret['MessageInfo'];
             $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
             is_array($return['data']) && isset($return['data']['ReturnCode']) && Q::log($return, 'Provider.CNBOOKING.Response.Return');
+            // Code 主要是查询返回的查询结果状态, ReturnCode主要是提交数据交互返回的业务处理状态
             if($ret['MessageInfo']['Code'] != '30000') {
-                // Code 主要是查询返回的查询结果状态, ReturnCode主要是提交数据交互返回的业务处理状态
                 $return['rc'] = is_array($return['data']) && isset($return['data']['ReturnCode']) ? $return['data']['ReturnCode'] : $ret['MessageInfo']['Code'];
                 $return['msg'] = is_array($return['data']) && isset($return['data']['ReturnCode']) ? $return['data']['ReturnMessage'] : $ret['MessageInfo']['Description'];
                 Q::log($ret, 'Provider.CNBOOKING.Error');
-            }else {
-                $return['rc'] = RC::RC_SUCCESS;
-            }
-        }Q::log('', 'Provider.CNBOOKING.Response.None');
+            }else $return['rc'] = RC::RC_SUCCESS;
+        }else Q::log('', 'Provider.CNBOOKING.Response.None');
         return $return;
     }
     
@@ -151,13 +150,15 @@ EOF;
     }
     
     public static function getRatePlanSearchXML($params) {
+        $cityId = isset($params['CityId']) ? $params['CityId'] : '';
+        $hotelId = isset($params['HotelId']) ? $params['HotelId'] : '';
         $roomId = isset($params['RoomId']) ? $params['RoomId'] : '';
         $ratePlanId = isset($params['RatePlanId']) ? $params['RatePlanId'] : '';
         return <<<EOF
     <CountryId>{$params['CountryId']}</CountryId>
     <ProvinceId>{$params['ProvinceId']}</ProvinceId>
-    <CityId>{$params['CityId']}</CityId>
-    <HotelId>{$params['HotelId']}</HotelId>
+    <CityId>{$cityId}</CityId>
+    <HotelId>{$hotelId}</HotelId>
     <RoomId>{$roomId}</RoomId>
     <RatePlanId>{$ratePlanId}</RatePlanId>
     <StayDateRange>
@@ -226,4 +227,13 @@ EOF;
     <CustomerOrderId>{$params['CustomerOrderId']}</CustomerOrderId>
 EOF;
     }
+    
+    public static function getBookingCancelXML($params) {
+        return <<<EOF
+        <OrderId>{$params['OrderId']}</OrderId>
+EOF;
+    }
+    
+/*     public static function getOrderSearchXML($params) {
+    } */
 }

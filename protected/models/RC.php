@@ -86,6 +86,7 @@ class RC {
     const RC_H_HOTEL_NOT_EXISTS= 100701;
     const RC_H_HOTEL_PREBOOKINGCHECK_ERROR= 100702;
     const RC_H_HOTEL_BOOKING_ERROR= 100703;
+    const RC_H_HOTEL_BOOKING_CANCEL_ERROR= 100704;
     
     const RC_SMS_LOG_NOT_EXISTS = 100801;
     const RC_SMS_HAD_SENDED = 100801;
@@ -149,6 +150,7 @@ class RC {
             self::RC_H_HOTEL_NOT_EXISTS => '酒店不存在',
             self::RC_H_HOTEL_PREBOOKINGCHECK_ERROR=>'抱歉, 该房间房态变化, 请选择其他房间',
             self::RC_H_HOTEL_BOOKING_ERROR=>'抱歉, 预定失败',
+            self::RC_H_HOTEL_BOOKING_CANCEL_ERROR=>'抱歉, 退房失败',
                 
         );
     

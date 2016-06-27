@@ -252,4 +252,40 @@ class HotelController extends ApiController {
                                                                                 'isRefund' => HotelStatus::getUserCando($order['status'], HotelStatus::APPLY_RFD),
         ))));
     }
+    
+    public function actionCancel() {
+/*         $_POST['orderId'] = 200022;
+        $_POST['userID'] = 5; */
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderId' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+    
+        if (!($order = HotelOrder::model()->findByPk($params['orderId'])) || $order->userID != $user->id) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+    
+        $this->onAjax($order->changeStatus(HotelStatus::CANCELED));
+    }
+    
+    public function actionRefund() {
+        $_POST['orderId'] = 200022;
+        $_POST['userID'] = 5;
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderId' => ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+        
+        if (!($order = HotelOrder::model()->findByPk($params['orderId'])) || $order->userID != $user->id) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }else $_POST['oID'] = $order->oID;
+        $this->onAjax($order->changeStatus(HotelStatus::APPLY_RFD, $_POST));
+    }
+    
 }
