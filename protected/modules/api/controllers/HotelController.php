@@ -125,9 +125,9 @@ class HotelController extends ApiController {
                                 if($rate['PriceAndStatus']['PriceAndStatuCount']==1){
                                     $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
                                 }
-                                //测试count 正式要去掉
                                 foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
-                                    $priceAndStatu['Count'] = rand(0,1);
+                                    $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
+                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0,1);
                                 }
                             }
                             

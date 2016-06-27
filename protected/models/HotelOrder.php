@@ -12,7 +12,7 @@ class HotelOrder extends QActiveRecord {
     
     public function rules() {
         return array(
-            array('merchantID, userID, hotelId, roomId, rateplanId, ctime, utime, status,roomCount, orderPrice, bedLimit, breakfast', 'numerical'),
+            array('merchantID, userID, departmentID, companyID, hotelId, roomId, rateplanId, ctime, utime, status,roomCount, orderPrice, bedLimit, breakfast', 'numerical'),
             array('hotelName, bookName, guestName, oID, roomName', 'length', 'max' => 32),
             array('reason, specialRemark', 'length', 'max' => 64),
             array('checkIn, checkOut', 'length', 'max' => 10),
@@ -77,7 +77,7 @@ class HotelOrder extends QActiveRecord {
         } catch (Exception $e) {
             $train->rollback();
             Q::log($e->getMessage(), 'dberror.hotel.createOrder');
-            return F::errReturn(RC::RC_DB_ERROR, $e->getMessage());
+            return F::errReturn(RC::RC_DB_ERROR);
         }
     }
     
