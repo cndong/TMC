@@ -244,8 +244,15 @@ class HotelController extends ApiController {
         $order = HotelOrder::model()->findByPk($params['orderId']);
         if (!$order)$this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         $order->lastCancelTime == '0000-00-00 00:00:00' && $order->lastCancelTime = '';
+        $hotel = Hotel::model()->findByPk($order->hotelId);
         $this->corAjax(array('orderDetail' => array_merge(
                                                                         $order->attributes,
+                                                                        array(
+                                                                                'address' => $hotel->address,
+                                                                                'lon' =>  $hotel->lon,
+                                                                                'lat' =>  $hotel->lat,
+                                                                                'star'=>  $hotel->star,
+                                                                       ),
                                                                         array(
                                                                                 'status' => HotelStatus::getUserDes($order['status']),
                                                                                 'isCancel' => HotelStatus::getUserCando($order['status'], HotelStatus::CANCELED),
