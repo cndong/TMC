@@ -12,8 +12,8 @@ class HotelOrder extends QActiveRecord {
     
     public function rules() {
         return array(
-            array('merchantID, userID, hotelId, roomId, rateplanId, ctime, utime, status,roomCount, orderPrice', 'numerical', 'integerOnly' => True),
-            array('hotelName, bookName, guestName, oID', 'length', 'max' => 32),
+            array('merchantID, userID, hotelId, roomId, rateplanId, ctime, utime, status,roomCount, orderPrice, bedLimit, breakfast', 'numerical'),
+            array('hotelName, bookName, guestName, oID, roomName', 'length', 'max' => 32),
             array('reason, specialRemark', 'length', 'max' => 64),
             array('checkIn, checkOut', 'length', 'max' => 10),
             array('bookPhone', 'length', 'max' =>11),
