@@ -190,7 +190,7 @@ class HotelOrder extends QActiveRecord {
     }
     
 /*     private function _cS2CheckSuccAfter() {
-        /*   if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
+        if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
          array(
                  'HotelId' => $_POST['hotelId'],
                  'RoomId' => $_POST['roomId'],
@@ -220,7 +220,8 @@ class HotelOrder extends QActiveRecord {
         if(F::isCorrect($return)){
         $train->commit();
         Log::add(Log::TYPE_HOTEL, $order->id, array('status' => $order->status, 'isSucc' => True));
-        }else $train->rollback(); */
+        }else $train->rollback();
         return F::corReturn(array('params' => array('reviewerID' => $params['reviewerID']->id)));
-    } */
+    }
+    */
 }

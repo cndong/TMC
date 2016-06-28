@@ -201,7 +201,7 @@ class HotelController extends ApiController {
         $rtn = array();
         $orders = HotelOrder::model()->findAll($criteria);
         foreach ($orders as $order) {
-            $tmp = F::arrayGetByKeys($order, array('id', 'hotelName', 'checkIn', 'checkOut', 'roomCount', 'orderPrice', 'ctime'));
+            $tmp = F::arrayGetByKeys($order, array('id', 'hotelName', 'roomName', 'checkIn', 'checkOut', 'roomCount', 'orderPrice', 'ctime'));
             $tmp['status'] = HotelStatus::getUserDes($order['status']);
             $rtn[] = $tmp;
         }
