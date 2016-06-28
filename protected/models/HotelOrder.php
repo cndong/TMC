@@ -189,39 +189,50 @@ class HotelOrder extends QActiveRecord {
         return $this->_checkBefore($params);
     }
     
-/*     private function _cS2CheckSuccAfter() {
-        if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
-         array(
-                 'HotelId' => $_POST['hotelId'],
-                 'RoomId' => $_POST['roomId'],
-                 'RateplanId' => $_POST['rateplanId'],
-                 'CheckIn' => $_POST['checkIn'],
-                 'CheckOut' => $_POST['checkOut'],
-                 'RoomCount' => $_POST['roomCount'],
-                 'OrderAmount' => $_POST['orderPrice'],
-                 'BookName' => $_POST['bookName'],
-                 'BookPhone' => $_POST['bookPhone'],
-                 'GuestName' => $_POST['guestName'],
-                 'SpecialRemark' => isset($params['specialRemark']) ? $params['specialRemark'] : '',
-                 'CustomerOrderId' => $order->id,
-         ))) && $res['data']){
-        if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::BOOKING_SUCCESS){
-        if($res['data']['Order']['OrderStatusId']>=ProviderCNBOOKING::BOOKING_SUCCESS_STATUS){
-        $return = F::corReturn(array('orderId'=>$order->id));
-        if(!$order->updateByPk($order->getPrimaryKey(), array('status'=>HotelStatus::WAIT_CHECK, 'oID'=>$res['data']['Order']['OrderId']))){//状态未更新则邮件报警
-        $cpl['tplInfo']['orderID'] = $order->id ;
-        @Mail::sendMail($cpl, 'Hotel.SyncFailed');
-        Q::log($e->getMessage(), 'dberror.hotel.syncFailed');
+    private function _cS2CheckSuccAfter() {
+        if(F::isCorrect($res= ProviderCNBOOKING::request('Booking', array(
+                'HotelId' => $this->hotelId,
+                'RoomId' => $this->roomId,
+                'RateplanId' => $this->rateplanId,
+                'CheckIn' => $this->checkIn,
+                'CheckOut' => $this->checkOut,
+                'RoomCount' => $this->roomCount,
+                'OrderAmount' => $this->orderPrice,
+                'BookName' => $this->bookName,
+                'BookPhone' => $this->bookPhone,
+                'GuestName' => $this->guestName,
+                'SpecialRemark' =>'',
+                'CustomerOrderId' => $this->id,
+        ))) && $res['data']){
+            if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::BOOKING_SUCCESS){
+                if($res['data']['Order']['OrderStatusId']>=ProviderCNBOOKING::BOOKING_SUCCESS_STATUS){
+                    $return = F::corReturn();
+                    if(!$this->updateByPk($this->getPrimaryKey(), array('status'=>HotelStatus::BOOK_SUCC, 'oID'=>$res['data']['Order']['OrderId']))){
+                        $this->_mailAlert('status');
+                        $return = F::errReturn(RC::RC_DB_ERROR);
+                    }
+                }else {
+                    $this->_mailAlert('booking');
+                    $return = F::errReturn(RC::RC_H_HOTEL_BOOKING_ERROR);
+                }
+            }else {
+                $this->_mailAlert($res['data']['ReturnMessage']);
+                $return = F::errReturn($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
+            }
         }
-        }else $return = F::errReturn(RC::RC_H_HOTEL_BOOKING_ERROR);
-        }else $return = F::errReturn($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
-        }
-        
-        if(F::isCorrect($return)){
-        $train->commit();
-        Log::add(Log::TYPE_HOTEL, $order->id, array('status' => $order->status, 'isSucc' => True));
-        }else $train->rollback();
-        return F::corReturn(array('params' => array('reviewerID' => $params['reviewerID']->id)));
+        return $return;
     }
-    */
+    
+    //成功发送 短信和app推送
+    private function _nofity() {
+    
+    }
+    
+    //邮件报警
+    private function _mailAlert($msg) {
+        $cpl['tplInfo']['orderID'] = $this->id;
+        $cpl['tplInfo']['msg'] = $msg;
+        @Mail::sendMail($cpl, 'Hotel.SyncFailed');
+        Q::log($msg, 'dberror.hotel.syncFailed');
+    }
 }

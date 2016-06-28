@@ -160,23 +160,6 @@ class HotelController extends ApiController {
     }
     
     public function actionBooking() {
-/*         $_POST =  array(
-                    'hotelId' => 1106,
-                    'hotelName'=>'北京西苑饭店',
-                    'roomId' => 127663,
-                    'rateplanId' => 1184,
-                    'checkIn' => '2016-07-20',
-                    'checkOut' => '2016-07-22',
-                    'roomCount' => 2,
-                    'orderPrice'=>2240,
-                    'bookName' => '测试_王东',
-                    'bookPhone' => '15952016956',
-                    'guestName' => '测试_王本',
-                    'reason'=>'去上海',
-                    'lastCancelTime'=>'',
-                    'merchantID'=>30,
-                    'userID'=>5,
-            );  */
         $this->onAjax(HotelOrder::createOrder($_POST));
     }
     
@@ -226,7 +209,7 @@ class HotelController extends ApiController {
             $criteria->compare('status', HotelStatus::WAIT_CHECK);
             $orders = HotelOrder::model()->findAll($criteria);
             foreach ($orders as $order) {
-                $tmp = F::arrayGetByKeys($order, array('id', 'hotelName', 'checkIn', 'checkOut', 'roomCount', 'orderPrice', 'ctime'));
+                $tmp = F::arrayGetByKeys($order, array('id', 'hotelName', 'roomName', 'checkIn', 'checkOut', 'roomCount', 'orderPrice', 'ctime'));
                 $tmp['status'] = HotelStatus::getUserDes($order['status']);
                 $rtn[] = $tmp;
             }
@@ -253,6 +236,16 @@ class HotelController extends ApiController {
         $this->onAjax($order->changeStatus($status, array('reviewerID' => $user)));
     }
     
+    private function _getFlags($status) {
+        return array(
+                'status' => HotelStatus::getUserDes($status),
+                'isReview' => $status == HotelStatus::WAIT_CHECK,
+                'isCancel' => in_array($status, array(HotelStatus::WAIT_CHECK, HotelStatus::WAIT_PAY)),
+                'isPay' => $status == HotelStatus::WAIT_PAY,
+                'isRefund' => in_array($status, array(HotelStatus::BOOK_SUCC))
+        );
+    }
+    
     public function actionOrderDetail() {
         if (!($params = F::checkParams($_GET,
                 array(
@@ -272,16 +265,11 @@ class HotelController extends ApiController {
                                                                                 'lat' =>  $hotel->lat,
                                                                                 'star'=>  $hotel->star,
                                                                        ),
-                                                                        array(
-                                                                                'status' => HotelStatus::getUserDes($order['status']),
-                                                                                'isCancel' => HotelStatus::getUserCando($order['status'], HotelStatus::CANCELED),
-                                                                                'isRefund' => HotelStatus::getUserCando($order['status'], HotelStatus::APPLY_RFD),
-        ))));
+                                                                       $this->_getFlags($order->status))
+                ));
     }
     
     public function actionCancel() {
-/*         $_POST['orderId'] = 200022;
-        $_POST['userID'] = 5; */
         if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderId' => ParamsFormat::INTNZ)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
@@ -298,8 +286,6 @@ class HotelController extends ApiController {
     }
     
     public function actionRefund() {
-        $_POST['orderId'] = 200022;
-        $_POST['userID'] = 5;
         if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderId' => ParamsFormat::INTNZ)))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }

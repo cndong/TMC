@@ -31,7 +31,6 @@ class HotelStatus {
             self::CHECK_SUCC => array(
                     'des' => array('user' => '已通过'),
                     'str' => 'CheckSucc',
-                    'userStatus' => array(self::CANCELED),
                     'sysHdStatus' => array(self::BOOK_PUSHED),
             ),
             self::WAIT_PAY => array(

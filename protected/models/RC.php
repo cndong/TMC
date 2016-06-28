@@ -149,9 +149,10 @@ class RC {
                 
             self::RC_H_HOTEL_NOT_EXISTS => '酒店不存在',
             self::RC_H_HOTEL_PREBOOKINGCHECK_ERROR=>'抱歉, 该房间房态变化, 请选择其他房间',
-            self::RC_H_HOTEL_BOOKING_ERROR=>'抱歉, 预定失败',
+            self::RC_H_HOTEL_BOOKING_ERROR=>'抱歉, 预订失败',
             self::RC_H_HOTEL_BOOKING_CANCEL_ERROR=>'抱歉, 退房失败',
-                
+
+            self::RC_ORDER_NOT_EXISTS=>'该订单不存在',
         );
     
         return isset($config[$status]) ? $config[$status] : '服务器异常，请稍后再试(' . $status . ')';
