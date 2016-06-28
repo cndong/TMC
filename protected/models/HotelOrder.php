@@ -40,37 +40,6 @@ class HotelOrder extends QActiveRecord {
             $order->attributes = $params;
             isset($params['lastCancelTime']) && $params['lastCancelTime'] && $order->lastCancelTime = date('Y-m-d H:i:s', strtotime($params['lastCancelTime']));
             $order->save();
-          /*   if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
-                    array(
-                            'HotelId' => $_POST['hotelId'],
-                            'RoomId' => $_POST['roomId'],
-                            'RateplanId' => $_POST['rateplanId'],
-                            'CheckIn' => $_POST['checkIn'],
-                            'CheckOut' => $_POST['checkOut'],
-                            'RoomCount' => $_POST['roomCount'],
-                            'OrderAmount' => $_POST['orderPrice'],
-                            'BookName' => $_POST['bookName'],
-                            'BookPhone' => $_POST['bookPhone'],
-                            'GuestName' => $_POST['guestName'],
-                            'SpecialRemark' => isset($params['specialRemark']) ? $params['specialRemark'] : '',
-                            'CustomerOrderId' => $order->id,
-                    ))) && $res['data']){
-                if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::BOOKING_SUCCESS){
-                    if($res['data']['Order']['OrderStatusId']>=ProviderCNBOOKING::BOOKING_SUCCESS_STATUS){
-                        $return = F::corReturn(array('orderId'=>$order->id));
-                        if(!$order->updateByPk($order->getPrimaryKey(), array('status'=>HotelStatus::WAIT_CHECK, 'oID'=>$res['data']['Order']['OrderId']))){//状态未更新则邮件报警
-                            $cpl['tplInfo']['orderID'] = $order->id ;
-                            @Mail::sendMail($cpl, 'Hotel.SyncFailed');
-                            Q::log($e->getMessage(), 'dberror.hotel.syncFailed');
-                        }
-                    }else $return = F::errReturn(RC::RC_H_HOTEL_BOOKING_ERROR);
-                }else $return = F::errReturn($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
-            }
-    
-            if(F::isCorrect($return)){
-                $train->commit();
-                Log::add(Log::TYPE_HOTEL, $order->id, array('status' => $order->status, 'isSucc' => True));
-            }else $train->rollback(); */
             $return = F::corReturn(array('orderId'=>$order->id));
             $train->commit();
             return $return;
@@ -192,4 +161,66 @@ class HotelOrder extends QActiveRecord {
             }else return F::errReturn($res['data']['ReturnCode'], $res['data']['ReturnMessage']); //return F::errReturn(RC::RC_H_HOTEL_BOOKING_CANCEL_ERROR);
         }
     }
+    
+    private function _checkBefore($params) {
+        if (empty($params['reviewerID'])) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+    
+        $rtn = array();
+        if (!($params['reviewerID'] instanceof User)) {
+            if (!($params['reviewerID'] = User::model()->findByPk($params['reviewerID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+                return F::errReturn(RC::RC_USER_NOT_EXISTS);
+            }
+        }
+    
+        if (!$params['reviewerID']->isReviewer) {
+            return F::errReturn(RC::RC_HAVE_NO_REVIEW_PRIVILEGE);
+        }
+    
+        return F::corReturn(array('params' => array('reviewerID' => $params['reviewerID']->id)));
+    }
+    
+    private function _cS2CheckFailBefore($params) {
+        return $this->_checkBefore($params);
+    }
+    
+    private function _cS2CheckSuccBefore($params) {
+        return $this->_checkBefore($params);
+    }
+    
+/*     private function _cS2CheckSuccAfter() {
+        /*   if(F::isCorrect($res= ProviderCNBOOKING::request('Booking',
+         array(
+                 'HotelId' => $_POST['hotelId'],
+                 'RoomId' => $_POST['roomId'],
+                 'RateplanId' => $_POST['rateplanId'],
+                 'CheckIn' => $_POST['checkIn'],
+                 'CheckOut' => $_POST['checkOut'],
+                 'RoomCount' => $_POST['roomCount'],
+                 'OrderAmount' => $_POST['orderPrice'],
+                 'BookName' => $_POST['bookName'],
+                 'BookPhone' => $_POST['bookPhone'],
+                 'GuestName' => $_POST['guestName'],
+                 'SpecialRemark' => isset($params['specialRemark']) ? $params['specialRemark'] : '',
+                 'CustomerOrderId' => $order->id,
+         ))) && $res['data']){
+        if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::BOOKING_SUCCESS){
+        if($res['data']['Order']['OrderStatusId']>=ProviderCNBOOKING::BOOKING_SUCCESS_STATUS){
+        $return = F::corReturn(array('orderId'=>$order->id));
+        if(!$order->updateByPk($order->getPrimaryKey(), array('status'=>HotelStatus::WAIT_CHECK, 'oID'=>$res['data']['Order']['OrderId']))){//状态未更新则邮件报警
+        $cpl['tplInfo']['orderID'] = $order->id ;
+        @Mail::sendMail($cpl, 'Hotel.SyncFailed');
+        Q::log($e->getMessage(), 'dberror.hotel.syncFailed');
+        }
+        }else $return = F::errReturn(RC::RC_H_HOTEL_BOOKING_ERROR);
+        }else $return = F::errReturn($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
+        }
+        
+        if(F::isCorrect($return)){
+        $train->commit();
+        Log::add(Log::TYPE_HOTEL, $order->id, array('status' => $order->status, 'isSucc' => True));
+        }else $train->rollback(); */
+        return F::corReturn(array('params' => array('reviewerID' => $params['reviewerID']->id)));
+    } */
 }

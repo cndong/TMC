@@ -127,7 +127,8 @@ class HotelController extends ApiController {
                                 }
                                 foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
                                     $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
-                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0,1);
+                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
+                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d g:i:s', time()+3600);
                                 }
                             }
                             
@@ -232,6 +233,24 @@ class HotelController extends ApiController {
         }
     
         $this->corAjax(array('reviewOrderList' => $rtn));
+    }
+    
+    public function actionReview() {
+        if (!($params = F::checkParams($_POST, array('userID' => ParamsFormat::INTNZ, 'orderId' => ParamsFormat::INTNZ, 'status' => ParamsFormat::BOOL)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+    
+        if (!($user = User::model()->findByPk($params['userID'], 'deleted=:deleted', array(':deleted' => User::DELETED_F)))) {
+            $this->errAjax(RC::RC_USER_NOT_EXISTS);
+        }
+    
+        if (!($order = HotelOrder::model()->findByPk($params['orderId']))) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+    
+        $status = $params['status'] ? HotelStatus::CHECK_SUCC : HotelStatus::CHECK_FAIL;
+    
+        $this->onAjax($order->changeStatus($status, array('reviewerID' => $user)));
     }
     
     public function actionOrderDetail() {
