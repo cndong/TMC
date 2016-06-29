@@ -34,7 +34,7 @@ class ProviderCNBOOKING{
     const BOOKING_CANCEL_SUCCESS= '31009';
     const BOOKING_SUCCESS_STATUS = 10;  // 订单状态大于等于10是已确认
     
-    public static function request($method, $params=array()) {
+    public static function request($method, $params=array(), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1)) {
         $return = array(
                 'rc' => RC::RC_ERROR,
                 'msg' => '',
@@ -42,7 +42,7 @@ class ProviderCNBOOKING{
         );
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['WSDL_URL']);
-        $postParams = array('xmlRequest'=>self::getRequestXML($method, $params));
+        $postParams = array('xmlRequest'=>self::getRequestXML($method, $params, $scrollingInfo));
         Q::log($postParams, 'Provider.CNBOOKING.Request');
         if($postParams){
             curl_setopt($ch, CURLOPT_POST,count($postParams)) ;
@@ -89,11 +89,10 @@ class ProviderCNBOOKING{
         return $return;
     }
     
-    public static function addXMLShell($actionName, $xml) {
+    public static function addXMLShell($actionName, $xml, $scrollingInfo) {
         $sequenceID = Q::getUniqueID();
         $dateTime = date('Y-m-d H:i:s', Q_TIME);
         $xml = str_replace(array("\n", "\r\r", "\t", '    '), '', $xml);
-        
         return <<<EOF
 <CNRequest>
      <ActionName>{$actionName}</ActionName>
@@ -105,18 +104,18 @@ class ProviderCNBOOKING{
          <Signature>RU4wMDAwMDFFMTBBREMzOTQ5QkE1OUFCQkU1NkUwNTdGMjBGODgzRTM2OWI0NjljLTUxYjItNDNjZC05Njc3LTkzNGNhMTdmMjY1MQ==</Signature>
      </IdentityInfo>
      <ScrollingInfo>
-        <DisplayReq>40</DisplayReq>
+        <DisplayReq>{$scrollingInfo['DisplayReq']}</DisplayReq>
         <PageItems>10</PageItems>
-        <PageNo>1</PageNo>
+        <PageNo>{$scrollingInfo['PageNo']}</PageNo>
      </ScrollingInfo>
-        <SearchConditions>{$xml}</SearchConditions>
+     <SearchConditions>{$xml}</SearchConditions>
 </CNRequest>
 EOF;
     }
     
-    public static function getRequestXML($actionName, $params) {
+    public static function getRequestXML($actionName, $params, $scrollingInfo) {
         $xml = call_user_func(array('ProviderCNBOOKING', "get{$actionName}XML"), $params);
-        return self::addXMLShell($actionName, $xml);
+        return self::addXMLShell($actionName, $xml, $scrollingInfo);
     }
     
     public static function getHotelSearchXML($params) {

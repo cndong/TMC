@@ -38,30 +38,83 @@ class HotelController extends ApiController {
                 ))))
             $this->errAjax(RC::RC_VAR_ERROR);
         
+        $rtn = array();
         $criteria = new CDbCriteria();
         foreach (array('cityId', 'star') as $type) {
             if (!empty($params[$type])) {
-                $criteria->compare('t.' . $type, $params[$type]);
+                if($type == 'star') $criteria->addInCondition($type, Hotel::$starArray[$params[$type]]);
+                else $criteria->compare('t.' . $type, $params[$type]);
             }
         }
         if($params['lon'] && $params['lat'])
             $criteria->order = ' ACOS(SIN(('.$params['lat'].' * 3.1415) / 180 ) *SIN((lat * 3.1415) / 180 ) +COS(('.$params['lat'].' * 3.1415) / 180 ) * COS((lat * 3.1415) / 180 ) *COS(('.$params['lon'].' * 3.1415) / 180 - (lon * 3.1415) / 180 ) ) * 6380 asc';
-        
         //分页
         $count = Hotel::model()->count($criteria);
         $criteria->limit = $params['pageSize'];
         $criteria->offset = ($params['page']-1)*$criteria->limit;
         
-        $rtn = array();
         $hotels = Hotel::model()->findAll($criteria);
         foreach ($hotels as $hotel) {
-            $hotel = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
+            $hotelArray = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
             $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg');
-            $hotel['image'] = $images[rand(0, 1)];
-            $hotel['lowPrice'] = rand(100, 500);
-            $rtn[] = $hotel;
+            $hotelArray['image'] = $images[rand(0, 1)];
+            $hotelArray['lowPrice'] = $this->getLowPrice($hotel, $params);
+            $rtn[] = $hotelArray;
         }
         $this->corAjax(array('hotelList'=>$rtn)); 
+    }
+    
+    public function getLowPrice($hotel, $params){
+        $cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
+        if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
+            $priceArray= array();
+            $city = DataHotelCity::getCity($hotel->cityId);
+            if(F::isCorrect($res= ProviderCNBOOKING::request('RatePlanSearch',
+                    array(
+                            'CountryId' => $city['CountryId'],
+                            'ProvinceId' => $city['ProvinceId'],
+                            'CityId' => $city['cityCode'],
+                            'HotelId' => $hotel->hotelId,
+                            'CheckIn' => $params['checkIn'],
+                            'CheckOut' => $params['checkOut']
+                    ))) && $res['data']){
+                if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
+                    $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
+                    //去除[]  breakfastType description
+                    foreach ($rooms as &$room){
+                        if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
+                            if($room['RatePlans']['RatePlanCount'] == 1) $room['RatePlans']['RatePlan'] = array($room['RatePlans']['RatePlan']);
+                            foreach ($room['RatePlans']['RatePlan'] as &$ratePlan){
+                                unset($ratePlan['Description']);
+                                unset($ratePlan['BreakfastType']);
+                            }
+                        }
+                    }
+                    
+                    //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
+                    foreach ($rooms as &$room){
+                        if(isset($room['Rates']) && $room['Rates']['RateCount']){
+                            if($room['Rates']['RateCount']==1) $room['Rates']['Rate'] = array($room['Rates']['Rate']);
+                            foreach ($room['Rates']['Rate'] as &$rate) {
+                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
+                                foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
+                                    $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
+                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
+                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
+                                    $priceArray[] = $priceAndStatu['Price'];
+                                }
+                            }
+                        }
+                    }
+            
+                }
+            }
+            sort($priceArray);
+            var_dump($priceArray);
+            Yii::app()->cache->set($cacheKey, $priceArray);
+        }
+        return $priceArray ? $priceArray[0] : 0;
     }
     
     public function actionHotelDetail() {
@@ -102,6 +155,7 @@ class HotelController extends ApiController {
                     ))) && $res['data']){
                 if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
                     $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
                     
                     //去除[]  breakfastType description
                     foreach ($rooms as &$room){
@@ -117,21 +171,15 @@ class HotelController extends ApiController {
                     //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
                     foreach ($rooms as &$room){
                         if(isset($room['Rates']) && $room['Rates']['RateCount']){
-                            
-                            if($room['Rates']['RateCount']==1){
-                                $room['Rates']['Rate'] = array($room['Rates']['Rate']);
-                            }
+                            if($room['Rates']['RateCount']==1) $room['Rates']['Rate'] = array($room['Rates']['Rate']);
                             foreach ($room['Rates']['Rate'] as &$rate) {
-                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1){
-                                    $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
-                                }
+                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
                                 foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
                                     $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
                                     if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
-                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d g:i:s', time()+3600);
+                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
                                 }
                             }
-                            
                         }
                     }
                     
@@ -236,13 +284,13 @@ class HotelController extends ApiController {
         $this->onAjax($order->changeStatus($status, array('reviewerID' => $user)));
     }
     
-    private function _getFlags($status) {
+    private function _getFlags($status, $order) {
         return array(
                 'status' => HotelStatus::getUserDes($status),
                 'isReview' => $status == HotelStatus::WAIT_CHECK,
                 'isCancel' => in_array($status, array(HotelStatus::WAIT_CHECK, HotelStatus::WAIT_PAY)),
                 'isPay' => $status == HotelStatus::WAIT_PAY,
-                'isRefund' => in_array($status, array(HotelStatus::BOOK_SUCC))
+                'isRefund' => in_array($status, array(HotelStatus::BOOK_SUCC)) && $order->lastCancelTime != ''
         );
     }
     
@@ -265,7 +313,7 @@ class HotelController extends ApiController {
                                                                                 'lat' =>  $hotel->lat,
                                                                                 'star'=>  $hotel->star,
                                                                        ),
-                                                                       $this->_getFlags($order->status))
+                                                                       $this->_getFlags($order->status, $order))
                 ));
     }
     

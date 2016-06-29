@@ -151,7 +151,6 @@ class HotelOrder extends QActiveRecord {
     }
     
     private function _cS2ApplyRfdBefore($params) {
-        return F::corReturn(array('params'=>array('status'=>HotelStatus::RFDED)));
         if(F::isCorrect($res= ProviderCNBOOKING::request('BookingCancel',
                 array(
                         'OrderId' => $params['oID'],

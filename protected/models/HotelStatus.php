@@ -53,13 +53,13 @@ class HotelStatus {
                     'sysOpStatus' => array(self::BOOK_SUCC, self::BOOK_FAIL)
             ),
             self::BOOK_FAIL => array(
-                    'des' => array('user' => '出票失败'),
+                    'des' => array('user' => '预定失败'),
                     'str' => 'BookFail',
                     'btn' => '出票失败',
                     'btnColor' => 'danger'
             ),
             self::BOOK_SUCC => array(
-                    'des' => array('user' => '出票成功'),
+                    'des' => array('user' => '预定成功'),
                     'str' => 'BookSucc',
                     'userStatus' => array(self::APPLY_RFD),
                     'btn' => '出票成功',
