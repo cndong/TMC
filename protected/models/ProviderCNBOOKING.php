@@ -31,9 +31,10 @@ class ProviderCNBOOKING{
     
     const PREBOOKINGCHECK_SUCCESS= '31002';
     const BOOKING_SUCCESS= '31004';
+    const BOOKING_CANCEL_SUCCESS= '31009';
     const BOOKING_SUCCESS_STATUS = 10;  // 订单状态大于等于10是已确认
     
-    public static function request($method, $params=array()) {
+    public static function request($method, $params=array(), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1)) {
         $return = array(
                 'rc' => RC::RC_ERROR,
                 'msg' => '',
@@ -41,7 +42,7 @@ class ProviderCNBOOKING{
         );
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['WSDL_URL']);
-        $postParams = array('xmlRequest'=>self::getRequestXML($method, $params));
+        $postParams = array('xmlRequest'=>self::getRequestXML($method, $params, $scrollingInfo));
         Q::log($postParams, 'Provider.CNBOOKING.Request');
         if($postParams){
             curl_setopt($ch, CURLOPT_POST,count($postParams)) ;
@@ -78,23 +79,20 @@ class ProviderCNBOOKING{
             $ret['MessageInfo'] = (array) $ret['MessageInfo'];
             $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
             is_array($return['data']) && isset($return['data']['ReturnCode']) && Q::log($return, 'Provider.CNBOOKING.Response.Return');
+            // Code 主要是查询返回的查询结果状态, ReturnCode主要是提交数据交互返回的业务处理状态
             if($ret['MessageInfo']['Code'] != '30000') {
-                // Code 主要是查询返回的查询结果状态, ReturnCode主要是提交数据交互返回的业务处理状态
                 $return['rc'] = is_array($return['data']) && isset($return['data']['ReturnCode']) ? $return['data']['ReturnCode'] : $ret['MessageInfo']['Code'];
                 $return['msg'] = is_array($return['data']) && isset($return['data']['ReturnCode']) ? $return['data']['ReturnMessage'] : $ret['MessageInfo']['Description'];
                 Q::log($ret, 'Provider.CNBOOKING.Error');
-            }else {
-                $return['rc'] = RC::RC_SUCCESS;
-            }
-        }Q::log('', 'Provider.CNBOOKING.Response.None');
+            }else $return['rc'] = RC::RC_SUCCESS;
+        }else Q::log('', 'Provider.CNBOOKING.Response.None');
         return $return;
     }
     
-    public static function addXMLShell($actionName, $xml) {
+    public static function addXMLShell($actionName, $xml, $scrollingInfo) {
         $sequenceID = Q::getUniqueID();
         $dateTime = date('Y-m-d H:i:s', Q_TIME);
         $xml = str_replace(array("\n", "\r\r", "\t", '    '), '', $xml);
-        
         return <<<EOF
 <CNRequest>
      <ActionName>{$actionName}</ActionName>
@@ -106,18 +104,18 @@ class ProviderCNBOOKING{
          <Signature>RU4wMDAwMDFFMTBBREMzOTQ5QkE1OUFCQkU1NkUwNTdGMjBGODgzRTM2OWI0NjljLTUxYjItNDNjZC05Njc3LTkzNGNhMTdmMjY1MQ==</Signature>
      </IdentityInfo>
      <ScrollingInfo>
-        <DisplayReq>40</DisplayReq>
+        <DisplayReq>{$scrollingInfo['DisplayReq']}</DisplayReq>
         <PageItems>10</PageItems>
-        <PageNo>1</PageNo>
+        <PageNo>{$scrollingInfo['PageNo']}</PageNo>
      </ScrollingInfo>
-        <SearchConditions>{$xml}</SearchConditions>
+     <SearchConditions>{$xml}</SearchConditions>
 </CNRequest>
 EOF;
     }
     
-    public static function getRequestXML($actionName, $params) {
+    public static function getRequestXML($actionName, $params, $scrollingInfo) {
         $xml = call_user_func(array('ProviderCNBOOKING', "get{$actionName}XML"), $params);
-        return self::addXMLShell($actionName, $xml);
+        return self::addXMLShell($actionName, $xml, $scrollingInfo);
     }
     
     public static function getHotelSearchXML($params) {
@@ -151,13 +149,15 @@ EOF;
     }
     
     public static function getRatePlanSearchXML($params) {
+        $cityId = isset($params['CityId']) ? $params['CityId'] : '';
+        $hotelId = isset($params['HotelId']) ? $params['HotelId'] : '';
         $roomId = isset($params['RoomId']) ? $params['RoomId'] : '';
         $ratePlanId = isset($params['RatePlanId']) ? $params['RatePlanId'] : '';
         return <<<EOF
     <CountryId>{$params['CountryId']}</CountryId>
     <ProvinceId>{$params['ProvinceId']}</ProvinceId>
-    <CityId>{$params['CityId']}</CityId>
-    <HotelId>{$params['HotelId']}</HotelId>
+    <CityId>{$cityId}</CityId>
+    <HotelId>{$hotelId}</HotelId>
     <RoomId>{$roomId}</RoomId>
     <RatePlanId>{$ratePlanId}</RatePlanId>
     <StayDateRange>
@@ -226,4 +226,13 @@ EOF;
     <CustomerOrderId>{$params['CustomerOrderId']}</CustomerOrderId>
 EOF;
     }
+    
+    public static function getBookingCancelXML($params) {
+        return <<<EOF
+        <OrderId>{$params['OrderId']}</OrderId>
+EOF;
+    }
+    
+/*     public static function getOrderSearchXML($params) {
+    } */
 }
