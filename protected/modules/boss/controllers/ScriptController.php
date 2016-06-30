@@ -1,6 +1,10 @@
 <?php
 class ScriptController extends BossController {
     
+    public function actionGetHotel($hotelId, $cityId) {
+        Hotel::getHotelFromCity($hotelId, $cityId);
+    }
+    
     public function actionUpdateHotel($hoteId) {
         Hotel::updateHotel($hoteId);
     }
@@ -14,22 +18,24 @@ class ScriptController extends BossController {
         foreach ($cityList as $city) {
             $i=0;
             echo "<br>{$city['cityCode']}  ";
-            //if(Hotel::model()->find("cityId='{{$city['cityCode']}}'")) continue;
-            //$res = ProviderCNBOOKING::request('HotelSearch', array('CountryId'=>'0001','ProvinceId'=>'3100','CityId'=>'3301')); //南京
-            $res = ProviderCNBOOKING::request('HotelSearch', array('CountryId'=>$city['CountryId'],'ProvinceId'=>$city['ProvinceId'],'CityId'=>$city['cityCode']));
-            if(F::isCorrect($res) && $res['data']){
-                if(is_array($res['data']['Hotels'])){
-                    $hotels = $res['data']['Hotels'];
-                    if(isset($hotels['Hotel']['HotelId'])) Hotel::_updateHotel($hotels['Hotel']); //!!!只有一个时直接就是Hotel
-                    else 
+        
+            $searchEnd = false;
+            for($pageNo=1; $pageNo<50; $pageNo++){
+                if($searchEnd) break;
+                $res = ProviderCNBOOKING::request('HotelSearch', array('CountryId'=>$city['CountryId'],'ProvinceId'=>$city['ProvinceId'],'CityId'=>$city['cityCode']), array('DisplayReq'=>30, 'PageNo'=>$pageNo, 'PageItems'=>200));
+                if(F::isCorrect($res) && is_array($res['data'])){
+                    if(is_array($res['data']['Hotels'])){
+                        $hotels = $res['data']['Hotels'];
+                        if($hotels['HotelCount'] == 1) $hotels['Hotel'] = array($hotels['Hotel']);
                         foreach ($hotels['Hotel'] as $key => $hotel){
-                            Hotel::_updateHotel($hotel);
-                            if($i>3) break;
-                            $i++;
+                            Q::realtimeLog($hotel['HotelId'], $city['cityCode']);
+                            Hotel::saveDB($hotel);
+                            //break 2;
                         }
-                }else Q::log($res, 'Hotel._UpdateHotel.Error.Hotel');
-                
+                    }else Q::log($res, 'Hotel.HotelSearch.UpdateHotels.Hotels.None');
+                }else $searchEnd = true;
             }
+            
         }
     }
     

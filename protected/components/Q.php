@@ -149,4 +149,35 @@ class Q {
         Q::log($model->getErrors(), $category);
         Q::log('---------数据库操作失败结束---------', $category);
     }
+    
+    public static function realtimeLog()
+    {
+        $args = func_get_args();
+        $backtrace = debug_backtrace();
+        $title = !isset($args[1]) ? date("Y-m-d H:i:s"): date("Y-m-d H:i:s").' ['.$args[1].'] ';
+        $log=(!$args[0])?'empty $log':$args[0];
+        if(is_array($log)) $log =  json_encode($log);
+        if(is_object($log)) {
+            //$log = (array)($log);
+            $log = get_object_vars($log);
+            $log =  json_encode($log);
+        }
+        if(is_resource($log)) $log ='is_resource';
+        $log.=' [FileLine] '.$backtrace[0]['file'].$backtrace[0]['line'].' ';
+        //$fp = @fopen("D:/www/theone/protected/runtime/LogFile.txt", "a");
+        $path = realpath(Yii::app()->getRuntimePath()).DIRECTORY_SEPARATOR.'retimeLog.txt';
+        $fp = fopen($path, "a");
+        @flock($fp, LOCK_EX);
+        //fwrite($fp, $title."\r\n");
+        @fwrite($fp, $title);
+        @fwrite($fp, $log."\r\n");
+        //fwrite($fp, (string)var_export($log,true)."\r\n");
+        @flock($fp, LOCK_UN);
+        @fclose($fp);
+        /*
+         windows是\r\n
+        linux是\n
+        mac是\r
+        */
+    }
 }

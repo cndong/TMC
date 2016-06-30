@@ -30,24 +30,33 @@ class Hotel extends QActiveRecord {
     
     static function load($hotelId, $cityId=''){
         $hotel = Hotel::model()->findByPK($hoteId);
-        return $hotel ? $hotel : getHotelFromCity($hotelId, $cityId);
+        return $hotel ? $hotel : self::getHotelFromCity($hotelId, $cityId);
     }
     
     //获取酒店用城市
     static function getHotelFromCity($hotelId, $cityId) {
         if(!$cityId) return false;
         $city = DataHotelCity::getCity($cityId);
-        $res = ProviderCNBOOKING::request('HotelSearch', array('CountryId'=>$city['CountryId'],'ProvinceId'=>$city['ProvinceId'],'CityId'=>$city['cityCode']));
-        if(F::isCorrect($res) && $res['data']){
-            if(is_array($res['data']['Hotels'])){
-                $hotels = $res['data']['Hotels'];
-                if(isset($hotels['Hotel']['HotelId'])) {
-                    if($hotels['Hotel']['HotelId'] == $hotelId) Hotel::saveDB($hotels['Hotel']);
-                }else
+        
+        $searchSuccess = false;
+        $searchEnd = false;
+        for($pageNo=1; $pageNo<50; $pageNo++){
+            if($searchSuccess || $searchEnd) break;
+            $res = ProviderCNBOOKING::request('HotelSearch', array('CountryId'=>$city['CountryId'],'ProvinceId'=>$city['ProvinceId'],'CityId'=>$city['cityCode']), array('DisplayReq'=>30, 'PageNo'=>$pageNo, 'PageItems'=>200));
+            if(F::isCorrect($res) && is_array($res['data'])){
+                if(is_array($res['data']['Hotels'])){
+                    $hotels = $res['data']['Hotels'];
+                    if($hotels['HotelCount'] == 1) $hotels['Hotel'] = array($hotels['Hotel']);
                     foreach ($hotels['Hotel'] as $key => $hotel){
-                        if($hotel['HotelId'] == $hotelId) Hotel::saveDB($hotel);
+                        if($hotel['HotelId'] == $hotelId) {
+                            Q::realtimeLog($hotel['HotelId'], $city['cityCode']);
+                            Hotel::saveDB($hotel);
+                            $searchSuccess = true;
+                            break;
+                        }
                     }
-            }else Q::log($res, 'Hotel._UpdateHotel.Error.Hotel');
+                }else Q::log($res, 'Hotel.HotelSearch.getHotelFromCity.Hotels.None');
+            }else $searchEnd = true;
         }
     }
     
@@ -68,6 +77,10 @@ class Hotel extends QActiveRecord {
     
     static  function saveDB($hotelInput) {
             $return = false;
+            if(is_array($hotelInput['Address'])) {
+                $hotelInput['Address'] = isset($hotelInput['Address'][0]) ? $hotelInput['Address'][0] : '';
+                Q::log($hotelInput['Address'], 'Hotel._UpdateHotel.Address.Error.'.$hotelInput['HotelId']);
+            }
             if(is_array($hotelInput['Reserve2'])) {
                 $hotelInput['telephone'] = isset($hotelInput['Reserve2'][0]) ? $hotelInput['Reserve2'][0] : '';
                 Q::log($hotelInput['Reserve2'], 'Hotel._UpdateHotel.Reserve2.Error.'.$hotelInput['HotelId']);

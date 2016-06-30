@@ -34,7 +34,7 @@ class ProviderCNBOOKING{
     const BOOKING_CANCEL_SUCCESS= '31009';
     const BOOKING_SUCCESS_STATUS = 10;  // 订单状态大于等于10是已确认
     
-    public static function request($method, $params=array(), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1)) {
+    public static function request($method, $params=array(), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')) {
         $return = array(
                 'rc' => RC::RC_ERROR,
                 'msg' => '',
@@ -67,12 +67,10 @@ class ProviderCNBOOKING{
                                         ["Description"]=>
                                         string(12) "操作成功"
                                       }
-                      ["Data"]=> array(1) {
-                                            ["Hotels"]=>  array(2)
-                                        }
-                                '暂无数据'
+                      ["Data"]=> array(1) { ["Hotels"]=>  array(2)
+                                        '暂无数据'
                                 
-                    ["Data"] => array(2) {
+                     ["Data"] => array(2) {
                                  'ReturnCode' => '31001',
                                  'ReturnMessage' => '该字符串未被识别为有效的 DateTime。',
             */
@@ -105,7 +103,7 @@ class ProviderCNBOOKING{
      </IdentityInfo>
      <ScrollingInfo>
         <DisplayReq>{$scrollingInfo['DisplayReq']}</DisplayReq>
-        <PageItems>10</PageItems>
+        <PageItems>{$scrollingInfo['PageItems']}</PageItems>
         <PageNo>{$scrollingInfo['PageNo']}</PageNo>
      </ScrollingInfo>
      <SearchConditions>{$xml}</SearchConditions>

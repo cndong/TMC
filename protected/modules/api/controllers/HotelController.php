@@ -56,9 +56,16 @@ class HotelController extends ApiController {
         $hotels = Hotel::model()->findAll($criteria);
         foreach ($hotels as $hotel) {
             $hotelArray = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
-            $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg');
+            $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ180.jpg');
             $hotelArray['image'] = $images[rand(0, 1)];
-            $hotelArray['lowPrice'] = $this->getLowPrice($hotel, $params);
+            $hotelArray['lowPrice'] = (string)$this->getLowPrice($hotel, $params);
+            foreach (Hotel::$starArray as  $key => $stars){
+                foreach ($stars as $star){
+                    if($hotelArray['star'] == $star) {
+                        $hotelArray['star'] = $key; break 2;
+                    }
+                }
+            }
             $rtn[] = $hotelArray;
         }
         $this->corAjax(array('hotelList'=>$rtn)); 
@@ -111,8 +118,7 @@ class HotelController extends ApiController {
                 }
             }
             sort($priceArray);
-            var_dump($priceArray);
-            Yii::app()->cache->set($cacheKey, $priceArray);
+            Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
         }
         return $priceArray ? $priceArray[0] : 0;
     }
@@ -132,7 +138,7 @@ class HotelController extends ApiController {
              $hotel = $hotel->attributes;
              
              //图片
-             $imagesRand = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg');
+             $imagesRand = array('http://userimg.qunar.com/imgs/201407/24/Z7-ECTkRKqNNEmJIZ480s.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ480s.jpg');
              $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' => $imagesRand[rand(0, 1)]);
              $hotel['images'] = json_decode($hotel['images'] ,true);
              $hotel['images'] = $hotel['images'] ? $hotel['images'] : array(); 
@@ -176,7 +182,7 @@ class HotelController extends ApiController {
                                 if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
                                 foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
                                     $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
-                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
+                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = (string)rand(0, 10);
                                     if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
                                 }
                             }
