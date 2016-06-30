@@ -251,7 +251,7 @@ class TrainOrder extends QActiveRecord {
             $passengers = array();
             foreach ($params['passengers'] as $index => $passenger) {
                 if (!is_object($passenger)) {
-                    if (Dict::PASSENGER_TYPE_CHILD != $passenger['trainType']) {
+                    if (Dict::PASSENGER_TYPE_CHILD != $passenger['type']) {
                         if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
                             throw new Exception($res['rc']);
                         }
