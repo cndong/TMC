@@ -13,12 +13,13 @@ class TrainOrder extends QActiveRecord {
         return array(
             array('merchantID, userID, departmentID, companyID, contactName, contactMobile, isPrivate, isInsured, isInvoice, isRound, passengers, passengerNum, orderPrice, ticketPrice, insurePrice, invoicePrice', 'required'),
             array('merchantID, userID, departmentID, companyID, reviewerID, isPrivate, isInsured, isInvoice, isRound, passengerNum, orderPrice, payPrice, ticketPrice, insurePrice, invoicePrice, invoicePostPrice, invoicePostID, operaterID, status, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('providerOID', 'length', 'max' => 15),
             array('contactName', 'length', 'max' => 50),
             array('contactMobile', 'length', 'max' => 11),
             array('passengers', 'length', 'max' => 655),
             array('invoiceAddress, reason', 'length', 'max' => 500),
             array('invoiceTradeNo, tradeNo', 'length', 'max' => 32),
-            array('id, merchantID, userID, departmentID, companyID, contactName, contactMobile, reviewerID, isPrivate, isInsured, isInvoice, isRound, passengers, passengerNum, orderPrice, payPrice, ticketPrice, insurePrice, invoicePrice, invoiceAddress, invoicePostPrice, invoicePostID, invoiceTradeNo, tradeNo, reason, operaterID, status, ctime, utime', 'safe', 'on' => 'search'),
+            array('id, merchantID, providerOID, userID, departmentID, companyID, contactName, contactMobile, reviewerID, isPrivate, isInsured, isInvoice, isRound, passengers, passengerNum, orderPrice, payPrice, ticketPrice, insurePrice, invoicePrice, invoiceAddress, invoicePostPrice, invoicePostID, invoiceTradeNo, tradeNo, reason, operaterID, status, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
     
@@ -150,10 +151,11 @@ class TrainOrder extends QActiveRecord {
                     return F::errReturn(RC::RC_PASSENGER_NOT_EXISTS);
                 }
             } else {
+                $tmp['businessID'] = Dict::BUSINESS_TRAIN;
                 $attributes = $tmp;
                 $attributes['trainType'] = $attributes['type'];
                 unset($attributes['type'], $attributes['businessID']);
-                if ($tmpPassenger = UserPassenger::model()->findByAttributes($attributes, 'deleted=:deleted', array(':deleted' => UserPassenger::DELETED_F))) {
+                if ($attributes['trainType'] != Dict::PASSENGER_TYPE_CHILD && ($tmpPassenger = UserPassenger::model()->findByAttributes($attributes, 'deleted=:deleted', array(':deleted' => UserPassenger::DELETED_F)))) {
                     $passenger = $tmpPassenger;
                 } else {
                     $passenger = $tmp;
@@ -249,11 +251,14 @@ class TrainOrder extends QActiveRecord {
             $passengers = array();
             foreach ($params['passengers'] as $index => $passenger) {
                 if (!is_object($passenger)) {
-                    if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
-                        throw new Exception($res['rc']);
+                    if (Dict::PASSENGER_TYPE_CHILD != $passenger['trainType']) {
+                        if (!F::isCorrect($res = UserPassenger::createPassenger($passenger))) {
+                            throw new Exception($res['rc']);
+                        }
+                        $passenger = $res['data'];
                     }
-                    $passenger = $res['data'];
                 }
+                $passenger['id'] = $index + 1;
                 $passengers[] = $passenger;
             }
         
@@ -475,4 +480,14 @@ class TrainOrder extends QActiveRecord {
     private function _cS2CheckSuccBefore($params) {
         return $this->_checkBefore($params);
     }
+    
+    private function _cS2BookPushed($params) {
+        if (!F::isCorrect($res = ProviderT::book($this))) {
+            return $res;
+        }
+        
+        return F::corReturn(array('params' => array('providerOID' => $res['data']['orderID'])));
+    }
+    
+    
 }

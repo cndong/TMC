@@ -2,7 +2,11 @@
 class DictTrain {
     const MAX_PASSENGER_NUM = 5;
     
+    const INSURE_ID = 1;
     const INSURE_PRICE = 2000;
+    
+    const JOURNEY_TYPE_DC = 1;
+    const JOURNEY_TYPE_WF = 2;
     
     const SEAT_NO = 1;
     const SEAT_HARD = 2;

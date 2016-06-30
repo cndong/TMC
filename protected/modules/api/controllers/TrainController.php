@@ -50,7 +50,7 @@ class TrainController extends ApiController {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        foreach ($params as $k => $v) {
+        foreach ($params as $k => $v) {;
             $_POST[$k] = json_decode($v, True);
         }
         

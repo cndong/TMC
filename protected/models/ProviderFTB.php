@@ -183,13 +183,11 @@ class ProviderFTB extends ProviderF {
         
         if (!F::isCorrect($res = $this->pGetCNFlightList($params, 'lowprice'))) {
             $res = F::corReturn(array());
-            //return $res;
         }
         $lowpriceData = $res['data'];
         
         if (!F::isCorrect($res = $this->pGetCNFlightList($params, 'gaoduan'))) {
             $res = F::corReturn(array());
-            //return $res;
         }
         
         return F::corReturn(F::mergeArrayInt($outboundData, $lowpriceData, $res['data']));

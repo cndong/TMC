@@ -94,7 +94,30 @@ class ProviderTQ extends ProviderT {
         return $data;
     }
     
-    public function pCreateOrder($order) {
+    public function pBook($order) {
+        $routes = $order->getRoutes();
+        $route = $routes['departRoute'];
+        $params = F::arrayGetByKeys($order, array('contactName', 'contactMobile'));
+        $params['merchantOrderID'] = $order->id;
+        $params['queryKey'] = md5($order->id);
+        $params['journeyType'] = $order->isRound ? DictTrain::JOURNEY_TYPE_WF : DictTrain::JOURNEY_TYPE_DC;
+        $passengers = array();
+        foreach (UserPassenger::parsePassengers($order->passengers) as $passenger) {
+            $tmp = F::arrayGetByKeys($passenger, array('type', 'name', 'cardType', 'cardNo'));
+            $tmp['birth'] = $passenger['birthday'];
+            $tmp['seatType'] = $route->seatType;
+            $tmp['ticketPrice'] = $route->ticketPrice;
+        }
+        $params['insureID'] = $order->isInsured ? DictTrain::INSURE_ID : 0;
+        $params['insurePrice'] = $order->insurePrice;
+        $params['isMergeNotice'] = Dict::STATUS_FALSE;
+        $params['isAcceptNoSeat'] = Dict::STATUS_FALSE;
         
+        $params['passengers'] = json_encode($passengers);
+        $params = array_merge($params, F::arrayGetByKeys($route, array('trainNo', 'departStationCode', 'arriveStationCode')));
+        $params['departDate'] = date('Y-m-d', $route->departTime);
+        $params['departTime'] = date('H:i', $route->departTime);
+        
+        return $this->_request('book', $params);
     }
 }

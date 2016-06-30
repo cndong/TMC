@@ -138,6 +138,7 @@ class UserController extends ApiController {
         $rtn = array();
         $type = Dict::$businesses[$tmp['businessID']]['str'] . 'Type';
         $criteria = new CDbCriteria();
+        $criteria->order = 'id DESC';
         $criteria->compare('userID', $_GET['userID']);
         $criteria->compare('deleted', UserPassenger::DELETED_F);
         $criteria->addInCondition($type, array_keys(Dict::getPassengerTypesByBusiness($tmp['businessID'])));

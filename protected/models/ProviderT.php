@@ -19,4 +19,8 @@ class ProviderT extends Provider {
         
         return F::corReturn(ProviderT::getProvider(self::PROVIDER_Q)->pGetStopList($params));
     }
+    
+    public static function book($order) {
+        return self::getProvider(self::PROVIDER_Q)->pBook($order);
+    }
 }

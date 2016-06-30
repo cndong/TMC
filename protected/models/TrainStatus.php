@@ -61,7 +61,8 @@ class TrainStatus {
         self::BOOK_PUSHED => array(
             'des' => array('user' => '正在出票'),
             'str' => 'BookPushed',
-            'sysOpStatus' => array(self::BOOK_SUCC, self::BOOK_FAIL)
+            'sysOpStatus' => array(self::BOOK_SUCC, self::BOOK_FAIL),
+            'btn' => '重新推送'
         ),
         self::BOOK_FAIL => array(
             'des' => array('user' => '出票失败'),
@@ -100,7 +101,8 @@ class TrainStatus {
         self::RSN_PUSHED => array(
             'des' => array('user' => '正在改签'),
             'str' => 'RsnPushed',
-            'sysOpStatus' => array(self::RSN_AGREE, self::RSN_REFUSE)
+            'sysOpStatus' => array(self::RSN_AGREE, self::RSN_REFUSE),
+            'btn' => '重新推送'
         ),
         self::RSN_AGREE => array(
             'des' => array('user' => '正在改签', 'admin' => '已同意改签'),
@@ -159,7 +161,8 @@ class TrainStatus {
         self::RFD_PUSHED => array(
             'des' => array('user' => '正在退款'),
             'str' => 'RfdPushed',
-            'sysOpStatus' => array(self::RFD_AGREE, self::RFD_REFUSE)
+            'sysOpStatus' => array(self::RFD_AGREE, self::RFD_REFUSE),
+            'btn' => '重新推送'
         ),
         self::RFD_REFUSE => array(
             'des' => array('user' => '退票失败'),
