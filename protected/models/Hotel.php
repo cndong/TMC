@@ -108,7 +108,7 @@ class Hotel extends QActiveRecord {
             if(!$hotel->save()){
                 Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
             }else {
-                Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.OK');
+                Q::realtimeLog($hotel->hotelId, 'Hotel.saveDB.OK');
                 $return = true;
             }
             return $return;

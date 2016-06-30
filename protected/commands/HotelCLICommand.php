@@ -2,7 +2,6 @@
 class HotelCLICommand extends CConsoleCommand {
     //更新所有酒店(遍历城市)
     public function actionUpdateHotels() {
-        print str_repeat(" ", 4096); //php.ini output_buffering默认是4069字符或者更大，即输出内容必须达到4069字符服务器才会flush刷新输出缓冲
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
         $cityList = DataHotelCity::getCities();
@@ -20,7 +19,7 @@ class HotelCLICommand extends CConsoleCommand {
                 $hotels = $res['data']['Hotels'];
                 if($hotels['HotelCount'] == 1) $hotels['Hotel'] = array($hotels['Hotel']);
                 foreach ($hotels['Hotel'] as $key => $hotel){
-                    Q::realtimeLog($hotel['HotelId'], $city['cityCode']);
+                            Q::realtimeLog($hotel['HotelId'], $city['cityCode']);
                             Hotel::saveDB($hotel);
                             break 2;
                         }
