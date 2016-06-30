@@ -77,6 +77,10 @@ class Hotel extends QActiveRecord {
     
     static  function saveDB($hotelInput) {
             $return = false;
+            if(is_array($hotelInput['HotelName'])) {
+                $hotelInput['HotelName'] = isset($hotelInput['HotelName'][0]) ? $hotelInput['HotelName'][0] : '';
+                Q::log($hotelInput['HotelName'], 'Hotel._UpdateHotel.HotelName.Error.'.$hotelInput['HotelId']);
+            }
             if(is_array($hotelInput['Address'])) {
                 $hotelInput['Address'] = isset($hotelInput['Address'][0]) ? $hotelInput['Address'][0] : '';
                 Q::log($hotelInput['Address'], 'Hotel._UpdateHotel.Address.Error.'.$hotelInput['HotelId']);
@@ -102,9 +106,9 @@ class Hotel extends QActiveRecord {
             $hotel  = $hotel ? $hotel : new Hotel();
             $hotel->attributes = $hotelInput;
             if(!$hotel->save()){
-                Q::log(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
+                Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
             }else {
-                Q::log($hotel->hotelId, 'Hotel.saveDB.OK');
+                Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.OK');
                 $return = true;
             }
             return $return;
