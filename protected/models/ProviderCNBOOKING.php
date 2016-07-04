@@ -35,17 +35,12 @@ class ProviderCNBOOKING{
     const BOOKING_SUCCESS_STATUS = 10;  // 订单状态大于等于10是已确认
     
     public static function request($method, $params=array(), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')) {
-        $return = array(
-                'rc' => RC::RC_ERROR,
-                'msg' => '',
-                'data' => array()
-        );
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['WSDL_URL']);
         $postParams = array('xmlRequest'=>self::getRequestXML($method, $params, $scrollingInfo));
         Q::log($postParams, 'Provider.CNBOOKING.Request');
         if($postParams){
-            curl_setopt($ch, CURLOPT_POST,count($postParams)) ;
+            curl_setopt($ch, CURLOPT_POST, count($postParams));
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postParams));
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -55,24 +50,87 @@ class ProviderCNBOOKING{
             $ret = @curl_exec($ch);
         }
         //Q::log($ret, 'Provider.CNBOOKING.Response');
+        return self::resovle($ret);
+    }
+    
+    
+    static function multiRequest($postParamsMulti = array()) {
+        $results = $ch = array();
+        $nch = 0;
+        $mh = curl_multi_init();
+        Q::log($postParamsMulti, 'Provider.CNBOOKING.Request');
+        foreach ($postParamsMulti as $postParams) {
+            $ch[$nch] = curl_init();
+            curl_setopt_array($ch[$nch],
+                    array(
+                            CURLOPT_URL => QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['WSDL_URL'],
+                            CURLOPT_HEADER => false,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_POST=>count($postParams),
+                            CURLOPT_POSTFIELDS=>http_build_query($postParams),
+                    ));
+            curl_multi_add_handle($mh, $ch[$nch]);
+            ++$nch;
+        }
+        /* wait for performing request */
+        do {
+            $mrc = curl_multi_exec($mh, $running);
+        } while (CURLM_CALL_MULTI_PERFORM == $mrc);
+        while ($running && $mrc == CURLM_OK) {
+            // wait for network
+            if (curl_multi_select($mh, 0.5) > -1) {
+                // pull in new data;
+                do {
+                    $mrc = curl_multi_exec($mh, $running);
+                } while (CURLM_CALL_MULTI_PERFORM == $mrc);
+            }
+        }
+        if ($mrc != CURLM_OK) {
+            Q::log($mrc, 'curl_multi.while.error');
+        }
+        /* get data */
+        $nch = 0;
+        foreach ($postParamsMulti as $moudle => $node) {
+            if (($err = curl_error($ch[$nch])) == '') {
+                $results[$moudle] = curl_multi_getcontent($ch[$nch]);
+            } else {
+                Q::log($err, 'curl_multi.error');
+            }
+            curl_multi_remove_handle($mh, $ch[$nch]);
+            curl_close($ch[$nch]);
+            ++$nch;
+        }
+        curl_multi_close($mh);
+        foreach ($results as $key => $result){
+            $results[$key] = self::resovle($result);
+        }
+        return $results;
+    }
+    
+    public static function resovle($ret){
+        $return = array(
+                'rc' => RC::RC_ERROR,
+                'msg' => '',
+                'data' => array()
+        );
         if($ret){
             $ret = (array)simplexml_load_string($ret);
             /*
              array(3) {
-                      ["ActionName"]=>
-                      string(11) "HotelSearch"
-                      ["MessageInfo"]=>array(2) {
-                                        ["Code"]=>
-                                        string(5) "30000"
-                                        ["Description"]=>
-                                        string(12) "操作成功"
-                                      }
-                      ["Data"]=> array(1) { ["Hotels"]=>  array(2)
-                                        '暂无数据'
-                                
-                     ["Data"] => array(2) {
-                                 'ReturnCode' => '31001',
-                                 'ReturnMessage' => '该字符串未被识别为有效的 DateTime。',
+            ["ActionName"]=>
+            string(11) "HotelSearch"
+            ["MessageInfo"]=>array(2) {
+            ["Code"]=>
+            string(5) "30000"
+            ["Description"]=>
+            string(12) "操作成功"
+            }
+            ["Data"]=> array(1) { ["Hotels"]=>  array(2)
+            '暂无数据'
+        
+            ["Data"] => array(2) {
+            'ReturnCode' => '31001',
+            'ReturnMessage' => '该字符串未被识别为有效的 DateTime。',
             */
             $ret['MessageInfo'] = (array) $ret['MessageInfo'];
             $return['data'] = is_object($ret['Data']) ? json_decode(json_encode($ret['Data']), true) : $ret['Data'];
@@ -87,7 +145,7 @@ class ProviderCNBOOKING{
         return $return;
     }
     
-    public static function addXMLShell($actionName, $xml, $scrollingInfo) {
+    public static function addXMLShell($actionName, $xml, $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')) {
         $sequenceID = Q::getUniqueID();
         $dateTime = date('Y-m-d H:i:s', Q_TIME);
         $xml = str_replace(array("\n", "\r\r", "\t", '    '), '', $xml);

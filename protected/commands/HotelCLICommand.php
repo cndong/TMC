@@ -1,14 +1,17 @@
 <?php
 class HotelCLICommand extends CConsoleCommand {
-    //更新所有酒店(遍历城市)
+    
+    
+    //更新所有酒店(遍历城市) /dragon/bin/php-5.3.28/bin/php /dragon/webapp/tmc/ScriptCLI.php HotelCLI updatehotels
     public function actionUpdateHotels() {
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
         $cityList = DataHotelCity::getCities();
+        $res;
         //Q::log($cityList, 'Hotel._UpdateHotel.$cityList');
         foreach ($cityList as $city) {
             echo "{$city['cityCode']}  "." \n";
-    
+            //if($city['cityCode']<1701) continue;
             $searchEnd = false;
             for($pageNo=1; $pageNo<100; $pageNo++){
                 if($searchEnd) break;

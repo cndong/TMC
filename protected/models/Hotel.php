@@ -125,11 +125,15 @@ class Hotel extends QActiveRecord {
         $return = '';
         if(isset($images['Images']) && $images['Images'] && isset($images['Images']['Image'])){
             $images =array_slice($images['Images']['Image'], 0, 6);
+            HotelImage::model()->deleteAll("hotelId={$hotel->hotelId}");
             foreach ($images as $image) {
                 $hotelImage = new HotelImage();
-                $hotelImage->attributes = $image;
-                $hotelImage->hotelId = $hotel->hotelId;
-                $hotelImage->save();
+                if(isset($image['ImageName']) && isset($image['ImageUrl']) ){
+                    is_array($image['ImageName']) && $image['ImageName']= '';
+                    $hotelImage->attributes = $image;
+                    $hotelImage->hotelId = $hotel->hotelId;
+                    $hotelImage->save();
+                }
             }
         }
     }
@@ -141,6 +145,7 @@ class Hotel extends QActiveRecord {
                 foreach ($landmarks['Landmark'] as $key => $value) {
                     if(in_array($value['LandName'], array('机场', '地铁', '高速公路', '火车站', '火车站', '公交车站', '会展中心'))) unset($landmarks['Landmark'][$key]);
                 }
+                HotelLandmark::model()->deleteAll("hotelId={$hotel->hotelId}");
                 $landmarks = $landmarks['Landmark'];
                 foreach ($landmarks as $landmark) {
                     $hotelLandmark = new HotelLandmark();
