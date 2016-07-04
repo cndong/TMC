@@ -19,12 +19,12 @@ class Hotel extends QActiveRecord {
     public function rules() {
         return array(
             array('hotelId, ctime, utime', 'numerical', 'integerOnly' => True),
-            array('hotelName, telephone', 'length', 'max' => 32),
+            array('hotelName, telephone', 'length', 'max' => 64),
             array('countryId, provinceId, cityId', 'length', 'max' => 4),
             array('address, image', 'length', 'max' => 255),
             array('star, recommendedLevel', 'length', 'max' => 6),
             array('lon, lat', 'numerical'),
-            array('intro, images, landmarks', 'length', 'max' => 1024),
+            array('intro', 'length', 'max' => 1024),
         );
     }
     
@@ -93,8 +93,6 @@ class Hotel extends QActiveRecord {
                 $hotelInput['Intro'] = isset($hotelInput['Intro'][0]) ? $hotelInput['Intro'][0] : '';
                 Q::log($hotelInput['Intro'], 'Hotel._UpdateHotel.Intro.Error.'.$hotelInput['HotelId']);
             }
-            $hotelInput['images'] = self::setImages($hotelInput['Reserve1']);
-            $hotelInput['landmarks'] = self::setLandmarks($hotelInput['Landmarks']);
             foreach ($hotelInput as $key => $value) {
                 $hotelInput[lcfirst($key)] = $value;
             }
@@ -103,33 +101,53 @@ class Hotel extends QActiveRecord {
         
             $hotel = Hotel::model()->findByPk($hotelInput['HotelId']);
             //if($hotel) return true;
-            $hotel  = $hotel ? $hotel : new Hotel();
-            $hotel->attributes = $hotelInput;
-            if(!$hotel->save()){
-                Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
-            }else {
-                Q::realtimeLog($hotel->hotelId, 'Hotel.saveDB.OK');
-                $return = true;
+            $trans = Yii::app()->db->beginTransaction();
+            try {
+                $hotel  = $hotel ? $hotel : new Hotel();
+                $hotel->attributes = $hotelInput;
+                if(!$hotel->save()){
+                    Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
+                }else {
+                    self::setImages($hotel, $hotelInput['Reserve1']);
+                    self::setLandmarks($hotel, $hotelInput['Landmarks']);
+                    Q::realtimeLog($hotel->hotelId, 'Hotel.saveDB.OK');
+                    $return = true;
+                }
+                $trans->commit();
+            } catch (Exception $e) {
+                Q::log($e->getMessage(), 'dberror.changeStatus');
+                $trans->rollback();
             }
             return $return;
     }
     
-    static  function setImages($images) {
+    static  function setImages($hotel, $images) {
         $return = '';
         if(isset($images['Images']) && $images['Images'] && isset($images['Images']['Image'])){
-            $return = json_encode(array_slice($images['Images']['Image'], 0, 5));
+            $images =array_slice($images['Images']['Image'], 0, 6);
+            foreach ($images as $image) {
+                $hotelImage = new HotelImage();
+                $hotelImage->attributes = $image;
+                $hotelImage->hotelId = $hotel->hotelId;
+                $hotelImage->save();
+            }
         }
-        return $return;
     }
     
-    static  function setLandmarks($landmarks) {
+    static  function setLandmarks($hotel, $landmarks) {
         $return = '';
         if(isset($landmarks['Landmark']) && $landmarks['Landmark']){
             if(is_array($landmarks['Landmark'])){
                 foreach ($landmarks['Landmark'] as $key => $value) {
                     if(in_array($value['LandName'], array('机场', '地铁', '高速公路', '火车站', '火车站', '公交车站', '会展中心'))) unset($landmarks['Landmark'][$key]);
                 }
-                $return = json_encode($landmarks['Landmark']);
+                $landmarks = $landmarks['Landmark'];
+                foreach ($landmarks as $landmark) {
+                    $hotelLandmark = new HotelLandmark();
+                    $hotelLandmark->attributes = $landmark;
+                    $hotelLandmark->hotelId = $hotel->hotelId;
+                    $hotelLandmark->save();
+                }
             }else Q::log($landmarks['Landmark'], 'Hotel..setLandmarks.Error');
         }
         return $return;

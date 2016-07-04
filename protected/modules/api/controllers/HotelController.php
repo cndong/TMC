@@ -140,13 +140,18 @@ class HotelController extends ApiController {
              //图片
              $imagesRand = array('http://userimg.qunar.com/imgs/201407/24/Z7-ECTkRKqNNEmJIZ480s.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ480s.jpg');
              $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' => $imagesRand[rand(0, 1)]);
-             $hotel['images'] = json_decode($hotel['images'] ,true);
-             $hotel['images'] = $hotel['images'] ? $hotel['images'] : array(); 
-             array_unshift($hotel['images'], $mainImage);
-             
+             $hotel['images'] = array($mainImage);
+             $hotelImages = HotelImage::model()->findAll("hotelId={$params['hotelId']}");
+             foreach ($hotelImages as $hotelImage) {
+                 $hotel['images'][] = F::arrayGetByKeys($hotelImage, array('ImageId', 'ImageName', 'ImageUrl'));
+             }
+            
              //地标
-             $hotel['landmarks'] = json_decode($hotel['landmarks'] ,true);
-             $hotel['landmarks'] = $hotel['landmarks'] ? $hotel['landmarks'] : array();
+             $hotel['landmarks'] = array();
+             $hotelLandmarks = HotelLandmark::model()->findAll("hotelId={$params['hotelId']}");
+             foreach ($hotelLandmarks as $hotelLandmark) {
+                 $hotel['landmarks'][] = F::arrayGetByKeys($hotelLandmark, array('Landid', 'LandName'));
+             }
              
             $hotel['rooms'] = array();
             $city = DataHotelCity::getCity($hotel['cityId']);
