@@ -217,7 +217,7 @@ class HotelOrder extends QActiveRecord {
                         if(!$this->updateByPk($this->getPrimaryKey(), array('status'=>HotelStatus::BOOK_SUCC, 'oID'=>$res['data']['Order']['OrderId']))){
                             $this->_mailAlert('status');
                             $return = F::errReturn(RC::RC_DB_ERROR);
-                        }
+                        }else $this->_nofity();
                     }
                 }else{
                     $this->_mailAlert('booking');
@@ -245,7 +245,34 @@ class HotelOrder extends QActiveRecord {
     
     //成功发送 短信和app推送
     private function _nofity() {
-    
+        //短信通知
+        $params = array(
+                'mobile' => $this->bookPhone,
+                'guestName' => $this->guestName,
+                'checkIn' => $this->checkIn,
+                'checkOut' => $this->checkOut,
+                'hotelName' => $this->hotelName,
+                'roomName' => $this->roomName,
+                'roomCount' => $this->roomCount,
+        );
+        SMS::send($params, SMSTemplate::H_BOOK_SUCC);
+        
+        //APP推送
+        $title = '订单提示'; $text= "尊敬的客户您好, 恭喜您的订单{$this->id}预定成功, 点击查看详情";
+        $params = array('behaviorType'=>'V003', 'orderID'=>$this->id);
+        $user = User::model()->findByPk($this->userID);
+        switch ($user->deviceType) {
+            case 1:
+                $push = new Push(Q::PUSH_IOS_KEY, Q::PUSH_IOS_SECRET);
+                $push->sendIOSUnicast($text, $user->deviceToken, $params);
+                break;
+            case 2:
+                $push = new Push(Q::PUSH_ANDROID_KEY, Q::PUSH_ANDROID_SECRET);
+                $push->sendAndroidUnicast($title, $text, $user->deviceToken, $params);
+                break;
+        }
+        
+        return F::corReturn();
     }
     
     //邮件报警

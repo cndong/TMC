@@ -4,6 +4,7 @@ class SMSTemplate {
     const FORGET_PASSWD = 2;
     const NEW_USRE = 3;
     const F_BOOK_SUCC = 4;
+    const H_BOOK_SUCC = 5;
     
     public static $templates = array(
         self::COMMON => array(
@@ -53,6 +54,22 @@ class SMSTemplate {
                 'flightNo' => ParamsFormat::F_FLIGHT_NO,
                 'passengers' => ParamsFormat::TEXTNZ
             )
+        ),
+        self::H_BOOK_SUCC => array(
+                'name' => '酒店预定成功',
+                'limit' => 50,
+                'limitUnit' => '1d',
+                'interval' => 60,
+                'template' => '尊敬的旅客, 您已成功预订酒店: <{guestName}><{checkIn}>~<{checkOut}>入住<{hotelName}><{roomName}>(<{roomCount}>间)。祝您旅途愉快！',
+                'formats' => array(
+                        'departDate' => ParamsFormat::TEXTNZ,
+                        'departTime' => ParamsFormat::TIMEHM,
+                        'departAirport' => ParamsFormat::TEXTNZ,
+                        'arriveTime' => ParamsFormat::TIMEHM,
+                        'arriveAirport' => ParamsFormat::TEXTNZ,
+                        'flightNo' => ParamsFormat::F_FLIGHT_NO,
+                        'passengers' => ParamsFormat::TEXTNZ
+                )
         )
     );
     
