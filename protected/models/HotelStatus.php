@@ -113,6 +113,10 @@ class HotelStatus {
         return self::$hotelStatus[$status]['des']['user'];
     }
     
+    public static function getAdminDes($status) {
+        return isset(self::$hotelStatus[$status]['des']['admin']) ? self::$hotelStatus[$status]['des']['admin'] : self::getUserDes($status);
+    }
+    
     public static function getUserCando($orderStatus, $doStatus){
         return isset(HotelStatus::$hotelStatus[$orderStatus]['userStatus']) && in_array($doStatus,HotelStatus::$hotelStatus[$orderStatus]['userStatus']);
     }

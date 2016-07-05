@@ -70,6 +70,29 @@ class HotelController extends ApiController {
             $hotelArray['lowPrice'] = (string) (isset($allLowPrice[$hotel->hotelId]) ? $allLowPrice[$hotel->hotelId] : 0);
             $hotelArray['lowPrice'] && $rtn[] = $hotelArray;
         }
+        
+        //数量不够再查一次
+        if(count($rtn)<10){
+            $criteria->offset = ($params['page']-1+1)*$criteria->limit;
+            $hotels = Hotel::model()->findAll($criteria);
+            $allLowPrice = $this->getAllLowPrice($hotels, $params);
+            
+            foreach ($hotels as $hotel) {
+                $hotelArray = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
+                $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ180.jpg');
+                $hotelArray['image'] = $images[rand(0, 1)];
+                foreach (Hotel::$starArray as  $key => $stars){
+                    foreach ($stars as $star){
+                        if($hotelArray['star'] == $star) {
+                            $hotelArray['star'] = $key; break 2;
+                        }
+                    }
+                }
+                $hotelArray['lowPrice'] = (string) (isset($allLowPrice[$hotel->hotelId]) ? $allLowPrice[$hotel->hotelId] : 0);
+                $hotelArray['lowPrice'] && $rtn[] = $hotelArray;
+            }
+        }
+        
         $this->corAjax(array('hotelList'=>$rtn));
     }
     
@@ -87,7 +110,7 @@ class HotelController extends ApiController {
                                     'CheckIn' => $params['checkIn'],
                                     'CheckOut' => $params['checkOut']
                             ), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')));
-            }else $allLowPrice[$hotel->hotelId] = $priceArray;
+            }else $allLowPrice[$hotel->hotelId] = $priceArray ? $priceArray[0] : 0;
         }
         
         $results =ProviderCNBOOKING::multiRequest($postParamsMulti);

@@ -1,13 +1,42 @@
 <?php
 class Hotel extends QActiveRecord {
-/*     public static $priceSelect = array(200=>array(0, 200), 400=>array(200, 400), 600=>array(400, 600), 800=>array(800, 80000));
-    
-    public static function isPriceSelect($select){
-        return isset(self::$priceSelect[$select]);
-    } */
-    
-    static  $starArray = array('012012'=>array('012009', '012011', '012012'), '012014'=>array('012013', '012014'), '012016'=>array('012015', '012016'), '012018'=>array('012017', '012018','012019', '012020'), );
+    /*     public static $priceSelect = array(200=>array(0, 200), 400=>array(200, 400), 600=>array(400, 600), 800=>array(800, 80000));
         
+        public static function isPriceSelect($select){
+            return isset(self::$priceSelect[$select]);
+        } */
+
+    static $starArray = array(
+            '012012' => array(
+                '012009', '012011', '012012'
+            ),
+            '012014' => array(
+                '012013', '012014'
+            ),
+            '012016' => array(
+                '012015', '012016'
+            ),
+            '012018' => array(
+                '012017', '012018', '012019', '012020'
+            ),
+    );
+
+    static $bedLimitArray = array(
+        '045001' => '大床/双床', '045002' => '大床', '045003' => '双床',
+    );
+
+    static $breakfastArray = array(
+            '011001' => '不含早餐',
+            '011002' => '单早',
+            '011003' => '双早',
+            '011004' => '单双早',
+            '011007' => '床位早',
+            '011008' => '三早',
+            '011010' => '六早',
+            '011011' => '四早',
+            '011012' => '八早',
+    );
+    
     public static function model($className=__CLASS__){
         return parent::model($className);
     }

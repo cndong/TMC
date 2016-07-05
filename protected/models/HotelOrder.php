@@ -21,6 +21,14 @@ class HotelOrder extends QActiveRecord {
         );
     }
     
+    public function relations() {
+        return array(
+                'user' => array(self::BELONGS_TO, 'User', 'userID'),
+                'department' => array(self::BELONGS_TO, 'Department', 'departmentID'),
+                'company' => array(self::BELONGS_TO, 'Company', 'companyID'),
+                'reviewer' => array(self::BELONGS_TO, 'User', 'reviewerID'),
+        );
+    }
     
     public static function createOrder($params) {
 /*         if (!F::isCorrect($res = self::_checkCreateOrderParams($params))) {
@@ -205,21 +213,34 @@ class HotelOrder extends QActiveRecord {
         ))) && $res['data']){
             if(is_array($res['data']) && $res['data']['ReturnCode'] == ProviderCNBOOKING::BOOKING_SUCCESS){
                 if($res['data']['Order']['OrderStatusId']>=ProviderCNBOOKING::BOOKING_SUCCESS_STATUS){
-                    $return = F::corReturn();
-                    if(!$this->updateByPk($this->getPrimaryKey(), array('status'=>HotelStatus::BOOK_SUCC, 'oID'=>$res['data']['Order']['OrderId']))){
-                        $this->_mailAlert('status');
-                        $return = F::errReturn(RC::RC_DB_ERROR);
+                    if($return = $this->_changeFinance()){
+                        if(!$this->updateByPk($this->getPrimaryKey(), array('status'=>HotelStatus::BOOK_SUCC, 'oID'=>$res['data']['Order']['OrderId']))){
+                            $this->_mailAlert('status');
+                            $return = F::errReturn(RC::RC_DB_ERROR);
+                        }
                     }
-                }else {
+                }else{
                     $this->_mailAlert('booking');
                     $return = F::errReturn(RC::RC_H_HOTEL_BOOKING_ERROR);
                 }
-            }else {
+            }else{
                 $this->_mailAlert($res['data']['ReturnMessage']);
                 $return = F::errReturn($res['data']['ReturnCode'], $res['data']['ReturnMessage']);
             }
         }
         return $return;
+    }
+    
+    private function _changeFinance() {
+        $userTAOPrice = $this->orderPrice*100;
+        if (!$this->isPrivate) {
+            $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
+            $company = Company::model()->findByPk($this->companyID);
+            if (!F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $this, $userTAOPrice, 0, $info))) {
+                return $res;
+            }
+        }
+        return F::corReturn();
     }
     
     //成功发送 短信和app推送
@@ -233,5 +254,36 @@ class HotelOrder extends QActiveRecord {
         $cpl['tplInfo']['msg'] = $msg;
         @Mail::sendMail($cpl, 'Hotel.SyncFailed');
         Q::log($msg, 'dberror.hotel.syncFailed');
+    }
+    
+    public static function search($params, $isGetCriteria = False, $isWithRoute = True) {
+        $rtn = array('criteria' => Null, 'params' => array(), 'data' => array());
+    
+        $defaultBeginDate = date('Y-m-d', strtotime('-1 week'));
+        $rtn['params'] = F::checkParams($params, array(
+                'orderID' => '!' . ParamsFormat::INTNZ . '--0', 'userID' => '!' . ParamsFormat::INTNZ . '--0', 'departmentID' => '!' . ParamsFormat::INTNZ . '--0', 'companyID' => '!' . ParamsFormat::INTNZ . '--0', 'operaterID' => '!' . ParamsFormat::INTNZ . '--0',
+                'beginDate' => '!' . ParamsFormat::DATE . '--' . $defaultBeginDate, 'endDate' => '!' . ParamsFormat::DATE . '--' . Q_DATE,
+                'status' => '!' . ParamsFormat::INTNZ . '--0', 
+        ));
+    
+        $criteria = new CDbCriteria();
+        $criteria->with = array_keys(self::model()->relations());
+        $criteria->order = 't.id DESC';
+        foreach (array('orderID', 'userID', 'departmentID', 'companyID', 'operaterID', 'status') as $type) {
+            if (!empty($rtn['params'][$type])) {
+                $field = $type == 'orderID' ? 'id' : $type;
+                $criteria->compare('t.' . $field, $params[$type]);
+            }
+        }
+        $criteria->addBetweenCondition('t.ctime', strtotime($rtn['params']['beginDate']), strtotime($rtn['params']['endDate'] . ' 23:59:59'));
+        
+        $rtn['criteria'] = $criteria;
+        if ($isGetCriteria) {
+            return $rtn;
+        }
+    
+        $orders = F::arrayAddField(self::model()->findAll($criteria), 'id');
+        $rtn['data'] = $orders;
+        return $rtn;
     }
 }
