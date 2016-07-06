@@ -55,4 +55,8 @@ class DictTrain {
         self::SEAT_ADVANCE_D_SLEEP_DOWN => array('name' => '高级动卧下铺', 'cname' => '高级动卧'),
         self::SEAT_OTHER => array('name' => '其他'),
     );
+    
+    public function isSeatType($seatType) {
+        return isset(self::$seatTypes[$seatType]);
+    }
 }

@@ -46,6 +46,7 @@ class Dict {
     public static $passengerTypes = array(
         self::PASSENGER_TYPE_ADULT => array(
             'name' => '成人票',
+            'public' => array(self::BUSINESS_FLIGHT, self::BUSINESS_TRAIN, self::BUSINESS_BUS),
             'business' => array(self::BUSINESS_FLIGHT => array(), self::BUSINESS_TRAIN => array(), self::BUSINESS_BUS => array())
         ),
         self::PASSENGER_TYPE_CHILD => array(
@@ -75,6 +76,10 @@ class Dict {
         }
         
         return $rtn;
+    }
+    
+    public static function getPassengerPublic($passengerType) {
+        return !empty(self::$passengerTypes[$passengerType]) ? self::$passengerTypes[$passengerType] : array();
     }
     
     public static function isPassengerType($passengerType) {

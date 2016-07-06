@@ -44,7 +44,7 @@
                         echo '<p><button class="c_change_status btn btn-sm btn-' . $btnColor . '" data-is-handle="1" data-order-id="' . $data->id . '" data-status="' . $toStatus . '" data-status-str="' . $toStatusConfig['str'] . '">' . $btn . '</button><p>';
                     }
                     
-                    foreach (TrainStatus::getAdminOpStatus($data->status) as $toStatus) {
+                    foreach (TrainStatus::getSysOpStatus($data->status) as $toStatus) {
                         if ((($checkFunc = TrainStatus::getCheckFunc($toStatus)) && !$data->$checkFunc()) || $data->operaterID != $this->admin->id) {
                             continue;
                         }
@@ -56,25 +56,20 @@
                 ?>
             </td>
             <td rowspan="3" class="text-center">
-                <?php echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-sm btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . TrainStatus::RFDED . '" data-status-str="' . TrainStatus::$trainStatus[TrainStatus::RFDED]['str'] . '">退款成功</button>' : '无'; ?>
+                <?php //echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-sm btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . TrainStatus::RFDED . '" data-status-str="' . TrainStatus::$trainStatus[TrainStatus::RFDED]['str'] . '">退款成功</button>' : '无'; ?>
             </td>
         </tr>
         <tr>
             <td colspan="8">
                 <?php 
-                    $cities = DataAirport::getCNCities();
-                    $classifyPassengers = UserPassenger::classifyPassengers(UserPassenger::parsePassengers($data->passengers));
-                    foreach ($data->segments as $segment) {
+                    $stations = ProviderT::getStationList();
+                    $classifyPassengers = UserPassenger::classifyPassengers(UserPassenger::parsePassengers($data->passengers), Dict::BUSINESS_TRAIN);
+                    foreach ($data->routes as $route) {
                         echo '<span class="pull-left text-danger">';
-                        echo "【航段】{$cities[$segment->departCityCode]['cityName']}({$segment->departAirportCode})-{$cities[$segment->arriveCityCode]['cityName']}({$segment->arriveAirportCode})";
-                        echo "【航班】{$segment->flightNo}, {$segment->cabin}";
-                        foreach ($classifyPassengers as $ticketType => $passengers) {
-                            if (!empty($passengers)) {
-                                $ticketTypeStr = DictFlight::$ticketTypes[$ticketType]['str'];
-                                echo '【', DictFlight::$ticketTypes[$ticketType]['name'], '价格】', $segment[$ticketTypeStr . 'Price'] / 100, '-', $segment[$ticketTypeStr . 'AirportTax'] / 100, '-', $segment[$ticketTypeStr . 'OilTax'] / 100;
-                            }
-                        }
-                        echo '【时间】', date('Y-m-d H:i', $segment->departTime), '</span>';
+                        echo "【行程】{$stations[$route->departStationCode]['name']}-{$stations[$route->arriveStationCode]['name']}";
+                        echo "【车次】{$route->trainNo}, ", DictTrain::$seatTypes[$route->seatType]['name'];
+                        echo '【价格】', $route['ticketPrice'];
+                        echo '【时间】', date('Y-m-d H:i', $route->departTime), '</span>';
                     }
                 ?>
             </span>
@@ -83,9 +78,9 @@
         <tr>
             <td colspan="8">
                 <?php 
-                    foreach ($classifyPassengers as $ticketType => $passengers) {
+                    foreach ($classifyPassengers as $passengerType => $passengers) {
                         if (!empty($passengers)) {
-                            $ticketTypeName = DictFlight::$ticketTypes[$ticketType]['name'];
+                            $ticketTypeName = Dict::$passengerTypes[$passengerType]['name'];
                             foreach ($passengers as $passenger) {
                                 $cardType = Dict::$cardTypes[$passenger['cardType']]['name'];
                                 $sex = Dict::$sexTypes[$passenger['sex']]['name'];

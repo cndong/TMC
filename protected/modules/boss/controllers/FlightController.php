@@ -45,7 +45,7 @@ class FlightController extends BossController {
         }
         
         $finances = CompanyFinanceLog::model()->findAllByAttributes(array('orderID' => $order->id), array('order' => 'id DESC'));
-        $logs = Log::model()->findAllByAttributes(array('orderID' => $order->id, 'type' => Dict::BUSINESS_FLIGHT), array('order' => 'id DESC'));
+        $logs = Log::model()->findAllByAttributes(array('orderID' => $order->id, 'type' => Log::TYPE_CN_FLIGHT), array('order' => 'id DESC'));
         
         $rtn = array('html' => $this->renderPartial('_orderDetail', array('order' => $order, 'finances' => $finances, 'logs' => $logs), True));
         $this->corAjax($rtn);

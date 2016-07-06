@@ -8,7 +8,7 @@ class ProviderTQ extends ProviderT {
         'stationList' => array('url' => '/Train/StationList'),
         'trainList' => array('url' => '/Train/TrainList'),
         'stopList' => array('url' => '/Train/PassStationList'),
-        'book' => array('url' => 'Train/CreateOrder', 'method' => 'POST'),
+        'book' => array('url' => '/Train/CreateOrder', 'method' => 'POST'),
     );
     
     private function _request($type, $data = array()) {
@@ -26,7 +26,7 @@ class ProviderTQ extends ProviderT {
             $data = array();
         }
         
-        if (!Curl::isCorrect($res = $this->_curl->$method($url, $data))) {
+        if (!Curl::isCorrect($res = $this->_curl->debug()->$method($url, $data))) {
             return F::errReturn(F::getCurlError($res));
         }
         
@@ -106,11 +106,12 @@ class ProviderTQ extends ProviderT {
             $tmp = F::arrayGetByKeys($passenger, array('type', 'name', 'cardType', 'cardNo'));
             $tmp['birth'] = $passenger['birthday'];
             $tmp['seatType'] = $route->seatType;
-            $tmp['ticketPrice'] = $route->ticketPrice;
+            $tmp['ticketPrice'] = $route->ticketPrice / 100;
+            $passengers[] = $tmp;
         }
         $params['insureID'] = $order->isInsured ? DictTrain::INSURE_ID : 0;
-        $params['insurePrice'] = $order->insurePrice;
-        $params['isMergeNotice'] = Dict::STATUS_FALSE;
+        $params['insurePrice'] = $order->insurePrice / 100;
+        $params['isMergeNotice'] = Dict::STATUS_TRUE;
         $params['isAcceptNoSeat'] = Dict::STATUS_FALSE;
         
         $params['passengers'] = json_encode($passengers);

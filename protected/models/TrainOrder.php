@@ -374,6 +374,10 @@ class TrainOrder extends QActiveRecord {
                 return F::errReturn(RC::RC_STATUS_NOT_OP);
             }
     
+            if ($isSysHd || $isSysOp) {
+                $params['operaterID'] = Dict::OPERATER_SYSTEM;
+            }
+            
             if (($isSysHd || $isSysOp) && empty($params['operaterID'])) {
                 return F::errReturn(RC::RC_STATUS_NO_OPERATER);
             }
@@ -481,7 +485,7 @@ class TrainOrder extends QActiveRecord {
         return $this->_checkBefore($params);
     }
     
-    private function _cS2BookPushed($params) {
+    private function _cS2BookPushedBefore($params) {
         if (!F::isCorrect($res = ProviderT::book($this))) {
             return $res;
         }
@@ -489,5 +493,107 @@ class TrainOrder extends QActiveRecord {
         return F::corReturn(array('params' => array('providerOID' => $res['data']['orderID'])));
     }
     
+    private function _getBookSuccFormats() {
+        return array(
+            'trainNo' => ParamsFormat::T_TRAIN_NO,
+            'departStationCode' => ParamsFormat::T_STATION_CODE,
+            'arriveStationCode' => ParamsFormat::T_STATION_CODE,
+            'departDateTime' => ParamsFormat::DATEHM,
+            'arriveDateTime' => '!' . ParamsFormat::DATEHM . '--' . date('Y-m-d H:i'),
+            'passengers' => ParamsFormat::ISARRAY,
+            'pickNo' => ParamsFormat::T_TICKET_NO,
+            'servicePrice' => ParamsFormat::FLOAT,
+        );
+    }
     
+    private function _getBookSuccPassengerFormats() {
+        return array(
+            'id' => ParamsFormat::TEXTNZ,
+            'type' => ParamsFormat::PASSENGER_TYPE,
+            'cardType' => ParamsFormat::CARD_TYPE,
+            'cardNo' => ParamsFormat::CARD_NO,
+            'seatType' => ParamsFormat::T_SEAT_TYPE,
+            'seatName' => ParamsFormat::TEXTNZ,
+            'ticketPrice' => ParamsFormat::FLOATNZ
+        );
+    }
+    
+    private function _cS2BookSuccBefore($params) {
+        if (!F::checkParams($params, $this->_getBookSuccFormats())) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $route = current($this->routes);
+        $attributes = F::arrayGetByKeys($this, array('userID', 'departmentID', 'companyID'));
+        $attributes['orderID'] = $this->id;
+        $attributes['routeID'] = $route->id;
+        $totalTicketPrice = 0;
+        foreach (UserPassenger::parsePassengers($this->passengers) as $realPassenger) {
+            $isMatch = False;
+            foreach ($params['passengers'] as $index => $passenger) {
+                if (!F::checkParams($passenger, $this->_getBookSuccPassengerFormats())) {
+                    return F::errReturn(RC::RC_VAR_ERROR);
+                }
+                
+                if ($passenger['cardNo'] == $realPassenger['cardNo'] && $passenger['type'] == $realPassenger['type']) {
+                    $isMatch = True;
+                    break;
+                }
+            }
+            
+            if (!$isMatch) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            unset($params['passengers'][$index]);
+            
+            if ($route['trainNo'] != $params['trainNo'] || $route['departStationCode'] != $params['departStationCode'] || $route['arriveStationCode'] != $params['arriveStationCode'] || $route['seatType'] != $passenger['seatType'] || $route['departTime'] > strtotime($params['departDateTime'])) {
+                return F::errReturn(RC::RC_T_TRAIN_INFO_ERROR);
+            }
+            
+            $attributes = array_merge($attributes, F::arrayGetByKeys($route, array(
+                'trainNo', 'departStationCode', 'arriveStationCode'
+            )));
+            $attributes['providerPassengerID'] = $passenger['id'];
+            $attributes['ticketInfo'] = $passenger['seatName'];
+            $attributes['ticketNo'] = $params['pickNo'];
+            $attributes['departTime'] = strtotime($params['departDateTime']);
+            $attributes['arriveTime'] = strtotime($params['arriveDateTime']);
+            $attributes['ticketPrice'] = $passenger['ticketPrice'] * 100;
+            $totalTicketPrice += $attributes['ticketPrice'];
+            
+            $ticket = new TrainTicket();
+            $ticket->attributes = $attributes;
+            if (!$ticket->save()) {
+                Q::logModel($ticket);
+                return F::errReturn(RC::RC_MODEL_CREATE_ERROR);
+            }
+        }
+        
+        if (!$this->isPrivate) {
+            $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name);
+            $company = Company::model()->findByPk($this->companyID);
+            if (
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_ORDER_PRICE, $this, $totalTicketPrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INSURE_PRICE, $this, $this->insurePrice, 0, $info)) ||
+                !F::isCorrect($res = $company->changeFinance(CompanyFinanceLog::TYPE_INVOICE_PRICE, $this, $this->invoicePrice, 0, $info))
+            ) {
+                return $res;
+            }
+        }
+        
+        return F::corReturn(array('params' => array('pickNo' => $params['pickNo'])));
+    }
+    
+    private function _cS2RfdPushedBefore($params) {
+        if (!F::checkParams($params, array('passengerID'))) {
+            
+        }
+        if (!F::isCorrect($res = ProviderT::refund($this))) {
+            return $res;
+        }
+        
+        //修改票的状态
+        
+        return F::corReturn();
+    }
 }

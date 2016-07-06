@@ -37,6 +37,7 @@ return array(
                 'Bus/<action:.+>/*' => 'api/Bus/<action>',
                 'Hotel/<action:.+>/*' => 'api/Hotel/<action>',
                 'System/<action:.+>/*' => 'api/System/<action>',
+                'Provider/<action:.+>/*' => 'api/Provider/<action>',
                 //'Provider/<action:.+>/*' => 'api/Provider/<action>',
             )
         ),

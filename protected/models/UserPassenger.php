@@ -111,8 +111,14 @@ class UserPassenger extends QActiveRecord {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
+        $publicTypes = Dict::getPassengerPublic($params['type']);
         foreach (Dict::$businesses as $businessID => $businessConfig) {
-            $params[$businessConfig['str'] . 'Type'] = $businessID == $params['businessID'] ? $params['type'] : Dict::PASSENGER_TYPE_ADULT;
+            $type = 0;
+            if ($businessID == $params['businessID'] || in_array($businessID, $publicTypes)) {
+                $type = $params['type'];
+            }
+            
+            $params[$businessConfig['str'] . 'Type'] = $type;
         }
         $businessID = $params['businessID'];
         unset($params['businessID'], $params['type']);

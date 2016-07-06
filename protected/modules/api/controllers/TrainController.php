@@ -184,8 +184,15 @@ class TrainController extends ApiController {
         }
     
         $status = $params['status'] ? TrainStatus::CHECK_SUCC : TrainStatus::CHECK_FAIL;
-    
-        $this->onAjax($order->changeStatus($status, array('reviewerID' => $user)));
+        if (!F::isCorrect($res = $order->changeStatus($status, array('reviewerID' => $user)))) {
+            $this->onAjax($res);
+        }
+        
+        if ($params['status']) {
+            $order->changeStatus(TrainStatus::BOOK_PUSHED);
+        }
+        
+        $this->onAjax($res);
     }
     
     public function actionCancel() {
@@ -202,5 +209,19 @@ class TrainController extends ApiController {
         }
     
         $this->onAjax($order->changeStatus(TrainStatus::CANCELED));
+    }
+    
+    public function actionRefund() {
+        if (!($params = F::checkParams($_POST, array_fill_keys(array('userID', 'orderID', 'ticketID'), ParamsFormat::INTNZ)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        $order = TrainOrder::model()->findByPk($params['orderID']);
+        $ticket = TrainTicket::model()->findByPk($ticket);
+        if (!$order || !$ticket || $order->userID != $user->id) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+        
+        $this->onAjax($order->changeStatus(TrainStatus::APPLY_RFD, array('ticketID' => $ticket->id)));
     }
 }

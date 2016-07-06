@@ -30,7 +30,7 @@
                     <select name="status" class="form-control input-sm" data-default-value="0">
                         <option value="0">--搜索状态--
                         <?php
-                            foreach (TrainStatus::$flightStatus as $status => $_) {
+                            foreach (TrainStatus::$trainStatus as $status => $_) {
                                 $selected = !empty($params['status']) && in_array($status, $params['status']) ? ' selected' : '';
                                 echo "<option value='{$status}'{$selected}>", FlightStatus::getAdminDes($status);
                             }
