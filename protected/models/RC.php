@@ -82,6 +82,7 @@ class RC {
     const RC_T_PRICE_ERROR = 100505;
     
     const RC_B_BUS_NOT_EXISTS = 100601;
+    const RC_B_STATUS_WAKE_ERROR = 100602;
     
     const RC_H_HOTEL_NOT_EXISTS= 100701;
     const RC_H_HOTEL_PREBOOKINGCHECK_ERROR= 100702;
