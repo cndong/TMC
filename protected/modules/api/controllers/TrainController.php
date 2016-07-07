@@ -234,6 +234,6 @@ class TrainController extends ApiController {
             }
         }
         
-        $this->onAjax($order->changeStatus(TrainStatus::APPLY_RFD, array('ticketIDs' => $ticket->id)));
+        $this->onAjax($order->changeStatus(TrainStatus::APPLY_RFD, array('ticketIDs' => $ticketIDs)));
     }
 }
