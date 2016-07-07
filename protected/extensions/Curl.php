@@ -269,7 +269,7 @@ class Curl {
 	
 	//发送HTTP请求及处理
 	private function _request($urlType, $urlData = array(), $isUrlEncode = False) {
-		$rtn = array('status' => self::STATUS_RIGHT, 'info' => array(), 'qheader' => array(), 'pheader' => array(), 'data' => '', 'urlType' => array());
+		$rtn = array('status' => self::STATUS_RIGHT, 'error_msg'=>'', 'data' => '', 'info' => array(), 'qheader' => array(), 'pheader' => array(), 'urlType' => array());
 		
 		if (is_array($urlType)) {
 			$urlConfig = $urlType;
@@ -293,7 +293,7 @@ class Curl {
 		$rtn['data'] = count($content) < 2 ? $content[0] : $content[1];
 		if (($errno = curl_errno($this->handler)) != 0) {
 		    $rtn['status'] = $errno;
-		    $rtn['info']['error_msg'] = curl_error($this->handler);
+		    $rtn['error_msg'] = curl_error($this->handler);
 		    return $rtn;
 		}
 		
@@ -305,7 +305,7 @@ class Curl {
 
 		if ($rtn['info']['http_code'] != 200) {
 		    $rtn['status'] = $rtn['info']['http_code'];
-			$rtn['info']['error_msg'] = curl_error($this->handler);
+			$rtn['error_msg'] = curl_error($this->handler);
 			return $rtn;
 		}
 		
@@ -336,6 +336,7 @@ class Curl {
 	}
 	
 	public function post($urlType, $postData = array(), $urlData = array(), $isUrlEncode = False) {
+	    Q::log($postData, 'curl.post.request: '.$urlType);
 		$ifHaveFile = False;
 		if (is_array($postData)) {
     		foreach ($postData as $k => $v) {
@@ -359,8 +360,9 @@ class Curl {
 			CURLOPT_POST => 1,
 			CURLOPT_POSTFIELDS => $postData
 		));
-		
-		return $this->_request($urlType, $urlData, $isUrlEncode);
+		$res = $this->_request($urlType, $urlData, $isUrlEncode);
+		Q::log($res['status'].'|'.$res['error_msg'].'|'.$res['data'], 'curl.post.response');
+		return $res;
 	}
 	
 	public function getC($urlType, $urlData = array(), $isUrlEncode = False) {
