@@ -95,7 +95,7 @@ class TrainStatus {
         self::APPLY_RSN => array(
             'des' => array('user' => '已申请改签'),
             'str' => 'ApplyRsn',
-            'check' => 'isCanApplyResign',
+            //'check' => 'isCanApplyResign',
             'sysHdStatus' => array(self::RSN_PUSHED)
         ),
         self::RSN_PUSHED => array(
@@ -155,7 +155,7 @@ class TrainStatus {
         self::APPLY_RFD => array(
             'des' => array('user' => '申请退票'),
             'str' => 'ApplyRfd',
-            'check' => 'isCanApplyRefund',
+            //'check' => 'isCanApplyRefund',
             'sysHdStatus' => array(self::RFD_PUSHED)
         ),
         self::RFD_PUSHED => array(
