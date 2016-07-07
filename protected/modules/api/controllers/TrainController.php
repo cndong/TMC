@@ -159,6 +159,7 @@ class TrainController extends ApiController {
                 $tmpTicket = UserPassenger::parsePassenger($ticket->passenger);
                 $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('trainNo', 'departStationCode', 'arriveStationCode', 'departTime', 'arriveTime', 'ticketPrice', 'ticketInfo', 'ticketNo')));
                 $tmp['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
+                $tmpTicket['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
                 $tmpTicket['isResign'] = in_array($ticket->status, TrainStatus::getCanResignTicketStatus());
                 $tmpTicket['isRefund'] = in_array($ticket->status, TrainStatus::getCanRefundTicketStatus());
                 $tmp['tickets'][] = $tmpTicket;
@@ -212,16 +213,27 @@ class TrainController extends ApiController {
     }
     
     public function actionRefund() {
-        if (!($params = F::checkParams($_POST, array_fill_keys(array('userID', 'orderID', 'ticketID'), ParamsFormat::INTNZ)))) {
+        $formats = array(
+            'userID' => ParamsFormat::INTNZ,
+            'orderID' => ParamsFormat::INTNZ,
+            'ticketIDs' => ParamsFormat::TEXTNZ
+        );
+        if (!($params = F::checkParams($_POST, $formats))) {
             $this->errAjax(RC::RC_VAR_ERROR);
         }
         
-        $order = TrainOrder::model()->findByPk($params['orderID']);
-        $ticket = TrainTicket::model()->findByPk($ticket);
-        if (!$order || !$ticket || $order->userID != $user->id) {
+        if (!($order = TrainOrder::model()->findByPk($params['orderID'])) || $order->userID != $params['userID']) {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $this->onAjax($order->changeStatus(TrainStatus::APPLY_RFD, array('ticketID' => $ticket->id)));
+        $tickets = F::arrayAddField($order->tickets, 'id');
+        $ticketIDs = explode('|', $params['ticketIDs']);
+        foreach ($ticketIDs as $ticketID) {
+            if (!isset($tickets[$ticketID])) {
+                $this->errAjax(RC::RC_VAR_ERROR);
+            }
+        }
+        
+        $this->onAjax($order->changeStatus(TrainStatus::APPLY_RFD, array('ticketIDs' => $ticket->id)));
     }
 }

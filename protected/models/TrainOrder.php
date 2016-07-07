@@ -588,22 +588,25 @@ class TrainOrder extends QActiveRecord {
     }
     
     private function _cS2ApplyRfdBefore($params) {
-        if (!F::checkParams($params, array('ticketID' => ParamsFormat::INTNZ))) {
+        if (!F::checkParams($params, array('ticketIDs' => ParamsFormat::ISARRAY))) {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
         $tickets = F::arrayAddField($this->tickets, 'id');
-        if (empty($tickets[$params['ticketID']])) {
-            return F::errReturn(RC::RC_VAR_ERROR);
-        }
-        
-        if (!in_array($ticket->status, TrainStatus::getCanRefundTicketStatus())) {
-            return F::errReturn(RC::RC_STATUS_TICKET_ERROR);
-        }
-        
-        $attributes = array('status' => TrainStatus::APPLY_RFD, 'utime' => Q_TIME);
-        if (!TrainTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => $ticket->status))) {
-            return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+        foreach ($params['ticketIDs'] as $ticketID) {
+            if (empty($tickets[$ticketID])) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+            
+            $ticket = $tickets[$ticketID];
+            if (!in_array($ticket->status, TrainStatus::getCanRefundTicketStatus())) {
+                return F::errReturn(RC::RC_STATUS_TICKET_ERROR);
+            }
+            
+            $attributes = array('status' => TrainStatus::APPLY_RFD, 'utime' => Q_TIME);
+            if (!TrainTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => $ticket->status))) {
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+            }
         }
         
         return F::corReturn(array('params' => array('status' => $this->status)));
