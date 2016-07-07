@@ -514,7 +514,7 @@ class TrainOrder extends QActiveRecord {
             'cardNo' => ParamsFormat::CARD_NO,
             'seatType' => ParamsFormat::T_SEAT_TYPE,
             'seatName' => ParamsFormat::TEXTNZ,
-            'ticketPrice' => ParamsFormat::FLOATNZ
+            'price' => ParamsFormat::FLOATNZ
         );
     }
     
@@ -523,7 +523,7 @@ class TrainOrder extends QActiveRecord {
             return F::errReturn(RC::RC_VAR_ERROR);
         }
         
-        $route = current($this->routes);
+        $route = $this->routes[0];
         $attributes = F::arrayGetByKeys($this, array('userID', 'departmentID', 'companyID'));
         $attributes['orderID'] = $this->id;
         $attributes['routeID'] = $route->id;
@@ -557,8 +557,11 @@ class TrainOrder extends QActiveRecord {
             $attributes['ticketInfo'] = $passenger['seatName'];
             $attributes['ticketNo'] = $params['pickNo'];
             $attributes['departTime'] = strtotime($params['departDateTime']);
-            $attributes['arriveTime'] = strtotime($params['arriveDateTime']);
-            $attributes['ticketPrice'] = $passenger['ticketPrice'] * 100;
+            $attributes['arriveTime'] = Q_TIME; //需要修改API项目，添加arriveTime字段, strtotime($params['arriveDateTime']);
+            $attributes['ticketPrice'] = $passenger['price'] * 100;
+            $attributes['passenger'] = UserPassenger::concatPassenger($realPassenger);
+            $attributes['seatType'] = $passenger['seatType'];
+            $attributes['status'] = TrainStatus::BOOK_SUCC;
             $totalTicketPrice += $attributes['ticketPrice'];
             
             $ticket = new TrainTicket();
@@ -584,16 +587,52 @@ class TrainOrder extends QActiveRecord {
         return F::corReturn(array('params' => array('pickNo' => $params['pickNo'])));
     }
     
-    private function _cS2RfdPushedBefore($params) {
-        if (!F::checkParams($params, array('passengerID'))) {
-            
+    private function _cS2ApplyRfdBefore($params) {
+        if (!F::checkParams($params, array('ticketID' => ParamsFormat::INTNZ))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
         }
-        if (!F::isCorrect($res = ProviderT::refund($this))) {
+        
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        if (empty($tickets[$params['ticketID']])) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        if (!in_array($ticket->status, TrainStatus::getCanRefundTicketStatus())) {
+            return F::errReturn(RC::RC_STATUS_TICKET_ERROR);
+        }
+        
+        $attributes = array('status' => TrainStatus::APPLY_RFD, 'utime' => Q_TIME);
+        if (!TrainTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => $ticket->status))) {
+            return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+        }
+        
+        return F::corReturn(array('params' => array('status' => $this->status)));
+    }
+    
+    private function _cS2RfdPushedBefore($params) {
+        if (!F::checkParams($params, array('ticketID' => ParamsFormat::INTNZ))) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        if (empty($tickets[$params['ticketID']])) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $ticket = $tickets[$params['ticketID']];
+        if (!in_array($ticket->status, TrainStatus::getCanRefundTicketStatus())) {
+            return F::errReturn(RC::RC_STATUS_TICKET_ERROR);
+        }
+        
+        if (!F::isCorrect($res = ProviderT::refund($this, $ticket))) {
             return $res;
         }
         
-        //修改票的状态
+        $attributes = array('status' => TrainStatus::RFD_PUSHED, 'utime' => Q_TIME);
+        if (!TrainTicket::model()->updateByPk($ticket->id, $attributes, 'status=:status', array(':status' => $ticket->status))) {
+            return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+        }
         
-        return F::corReturn();
+        return F::corReturn(array('params' => array('status' => $this->status)));
     }
 }

@@ -56,7 +56,7 @@ class DictTrain {
         self::SEAT_OTHER => array('name' => '其他'),
     );
     
-    public function isSeatType($seatType) {
+    public static function isSeatType($seatType) {
         return isset(self::$seatTypes[$seatType]);
     }
 }

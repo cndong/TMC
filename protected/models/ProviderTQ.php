@@ -26,7 +26,7 @@ class ProviderTQ extends ProviderT {
             $data = array();
         }
         
-        if (!Curl::isCorrect($res = $this->_curl->debug()->$method($url, $data))) {
+        if (!Curl::isCorrect($res = $this->_curl->$method($url, $data))) {
             return F::errReturn(F::getCurlError($res));
         }
         
@@ -120,5 +120,9 @@ class ProviderTQ extends ProviderT {
         $params['departTime'] = date('H:i', $route->departTime);
         
         return $this->_request('book', $params);
+    }
+    
+    public function pRefund($order, $ticketID) {
+        
     }
 }
