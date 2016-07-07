@@ -141,6 +141,14 @@ class F {
         return json_last_error() == JSON_ERROR_NONE;
     }
     
+    public static function isTime($str, $format = 'H:i:s') {
+        return self::isDateTime($str, $format);
+    }
+    
+    public static function isDate($str, $format = 'Y-m-d') {
+        return self::isDateTime($str, $format);
+    }
+    
     public static function isDateTime($str, $format = 'Y-m-d H:i:s'){
         return date($format, strtotime($str)) == $str;
     }
