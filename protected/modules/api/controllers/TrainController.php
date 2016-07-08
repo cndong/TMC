@@ -190,7 +190,7 @@ class TrainController extends ApiController {
         }
         
         if ($params['status']) {
-            $order->changeStatus(TrainStatus::BOOK_PUSHED);
+            $res = $order->changeStatus(TrainStatus::BOOK_PUSHED);
         }
         
         $this->onAjax($res);
