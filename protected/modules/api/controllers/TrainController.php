@@ -226,11 +226,11 @@ class TrainController extends ApiController {
             $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
         }
         
-        $tickets = F::arrayAddField($order->tickets, 'id');
+        $tickets = F::arrayGetField($order->tickets, 'id');
         $ticketIDs = explode('|', $params['ticketIDs']);
         foreach ($ticketIDs as $ticketID) {
             if (!isset($tickets[$ticketID])) {
-                $this->errAjax(RC::RC_VAR_ERROR);
+                $this->errAjax(RC::RC_T_INVAILD_TICKET);
             }
         }
         

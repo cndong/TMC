@@ -81,6 +81,7 @@ class RC {
     const RC_T_SEAT_PRICE_ERROR = 100503;
     const RC_T_TRAIN_INFO_ERROR = 100504;
     const RC_T_PRICE_ERROR = 100505;
+    const RC_T_INVAILD_TICKET = 100506;
     
     const RC_B_BUS_NOT_EXISTS = 100601;
     const RC_B_STATUS_WAKE_ERROR = 100602;
