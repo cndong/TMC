@@ -121,9 +121,7 @@ class TrainController extends ApiController {
         return array(
             'isReview' => $status == TrainStatus::WAIT_CHECK,
             'isCancel' => in_array($status, array(TrainStatus::WAIT_CHECK, TrainStatus::CHECK_SUCC, TrainStatus::WAIT_PAY)),
-            'isResign' => False, //$status == TrainStatus::BOOK_SUCC,
             'isPay' => $status == TrainStatus::WAIT_PAY,
-            'isRefund' => in_array($status, array(TrainStatus::BOOK_SUCC, TrainStatus::RSNED))
         );
     }
     
