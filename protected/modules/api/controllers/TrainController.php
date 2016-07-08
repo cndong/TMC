@@ -229,7 +229,7 @@ class TrainController extends ApiController {
         $tickets = F::arrayGetField($order->tickets, 'id');
         $ticketIDs = explode('|', $params['ticketIDs']);
         foreach ($ticketIDs as $ticketID) {
-            if (!isset($tickets[$ticketID])) {
+            if (!in_array($ticketID, $tickets)) {
                 $this->errAjax(RC::RC_T_INVAILD_TICKET);
             }
         }
