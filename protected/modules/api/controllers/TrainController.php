@@ -157,7 +157,8 @@ class TrainController extends ApiController {
             $tmp['tickets'] = array();
             foreach ($order->tickets as $ticket) {
                 $tmpTicket = UserPassenger::parsePassenger($ticket->passenger);
-                $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('id', 'trainNo', 'departStationCode', 'arriveStationCode', 'departTime', 'arriveTime', 'ticketPrice', 'ticketInfo', 'ticketNo')));
+                $tmpTicket['passengerID'] = $tmpTicket['id'];
+                $tmpTicket = array_merge($tmpTicket, F::arrayGetByKeys($ticket, array('id', 'trainNo', 'departStationCode', 'arriveStationCode', 'departTime', 'arriveTime', 'ticketPrice', 'insurePrice', 'ticketInfo', 'ticketNo')));
                 $tmp['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
                 $tmpTicket['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
                 $tmpTicket['isResign'] = in_array($ticket->status, TrainStatus::getCanResignTicketStatus());

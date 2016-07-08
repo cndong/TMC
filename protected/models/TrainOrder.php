@@ -559,6 +559,7 @@ class TrainOrder extends QActiveRecord {
             $attributes['departTime'] = strtotime($params['departDateTime']);
             $attributes['arriveTime'] = Q_TIME; //需要修改API项目，添加arriveTime字段, strtotime($params['arriveDateTime']);
             $attributes['ticketPrice'] = $passenger['price'] * 100;
+            $attributes['insurePrice'] = $this->insurePrice / $this->passengerNum;
             $attributes['passenger'] = UserPassenger::concatPassenger($realPassenger);
             $attributes['seatType'] = $passenger['seatType'];
             $attributes['status'] = TrainStatus::BOOK_SUCC;
