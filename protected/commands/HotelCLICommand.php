@@ -32,4 +32,28 @@ class HotelCLICommand extends CConsoleCommand {
             echo "OK \n";
         }
     }
+    
+    public function actionUpdateHotelPrice() {
+        ignore_user_abort(); //忽略用户影响
+        set_time_limit(0); //连续运行
+        $time = time() - 24 * 3600;
+        $hotelsAR = Hotel::model() ->findAll(array(
+                                'select' => array( 'hotelId'),
+                                'condition' => "utime < {$time}",
+                                'limit'=>10,
+                        ));
+/*         $hotels = array();
+        $hotelObj = new stdClass;
+        $hotelObj->hotelId = '1';
+        foreach ($hotelsAR as $hotel) {
+            $hotelObj->hotelId = $hotel->hotelId ;
+            $hotels[] = $hotelObj;
+        } */
+        $allLowPrice = Hotel::getAllLowPrice($hotelsAR, array('checkIn'=>date('Y-m-d'), 'checkOut'=>date('Y-m-d', strtotime('+1 day'))));
+        foreach ($hotelsAR as $hotel) {
+            $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time()));
+        }
+        var_dump($allLowPrice);
+    }
+    
 }

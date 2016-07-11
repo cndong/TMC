@@ -54,12 +54,25 @@ class HotelController extends ApiController {
         $criteria->offset = ($params['page']-1)*$criteria->limit;
         
         $hotels = Hotel::model()->findAll($criteria);
-        $allLowPrice = $this->getAllLowPrice($hotels, $params);
+        $rtn = $this->_getHotels($hotels, $params);
         
+        //数量不够再查一次
+        if(count($rtn)<9){
+            $criteria->offset = ($params['page']-1+1)*$criteria->limit;
+            $hotels = Hotel::model()->findAll($criteria);
+            $rtn = array_merge($rtn, $this->_getHotels($hotels, $params));
+        }
+        
+        $this->corAjax(array('hotelList'=>$rtn));
+    }
+    
+    private function _getHotels($hotels, $params){
+        $allLowPrice = Hotel::getAllLowPrice($hotels, $params);
+        $rtn = array();
         foreach ($hotels as $hotel) {
             $hotelArray = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
-            $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ180.jpg');
-            $hotelArray['image'] = $images[rand(0, 1)];
+            $path = "/static/images/pc/hotel/{$hotel->hotelId}.jpg";
+            $hotelArray['image'] = 'http://'.Q_HOST.(is_file(Q_ROOT_PATH.$path) ? $path : '/static/images/api/defaultHotel_MainImage.jpg');
             foreach (Hotel::$starArray as  $key => $stars){
                 foreach ($stars as $star){
                     if($hotelArray['star'] == $star) {
@@ -70,144 +83,8 @@ class HotelController extends ApiController {
             $hotelArray['lowPrice'] = (string) (isset($allLowPrice[$hotel->hotelId]) ? $allLowPrice[$hotel->hotelId] : 0);
             $hotelArray['lowPrice'] && $rtn[] = $hotelArray;
         }
-        
-        //数量不够再查一次
-        if(count($rtn)<10){
-            $criteria->offset = ($params['page']-1+1)*$criteria->limit;
-            $hotels = Hotel::model()->findAll($criteria);
-            $allLowPrice = $this->getAllLowPrice($hotels, $params);
-            
-            foreach ($hotels as $hotel) {
-                $hotelArray = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
-                $images = array('http://userimg.qunar.com/imgs/201501/21/66I5P26rcOOsfY2A6180.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ180.jpg');
-                $hotelArray['image'] = $images[rand(0, 1)];
-                foreach (Hotel::$starArray as  $key => $stars){
-                    foreach ($stars as $star){
-                        if($hotelArray['star'] == $star) {
-                            $hotelArray['star'] = $key; break 2;
-                        }
-                    }
-                }
-                $hotelArray['lowPrice'] = (string) (isset($allLowPrice[$hotel->hotelId]) ? $allLowPrice[$hotel->hotelId] : 0);
-                $hotelArray['lowPrice'] && $rtn[] = $hotelArray;
-            }
-        }
-        
-        $this->corAjax(array('hotelList'=>$rtn));
+        return $rtn;
     }
-    
-    public function getAllLowPrice($hotels, $params){
-        $allLowPrice = $postParamsMulti = array();
-        foreach ($hotels as $hotel) {
-            $cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
-            if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
-                $city = DataHotelCity::getCity($hotel->cityId);
-                $postParamsMulti[$hotel->hotelId] = array('xmlRequest'=>ProviderCNBOOKING::getRequestXML('RatePlanSearch', array(
-                                    'CountryId' => $city['CountryId'],
-                                    'ProvinceId' => $city['ProvinceId'],
-                                    'CityId' => $city['cityCode'],
-                                    'HotelId' => $hotel->hotelId,
-                                    'CheckIn' => $params['checkIn'],
-                                    'CheckOut' => $params['checkOut']
-                            ), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')));
-            }else $allLowPrice[$hotel->hotelId] = $priceArray ? $priceArray[0] : 0;
-        }
-        
-        $results =ProviderCNBOOKING::multiRequest($postParamsMulti);
-        foreach ($results as $hotelId => $res) {
-            $priceArray = array();
-            if(F::isCorrect($res) && $res['data']){
-                if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
-                    $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
-                    if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
-                    //去除[]  breakfastType description
-                    foreach ($rooms as &$room){
-                        if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
-                            if($room['RatePlans']['RatePlanCount'] == 1) $room['RatePlans']['RatePlan'] = array($room['RatePlans']['RatePlan']);
-                            foreach ($room['RatePlans']['RatePlan'] as &$ratePlan){
-                                unset($ratePlan['Description']);
-                                unset($ratePlan['BreakfastType']);
-                            }
-                        }
-                    }
-            
-                    //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
-                    foreach ($rooms as &$room){
-                        if(isset($room['Rates']) && $room['Rates']['RateCount']){
-                            if($room['Rates']['RateCount']==1) $room['Rates']['Rate'] = array($room['Rates']['Rate']);
-                            foreach ($room['Rates']['Rate'] as &$rate) {
-                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
-                                foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
-                                    $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
-                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
-                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
-                                    $priceArray[] = $priceAndStatu['Price'];
-                                }
-                            }
-                        }
-                    }
-            
-                }
-            }
-            sort($priceArray);
-            $cacheKey = $hotelId.$params['checkIn'].$params['checkOut'];
-            Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
-            $allLowPrice[$hotelId] = $priceArray ? $priceArray[0] : 0;
-        }
-        return $allLowPrice;
-    }
-    
-/*     public function getLowPrice($hotel, $params){
-        $cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
-        if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
-            $priceArray= array();
-            $city = DataHotelCity::getCity($hotel->cityId);
-            if(F::isCorrect($res= ProviderCNBOOKING::request('RatePlanSearch',
-                    array(
-                            'CountryId' => $city['CountryId'],
-                            'ProvinceId' => $city['ProvinceId'],
-                            'CityId' => $city['cityCode'],
-                            'HotelId' => $hotel->hotelId,
-                            'CheckIn' => $params['checkIn'],
-                            'CheckOut' => $params['checkOut']
-                    ))) && $res['data']){
-                if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
-                    $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
-                    if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
-                    //去除[]  breakfastType description
-                    foreach ($rooms as &$room){
-                        if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
-                            if($room['RatePlans']['RatePlanCount'] == 1) $room['RatePlans']['RatePlan'] = array($room['RatePlans']['RatePlan']);
-                            foreach ($room['RatePlans']['RatePlan'] as &$ratePlan){
-                                unset($ratePlan['Description']);
-                                unset($ratePlan['BreakfastType']);
-                            }
-                        }
-                    }
-                    
-                    //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
-                    foreach ($rooms as &$room){
-                        if(isset($room['Rates']) && $room['Rates']['RateCount']){
-                            if($room['Rates']['RateCount']==1) $room['Rates']['Rate'] = array($room['Rates']['Rate']);
-                            foreach ($room['Rates']['Rate'] as &$rate) {
-                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
-                                foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
-                                    $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
-                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
-                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
-                                    $priceArray[] = $priceAndStatu['Price'];
-                                }
-                            }
-                        }
-                    }
-            
-                }
-            }
-            sort($priceArray);
-            Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
-        }
-        return $priceArray ? $priceArray[0] : 0;
-    } */
     
     public function actionHotelDetail() {
         if (!($params = F::checkParams($_GET,
@@ -224,8 +101,8 @@ class HotelController extends ApiController {
              $hotel = $hotel->attributes;
              
              //图片
-             $imagesRand = array('http://userimg.qunar.com/imgs/201407/24/Z7-ECTkRKqNNEmJIZ480s.jpg', 'http://userimg.qunar.com/imgs/201310/29/Z7-ECT9IM3eABexaZ480s.jpg');
-             $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' => $imagesRand[rand(0, 1)]);
+             $path = "/static/images/pc/hotel/{$params['hotelId']}.jpg";
+             $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' =>'http://'.Q_HOST.(is_file(Q_ROOT_PATH.$path) ? $path : '/static/images/api/defaultHotel_MainImage.jpg'));
              $hotel['images'] = array($mainImage);
              $hotelImages = HotelImage::model()->findAll("hotelId={$params['hotelId']}");
              foreach ($hotelImages as $hotelImage) {

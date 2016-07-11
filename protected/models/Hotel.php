@@ -188,4 +188,67 @@ class Hotel extends QActiveRecord {
     }
     
     
+    static function getAllLowPrice($hotels, $params){
+        $allLowPrice = $postParamsMulti = array();
+        foreach ($hotels as $hotel) {
+            //$cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
+            $cacheKey = $hotel->hotelId.$params['checkIn'];
+            if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
+                $city = DataHotelCity::getCity($hotel->cityId);
+                $postParamsMulti[$hotel->hotelId] = array('xmlRequest'=>ProviderCNBOOKING::getRequestXML('RatePlanSearch', array(
+                        'CountryId' => $city['CountryId'],
+                        'ProvinceId' => $city['ProvinceId'],
+                        'CityId' => $city['cityCode'],
+                        'HotelId' => $hotel->hotelId,
+                        'CheckIn' => $params['checkIn'],
+                        'CheckOut' => $params['checkOut']
+                ), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')));
+            }else $allLowPrice[$hotel->hotelId] = $priceArray ? $priceArray[0] : 0;
+        }
+    
+        $results =ProviderCNBOOKING::multiRequest($postParamsMulti);
+        foreach ($results as $hotelId => $res) {
+            $priceArray = array();
+            if(F::isCorrect($res) && $res['data']){
+                if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
+                    $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
+                    //去除[]  breakfastType description
+                    foreach ($rooms as &$room){
+                        if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
+                            if($room['RatePlans']['RatePlanCount'] == 1) $room['RatePlans']['RatePlan'] = array($room['RatePlans']['RatePlan']);
+                            foreach ($room['RatePlans']['RatePlan'] as &$ratePlan){
+                                unset($ratePlan['Description']);
+                                unset($ratePlan['BreakfastType']);
+                            }
+                        }
+                    }
+    
+                    //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
+                    foreach ($rooms as &$room){
+                        if(isset($room['Rates']) && $room['Rates']['RateCount']){
+                            if($room['Rates']['RateCount']==1) $room['Rates']['Rate'] = array($room['Rates']['Rate']);
+                            foreach ($room['Rates']['Rate'] as &$rate) {
+                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
+                                foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
+                                    $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
+                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
+                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
+                                    $priceArray[] = $priceAndStatu['Price'];
+                                }
+                            }
+                        }
+                    }
+    
+                }
+            }
+            sort($priceArray);
+            $cacheKey = $hotelId.$params['checkIn'].$params['checkOut'];
+            Q::log($priceArray, 'hotel.price.'.$cacheKey);
+            Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
+            $allLowPrice[$hotelId] = $priceArray ? $priceArray[0] : 0;
+        }
+        return $allLowPrice;
+    }
+    
 }
