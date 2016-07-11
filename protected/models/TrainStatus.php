@@ -155,31 +155,45 @@ class TrainStatus {
         self::APPLY_RFD => array(
             'des' => array('user' => '申请退票'),
             'str' => 'ApplyRfd',
+            'isJumpCheck' => True,
+            'isOrder' => False,
+            'isTicket' => True,
             //'check' => 'isCanApplyRefund',
             'sysHdStatus' => array(self::RFD_PUSHED)
         ),
         self::RFD_PUSHED => array(
             'des' => array('user' => '正在退款'),
             'str' => 'RfdPushed',
+            'isJumpCheck' => True,
+            'isOrder' => False,
+            'isTicket' => True,
             'sysOpStatus' => array(self::RFD_AGREE, self::RFD_REFUSE),
             'btn' => '重新推送'
         ),
         self::RFD_REFUSE => array(
             'des' => array('user' => '退票失败'),
             'str' => 'RfdRefuse',
+            'isJumpCheck' => True,
+            'isOrder' => False,
+            'isTicket' => True,
             'btn' => '拒绝退票',
             'btnColor' => 'danger'
         ),
         self::RFD_AGREE => array(
             'des' => array('user' => '正在退款'),
             'str' => 'RfdAgree',
+            'isJumpCheck' => True,
+            'isOrder' => False,
+            'isTicket' => True,
             'btn' => '同意退票',
             'btnColor' => 'success'
         ),
         self::RFDED => array(
             'des' => array('user' => '已退款'),
             'str' => 'Rfded',
-            'isJumpCheck' => True
+            'isJumpCheck' => True,
+            'isOrder' => False,
+            'isTicket' => True
         ),
     );
 
@@ -263,6 +277,14 @@ class TrainStatus {
     
     public static function getCanRefundTicketStatus() {
         return array(self::BOOK_SUCC, self::RSN_SUCC);
+    }
+    
+    public static function getCanRefundPushTicketStatus() {
+        return array(self::APPLY_RFD);
+    }
+    
+    public static function getCanRefundResTicketStatus() {
+        return array(self::RFD_PUSHED);
     }
     
     public static function getCanRefundedTicketStatus() {

@@ -60,7 +60,10 @@ class Curl {
 	}
 	
 	public function debug() {
-	    Q::isLocalEnv() && $this->initHandler(array(CURLOPT_PROXY => '127.0.0.1:8888'));
+	    if (Q::isLocalEnv()) {
+	       $this->initHandler(array(CURLOPT_PROXY => '127.0.0.1:8888'));
+	    }
+	    
 	    return $this;
 	}
 	

@@ -84,7 +84,8 @@ class F {
     public static function arrayAddField($lines, $field) {
         $rtn = array();
         foreach ($lines as $v) {
-            $rtn[$v[$field]] = $v;
+            $k = is_object($v) ? $v->$field : $v[$field];
+            $rtn[$k] = $v;
         }
     
         return $rtn;

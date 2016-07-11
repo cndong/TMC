@@ -24,7 +24,7 @@ class ProviderT extends Provider {
         return self::getProvider(self::PROVIDER_Q)->pBook($order);
     }
     
-    public static function refund($order, $ticketID) {
-        return self::getProvider(self::PROVIDER_Q)->pRefund($order, $ticketID);
+    public static function refund($order, $ticket) {
+        return self::getProvider(self::PROVIDER_Q)->pRefund($order, $ticket);
     }
 }

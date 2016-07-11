@@ -233,6 +233,10 @@ class TrainController extends ApiController {
             }
         }
         
-        $this->onAjax($order->changeStatus(TrainStatus::APPLY_RFD, array('ticketIDs' => $ticketIDs)));
+        if (F::isCorrect($res = $order->changeStatus(TrainStatus::APPLY_RFD, array('ticketIDs' => $ticketIDs)))) {
+            $tmp = $order->changeStatus(TrainStatus::RFD_PUSHED, array('ticketIDs' => $ticketIDs, 'operaterID' => Dict::OPERATER_SYSTEM));
+        }
+        
+        $this->onAjax($res);
     }
 }

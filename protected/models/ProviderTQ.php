@@ -9,6 +9,7 @@ class ProviderTQ extends ProviderT {
         'trainList' => array('url' => '/Train/TrainList'),
         'stopList' => array('url' => '/Train/PassStationList'),
         'book' => array('url' => '/Train/CreateOrder', 'method' => 'POST'),
+        'refund' => array('url' => '/Train/ApplyRefund')
     );
     
     private function _request($type, $data = array()) {
@@ -26,7 +27,7 @@ class ProviderTQ extends ProviderT {
             $data = array();
         }
         
-        if (!Curl::isCorrect($res = $this->_curl->$method($url, $data))) {
+        if (!Curl::isCorrect($res = $this->_curl->debug()->$method($url, $data))) {
             return F::errReturn(F::getCurlError($res));
         }
         
@@ -122,7 +123,12 @@ class ProviderTQ extends ProviderT {
         return $this->_request('book', $params);
     }
     
-    public function pRefund($order, $ticketID) {
+    public function pRefund($order, $ticket) {
+        $params = array(
+            'orderID' => $order->providerOID,
+            'passengerID' => $ticket->providerPassengerID
+        );
         
+        return $this->_request('refund', $params);
     }
 }
