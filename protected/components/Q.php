@@ -156,7 +156,7 @@ class Q {
         $backtrace = debug_backtrace();
         $title = !isset($args[1]) ? date("Y-m-d H:i:s"): date("Y-m-d H:i:s").' ['.$args[1].'] ';
         $log=(!$args[0])?'empty $log':$args[0];
-        if(is_array($log)) $log =  json_encode($log);
+        if(is_array($log)) $log =  var_export($log, true);
         if(is_object($log)) {
             //$log = (array)($log);
             $log = get_object_vars($log);

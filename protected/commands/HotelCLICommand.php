@@ -4,10 +4,11 @@ class HotelCLICommand extends CConsoleCommand {
     
     //更新所有酒店(遍历城市) /dragon/bin/php-5.3.28/bin/php /dragon/webapp/tmc/ScriptCLI.php HotelCLI updatehotels
     public function actionUpdateHotels() {
+        ini_set('memory_limit', '512M');
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
         $cityList = DataHotelCity::getCities();
-        $res;
+        $res = $hotels = array();
         //Q::log($cityList, 'Hotel._UpdateHotel.$cityList');
         foreach ($cityList as $city) {
             echo "{$city['cityCode']}  "." \n";
@@ -25,7 +26,7 @@ class HotelCLICommand extends CConsoleCommand {
                             Hotel::saveDB($hotel);
                             //break 2;
                         }
-                      }else Q::log($res, 'Hotel.HotelSearch.UpdateHotels.Hotels.None');
+                      }else Q::realtimeLog($res, 'Hotel.HotelSearch.UpdateHotels.Hotels.None');
                  }else $searchEnd = true;
             }
             

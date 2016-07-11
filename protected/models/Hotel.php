@@ -84,7 +84,7 @@ class Hotel extends QActiveRecord {
                             break;
                         }
                     }
-                }else Q::log($res, 'Hotel.HotelSearch.getHotelFromCity.Hotels.None');
+                }else Q::realtimeLog($res, 'Hotel.HotelSearch.getHotelFromCity.Hotels.None');
             }else $searchEnd = true;
         }
     }
@@ -108,29 +108,32 @@ class Hotel extends QActiveRecord {
             $return = false;
             if(is_array($hotelInput['HotelName'])) {
                 $hotelInput['HotelName'] = isset($hotelInput['HotelName'][0]) ? $hotelInput['HotelName'][0] : '';
-                Q::log($hotelInput['HotelName'], 'Hotel._UpdateHotel.HotelName.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['HotelName'], 'Hotel._UpdateHotel.HotelName.Error.'.$hotelInput['HotelId']);
             }
             if(is_array($hotelInput['Address'])) {
                 $hotelInput['Address'] = isset($hotelInput['Address'][0]) ? $hotelInput['Address'][0] : '';
-                Q::log($hotelInput['Address'], 'Hotel._UpdateHotel.Address.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['Address'], 'Hotel._UpdateHotel.Address.Error.'.$hotelInput['HotelId']);
             }
             if(is_array($hotelInput['Reserve2'])) {
                 $hotelInput['telephone'] = isset($hotelInput['Reserve2'][0]) ? $hotelInput['Reserve2'][0] : '';
-                Q::log($hotelInput['Reserve2'], 'Hotel._UpdateHotel.Reserve2.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['Reserve2'], 'Hotel._UpdateHotel.Reserve2.Error.'.$hotelInput['HotelId']);
             }else $hotelInput['telephone'] = $hotelInput['Reserve2'];
             if(is_array($hotelInput['Intro'])) {
                 $hotelInput['Intro'] = isset($hotelInput['Intro'][0]) ? $hotelInput['Intro'][0] : '';
-                Q::log($hotelInput['Intro'], 'Hotel._UpdateHotel.Intro.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['Intro'], 'Hotel._UpdateHotel.Intro.Error.'.$hotelInput['HotelId']);
             }
             if(isset($hotelInput['Email'])) unset($hotelInput['Email']);
             if(isset($hotelInput['PostCode'])) unset($hotelInput['PostCode']);
             if(isset($hotelInput['Guide'])) unset($hotelInput['Guide']);
+            if(isset($hotelInput['StartBusinessDate'])) unset($hotelInput['StartBusinessDate']);
+            if(isset($hotelInput['Repairdate'])) unset($hotelInput['Repairdate']);
+            
             foreach ($hotelInput as $key => $value) {
-                $hotelInput[lcfirst($key)] = $value;
-                if(!is_string($value)){
-                    Q::realtimeLog(json_encode($hotelInput), 'Hotel.saveDB.Error.array_value.'.$key);
+                if($key!='Reserve1' && $key!='Landmarks' && !is_string($value)){
+                    Q::realtimeLog(json_encode($value), 'Hotel.saveDB.Error.array_value.'.$key);
                     return $return;
                 }
+                $hotelInput[lcfirst($key)] = $value;
             }
             $hotelInput['lon'] = floatval($hotelInput['lon']);
             $hotelInput['lat'] = floatval($hotelInput['lat']);
@@ -142,16 +145,16 @@ class Hotel extends QActiveRecord {
                 $hotel  = $hotel ? $hotel : new Hotel();
                 $hotel->attributes = $hotelInput;
                 if(!$hotel->save()){
-                    Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
+                    Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), "Hotel.{$hotelInput['HotelId']}.saveDB.Error");
                 }else {
                     self::setImages($hotel, $hotelInput['Reserve1']);
                     self::setLandmarks($hotel, $hotelInput['Landmarks']);
-                    Q::realtimeLog($hotel->hotelId, 'Hotel.saveDB.OK');
+                    Q::realtimeLog($hotel->hotelId, "Hotel.{$hotelInput['HotelId']}.saveDB.OK");
                     $return = true;
                 }
                 $trans->commit();
             } catch (Exception $e) {
-                Q::log($e->getMessage(), 'dberror.changeStatus');
+                Q::realtimeLog($e->getMessage(), "Hotel.{$hotelInput['HotelId']}.saveDB.Tranerror");
                 $trans->rollback();
             }
             return $return;
@@ -189,7 +192,7 @@ class Hotel extends QActiveRecord {
                     $hotelLandmark->hotelId = $hotel->hotelId;
                     $hotelLandmark->save();
                 }
-            }else Q::log($landmarks['Landmark'], 'Hotel.setLandmarks.Error');
+            }else Q::realtimeLog($landmarks['Landmark'], 'Hotel.setLandmarks.Error');
         }
         return $return;
     }
