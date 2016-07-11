@@ -122,8 +122,15 @@ class Hotel extends QActiveRecord {
                 $hotelInput['Intro'] = isset($hotelInput['Intro'][0]) ? $hotelInput['Intro'][0] : '';
                 Q::log($hotelInput['Intro'], 'Hotel._UpdateHotel.Intro.Error.'.$hotelInput['HotelId']);
             }
+            if(isset($hotelInput['Email'])) unset($hotelInput['Email']);
+            if(isset($hotelInput['PostCode'])) unset($hotelInput['PostCode']);
+            if(isset($hotelInput['Guide'])) unset($hotelInput['Guide']);
             foreach ($hotelInput as $key => $value) {
                 $hotelInput[lcfirst($key)] = $value;
+                if(!is_string($value)){
+                    Q::realtimeLog(json_encode($hotelInput), 'Hotel.saveDB.Error.array_value.'.$key);
+                    return $return;
+                }
             }
             $hotelInput['lon'] = floatval($hotelInput['lon']);
             $hotelInput['lat'] = floatval($hotelInput['lat']);
@@ -169,7 +176,7 @@ class Hotel extends QActiveRecord {
     
     static  function setLandmarks($hotel, $landmarks) {
         $return = '';
-        if(isset($landmarks['Landmark']) && $landmarks['Landmark']){
+        if(isset($landmarks['Landmark']) && $landmarks['LandmarkCount']>0){
             if(is_array($landmarks['Landmark'])){
                 foreach ($landmarks['Landmark'] as $key => $value) {
                     if(in_array($value['LandName'], array('机场', '地铁', '高速公路', '火车站', '火车站', '公交车站', '会展中心'))) unset($landmarks['Landmark'][$key]);
@@ -182,7 +189,7 @@ class Hotel extends QActiveRecord {
                     $hotelLandmark->hotelId = $hotel->hotelId;
                     $hotelLandmark->save();
                 }
-            }else Q::log($landmarks['Landmark'], 'Hotel..setLandmarks.Error');
+            }else Q::log($landmarks['Landmark'], 'Hotel.setLandmarks.Error');
         }
         return $return;
     }
