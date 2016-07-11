@@ -149,15 +149,20 @@ class ProviderCNBOOKING{
         $sequenceID = Q::getUniqueID();
         $dateTime = date('Y-m-d H:i:s', Q_TIME);
         $xml = str_replace(array("\n", "\r\r", "\t", '    '), '', $xml);
+        $AppId = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['AppId'];
+        $SecurityKey = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['SecurityKey'];
+        $UserName = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['UserName'];
+        $PassWord = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['PassWord'];
+        $Signature = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['Signature'];
         return <<<EOF
 <CNRequest>
      <ActionName>{$actionName}</ActionName>
      <IdentityInfo>
-         <AppId>1</AppId>
-         <SecurityKey>369b469c-51b2-43cd-9677-934ca17f2651</SecurityKey>
-         <UserName>EN000001</UserName>
-         <PassWord>E10ADC3949BA59ABBE56E057F20F883E</PassWord>
-         <Signature>RU4wMDAwMDFFMTBBREMzOTQ5QkE1OUFCQkU1NkUwNTdGMjBGODgzRTM2OWI0NjljLTUxYjItNDNjZC05Njc3LTkzNGNhMTdmMjY1MQ==</Signature>
+         <AppId>{$AppId}</AppId>
+         <SecurityKey>{$SecurityKey}</SecurityKey>
+         <UserName>{$UserName}</UserName>
+         <PassWord>{$PassWord}</PassWord>
+         <Signature>{$Signature}</Signature>
      </IdentityInfo>
      <ScrollingInfo>
         <DisplayReq>{$scrollingInfo['DisplayReq']}</DisplayReq>

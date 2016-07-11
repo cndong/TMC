@@ -192,7 +192,7 @@ class Hotel extends QActiveRecord {
         $allLowPrice = $postParamsMulti = array();
         foreach ($hotels as $hotel) {
             //$cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
-            $cacheKey = $hotel->hotelId.$params['checkIn'];
+            $cacheKey = $hotel->hotelId.'|'.$params['checkIn'];
             if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
                 $city = DataHotelCity::getCity($hotel->cityId);
                 $postParamsMulti[$hotel->hotelId] = array('xmlRequest'=>ProviderCNBOOKING::getRequestXML('RatePlanSearch', array(
@@ -243,7 +243,7 @@ class Hotel extends QActiveRecord {
                 }
             }
             sort($priceArray);
-            $cacheKey = $hotelId.$params['checkIn'].$params['checkOut'];
+            $cacheKey = $hotelId.'|'.$params['checkIn'];
             Q::log($priceArray, 'hotel.price.'.$cacheKey);
             Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
             $allLowPrice[$hotelId] = $priceArray ? $priceArray[0] : 0;
