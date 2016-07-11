@@ -4,10 +4,11 @@ class HotelCLICommand extends CConsoleCommand {
     
     //更新所有酒店(遍历城市) /dragon/bin/php-5.3.28/bin/php /dragon/webapp/tmc/ScriptCLI.php HotelCLI updatehotels
     public function actionUpdateHotels() {
+        ini_set('memory_limit', '512M');
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
         $cityList = DataHotelCity::getCities();
-        $res;
+        $res = $hotels = array();
         //Q::log($cityList, 'Hotel._UpdateHotel.$cityList');
         foreach ($cityList as $city) {
             echo "{$city['cityCode']}  "." \n";
@@ -25,11 +26,38 @@ class HotelCLICommand extends CConsoleCommand {
                             Hotel::saveDB($hotel);
                             //break 2;
                         }
-                      }else Q::log($res, 'Hotel.HotelSearch.UpdateHotels.Hotels.None');
+                      }else Q::realtimeLog($res, 'Hotel.HotelSearch.UpdateHotels.Hotels.None');
                  }else $searchEnd = true;
             }
             
             echo "OK \n";
         }
     }
+    
+    // D:/xampp/php/php.exe D:/www/TMC/ScriptCLI.php HotelCLI UpdateHotelPrice
+    public function actionUpdateHotelPrice() {
+        ignore_user_abort(); //忽略用户影响
+        set_time_limit(0); //连续运行
+        $time = time() - 24 * 3600;
+        $hotelsAR = Hotel::model() ->findAll(array(
+                                'select' => array( 'hotelId'),
+                                'condition' => "utime < {$time}",
+                                'limit'=>10,
+                        ));
+/*         $hotels = array();
+        $hotelObj = new stdClass;
+        $hotelObj->hotelId = '1';
+        foreach ($hotelsAR as $hotel) {
+            $hotelObj->hotelId = $hotel->hotelId ;
+            $hotels[] = $hotelObj;
+        } */
+        echo 'go!----------'.date('m-d H:i:s').'----------';
+        $allLowPrice = Hotel::getAllLowPrice($hotelsAR, array('checkIn'=>date('Y-m-d'), 'checkOut'=>date('Y-m-d', strtotime('+1 day'))));
+        foreach ($hotelsAR as $hotel) {
+            $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time()));
+        }
+        var_dump($allLowPrice);
+        echo 'end----------'.date('m-d H:i:s').'----------'."\n"."\n";
+    }
+    
 }

@@ -84,7 +84,7 @@ class Hotel extends QActiveRecord {
                             break;
                         }
                     }
-                }else Q::log($res, 'Hotel.HotelSearch.getHotelFromCity.Hotels.None');
+                }else Q::realtimeLog($res, 'Hotel.HotelSearch.getHotelFromCity.Hotels.None');
             }else $searchEnd = true;
         }
     }
@@ -108,21 +108,31 @@ class Hotel extends QActiveRecord {
             $return = false;
             if(is_array($hotelInput['HotelName'])) {
                 $hotelInput['HotelName'] = isset($hotelInput['HotelName'][0]) ? $hotelInput['HotelName'][0] : '';
-                Q::log($hotelInput['HotelName'], 'Hotel._UpdateHotel.HotelName.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['HotelName'], 'Hotel._UpdateHotel.HotelName.Error.'.$hotelInput['HotelId']);
             }
             if(is_array($hotelInput['Address'])) {
                 $hotelInput['Address'] = isset($hotelInput['Address'][0]) ? $hotelInput['Address'][0] : '';
-                Q::log($hotelInput['Address'], 'Hotel._UpdateHotel.Address.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['Address'], 'Hotel._UpdateHotel.Address.Error.'.$hotelInput['HotelId']);
             }
             if(is_array($hotelInput['Reserve2'])) {
                 $hotelInput['telephone'] = isset($hotelInput['Reserve2'][0]) ? $hotelInput['Reserve2'][0] : '';
-                Q::log($hotelInput['Reserve2'], 'Hotel._UpdateHotel.Reserve2.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['Reserve2'], 'Hotel._UpdateHotel.Reserve2.Error.'.$hotelInput['HotelId']);
             }else $hotelInput['telephone'] = $hotelInput['Reserve2'];
             if(is_array($hotelInput['Intro'])) {
                 $hotelInput['Intro'] = isset($hotelInput['Intro'][0]) ? $hotelInput['Intro'][0] : '';
-                Q::log($hotelInput['Intro'], 'Hotel._UpdateHotel.Intro.Error.'.$hotelInput['HotelId']);
+                Q::realtimeLog($hotelInput['Intro'], 'Hotel._UpdateHotel.Intro.Error.'.$hotelInput['HotelId']);
             }
+            if(isset($hotelInput['Email'])) unset($hotelInput['Email']);
+            if(isset($hotelInput['PostCode'])) unset($hotelInput['PostCode']);
+            if(isset($hotelInput['Guide'])) unset($hotelInput['Guide']);
+            if(isset($hotelInput['StartBusinessDate'])) unset($hotelInput['StartBusinessDate']);
+            if(isset($hotelInput['Repairdate'])) unset($hotelInput['Repairdate']);
+            
             foreach ($hotelInput as $key => $value) {
+                if($key!='Reserve1' && $key!='Landmarks' && !is_string($value)){
+                    Q::realtimeLog(json_encode($value), 'Hotel.saveDB.Error.array_value.'.$key);
+                    return $return;
+                }
                 $hotelInput[lcfirst($key)] = $value;
             }
             $hotelInput['lon'] = floatval($hotelInput['lon']);
@@ -135,16 +145,16 @@ class Hotel extends QActiveRecord {
                 $hotel  = $hotel ? $hotel : new Hotel();
                 $hotel->attributes = $hotelInput;
                 if(!$hotel->save()){
-                    Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), 'Hotel.saveDB.Error');
+                    Q::realtimeLog(json_encode($hotel->attributes).json_encode($hotel->getErrors()), "Hotel.{$hotelInput['HotelId']}.saveDB.Error");
                 }else {
                     self::setImages($hotel, $hotelInput['Reserve1']);
                     self::setLandmarks($hotel, $hotelInput['Landmarks']);
-                    Q::realtimeLog($hotel->hotelId, 'Hotel.saveDB.OK');
+                    Q::realtimeLog($hotel->hotelId, "Hotel.{$hotelInput['HotelId']}.saveDB.OK");
                     $return = true;
                 }
                 $trans->commit();
             } catch (Exception $e) {
-                Q::log($e->getMessage(), 'dberror.changeStatus');
+                Q::realtimeLog($e->getMessage(), "Hotel.{$hotelInput['HotelId']}.saveDB.Tranerror");
                 $trans->rollback();
             }
             return $return;
@@ -169,7 +179,7 @@ class Hotel extends QActiveRecord {
     
     static  function setLandmarks($hotel, $landmarks) {
         $return = '';
-        if(isset($landmarks['Landmark']) && $landmarks['Landmark']){
+        if(isset($landmarks['Landmark']) && $landmarks['LandmarkCount']>0){
             if(is_array($landmarks['Landmark'])){
                 foreach ($landmarks['Landmark'] as $key => $value) {
                     if(in_array($value['LandName'], array('机场', '地铁', '高速公路', '火车站', '火车站', '公交车站', '会展中心'))) unset($landmarks['Landmark'][$key]);
@@ -182,10 +192,73 @@ class Hotel extends QActiveRecord {
                     $hotelLandmark->hotelId = $hotel->hotelId;
                     $hotelLandmark->save();
                 }
-            }else Q::log($landmarks['Landmark'], 'Hotel..setLandmarks.Error');
+            }else Q::realtimeLog($landmarks['Landmark'], 'Hotel.setLandmarks.Error');
         }
         return $return;
     }
     
+    
+    static function getAllLowPrice($hotels, $params){
+        $allLowPrice = $postParamsMulti = array();
+        foreach ($hotels as $hotel) {
+            //$cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
+            $cacheKey = $hotel->hotelId.'|'.$params['checkIn'];
+            if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
+                $city = DataHotelCity::getCity($hotel->cityId);
+                $postParamsMulti[$hotel->hotelId] = array('xmlRequest'=>ProviderCNBOOKING::getRequestXML('RatePlanSearch', array(
+                        'CountryId' => $city['CountryId'],
+                        'ProvinceId' => $city['ProvinceId'],
+                        'CityId' => $city['cityCode'],
+                        'HotelId' => $hotel->hotelId,
+                        'CheckIn' => $params['checkIn'],
+                        'CheckOut' => $params['checkOut']
+                ), $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')));
+            }else $allLowPrice[$hotel->hotelId] = $priceArray ? $priceArray[0] : 0;
+        }
+    
+        $results =ProviderCNBOOKING::multiRequest($postParamsMulti);
+        foreach ($results as $hotelId => $res) {
+            $priceArray = array();
+            if(F::isCorrect($res) && $res['data']){
+                if(is_array($res['data']['Hotels']) && isset($res['data']['Hotels']['Hotel']['Rooms']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
+                    $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
+                    if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
+                    //去除[]  breakfastType description
+                    foreach ($rooms as &$room){
+                        if(isset($room['RatePlans']) && $room['RatePlans']['RatePlanCount']){
+                            if($room['RatePlans']['RatePlanCount'] == 1) $room['RatePlans']['RatePlan'] = array($room['RatePlans']['RatePlan']);
+                            foreach ($room['RatePlans']['RatePlan'] as &$ratePlan){
+                                unset($ratePlan['Description']);
+                                unset($ratePlan['BreakfastType']);
+                            }
+                        }
+                    }
+    
+                    //Rate PriceAndStatu json单层就转化为对象! 多层就转化成数组 我要数组!!!
+                    foreach ($rooms as &$room){
+                        if(isset($room['Rates']) && $room['Rates']['RateCount']){
+                            if($room['Rates']['RateCount']==1) $room['Rates']['Rate'] = array($room['Rates']['Rate']);
+                            foreach ($room['Rates']['Rate'] as &$rate) {
+                                if($rate['PriceAndStatus']['PriceAndStatuCount']==1) $rate['PriceAndStatus']['PriceAndStatu'] = array($rate['PriceAndStatus']['PriceAndStatu']);
+                                foreach ($rate['PriceAndStatus']['PriceAndStatu'] as &$priceAndStatu) {
+                                    $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
+                                    if(!Q::isProductEnv()) $priceAndStatu['Count'] = rand(0, 10);
+                                    if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
+                                    $priceArray[] = $priceAndStatu['Price'];
+                                }
+                            }
+                        }
+                    }
+    
+                }
+            }
+            sort($priceArray);
+            $cacheKey = $hotelId.'|'.$params['checkIn'];
+            Q::log($priceArray, 'hotel.price.'.$cacheKey);
+            Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
+            $allLowPrice[$hotelId] = $priceArray ? $priceArray[0] : 0;
+        }
+        return $allLowPrice;
+    }
     
 }

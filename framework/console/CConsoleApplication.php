@@ -65,6 +65,7 @@ class CConsoleApplication extends CApplication
 	 * </pre>
 	 */
 	public $commandMap=array();
+	public $defaultController='';
 
 	private $_commandPath;
 	private $_runner;
