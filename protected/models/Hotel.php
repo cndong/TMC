@@ -210,7 +210,7 @@ class Hotel extends QActiveRecord {
         foreach ($results as $hotelId => $res) {
             $priceArray = array();
             if(F::isCorrect($res) && $res['data']){
-                if(is_array($res['data']['Hotels']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
+                if(is_array($res['data']['Hotels']) && isset($res['data']['Hotels']['Hotel']['Rooms']) && is_array($res['data']['Hotels']['Hotel']['Rooms']['Room'])){
                     $rooms  =  $res['data']['Hotels']['Hotel']['Rooms']['Room'];
                     if(isset($res['data']['Hotels']['Hotel']['Rooms']['RoomCount']) && $res['data']['Hotels']['Hotel']['Rooms']['RoomCount'] ==1)  $rooms = array($rooms);
                     //去除[]  breakfastType description

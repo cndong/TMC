@@ -33,6 +33,7 @@ class HotelCLICommand extends CConsoleCommand {
         }
     }
     
+    // D:/xampp/php/php.exe D:/www/TMC/ScriptCLI.php HotelCLI UpdateHotelPrice
     public function actionUpdateHotelPrice() {
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
@@ -49,11 +50,13 @@ class HotelCLICommand extends CConsoleCommand {
             $hotelObj->hotelId = $hotel->hotelId ;
             $hotels[] = $hotelObj;
         } */
+        echo 'go!----------'.date('m-d H:i:s').'----------';
         $allLowPrice = Hotel::getAllLowPrice($hotelsAR, array('checkIn'=>date('Y-m-d'), 'checkOut'=>date('Y-m-d', strtotime('+1 day'))));
         foreach ($hotelsAR as $hotel) {
             $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time()));
         }
         var_dump($allLowPrice);
+        echo 'end----------'.date('m-d H:i:s').'----------'."\n"."\n";
     }
     
 }
