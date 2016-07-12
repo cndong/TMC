@@ -55,7 +55,6 @@ class HotelController extends ApiController {
         
         $hotels = Hotel::model()->findAll($criteria);
         $rtn = $this->_getHotels($hotels, $params);
-        
         //数量不够再查一次
         if(count($rtn)<9){
             $criteria->offset = ($params['page']-1+1)*$criteria->limit;
@@ -116,7 +115,7 @@ class HotelController extends ApiController {
                  $hotel['landmarks'][] = F::arrayGetByKeys($hotelLandmark, array('Landid', 'LandName'));
              }
              
-            $hotel['rooms'] = array();
+            $hotel['rooms'] = $priceArray = array();
             $city = DataHotelCity::getCity($hotel['cityId']);
             if(F::isCorrect($res= ProviderCNBOOKING::request('RatePlanSearch',
                     array(
@@ -152,6 +151,7 @@ class HotelController extends ApiController {
                                     $priceAndStatu['LastCancelTime'] = $priceAndStatu['LastCancelTime'] && strtotime($priceAndStatu['LastCancelTime']) > time() ? $priceAndStatu['LastCancelTime'] : '';
                                     if(!Q::isProductEnv()) $priceAndStatu['Count'] = (string)rand(0, 10);
                                     if(!Q::isProductEnv()) if(rand(0, 10)>5) $priceAndStatu['LastCancelTime'] = date('Y/n/d G:i:s', time()+3600);
+                                    $priceArray[] = $priceAndStatu['Price'];
                                 }
                             }
                         }
@@ -159,6 +159,8 @@ class HotelController extends ApiController {
                     
                     $hotel['rooms'] = F::changeArrKey($rooms);
                 }
+                sort($priceArray);
+                Hotel::setLowPrice($params['hotelId'], array_merge($params, array('cityId'=>$city['cityCode'])), $priceArray, false);
             }
             $this->corAjax(array('hotelDetail'=>$hotel));
         }

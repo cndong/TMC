@@ -165,7 +165,7 @@ class Q {
         if(is_resource($log)) $log ='is_resource';
         $log.=' [FileLine] '.$backtrace[0]['file'].$backtrace[0]['line'].' ';
         //$fp = @fopen("D:/www/theone/protected/runtime/LogFile.txt", "a");
-        $path = realpath(Yii::app()->getRuntimePath()).DIRECTORY_SEPARATOR.'retimeLog.txt';
+        $path = realpath(Yii::app()->getRuntimePath()).DIRECTORY_SEPARATOR.'retimeLog'.date('m-d').'.txt';
         $fp = fopen($path, "a");
         @flock($fp, LOCK_EX);
         //fwrite($fp, $title."\r\n");

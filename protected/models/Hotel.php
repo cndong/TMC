@@ -37,6 +37,9 @@ class Hotel extends QActiveRecord {
             '011012' => '八早',
     );
     
+    static $cityLowPriceKeyPrefix = 'CityLowPrice';
+    static $lowPriceKeyPrefix = 'LowPrice';
+    
     public static function model($className=__CLASS__){
         return parent::model($className);
     }
@@ -130,7 +133,7 @@ class Hotel extends QActiveRecord {
             
             foreach ($hotelInput as $key => $value) {
                 if($key!='Reserve1' && $key!='Landmarks' && !is_string($value)){
-                    Q::realtimeLog(json_encode($value), 'Hotel.saveDB.Error.array_value.'.$key);
+                    Q::realtimeLog(json_encode($value), 'Hotel.saveDB.Error.array_value.'.$hotelInput['HotelId'].'.'.$key);
                     return $return;
                 }
                 $hotelInput[lcfirst($key)] = $value;
@@ -139,7 +142,7 @@ class Hotel extends QActiveRecord {
             $hotelInput['lat'] = floatval($hotelInput['lat']);
         
             $hotel = Hotel::model()->findByPk($hotelInput['HotelId']);
-            //if($hotel) return true;
+            if($hotel) return true;
             $trans = Yii::app()->db->beginTransaction();
             try {
                 $hotel  = $hotel ? $hotel : new Hotel();
@@ -182,7 +185,7 @@ class Hotel extends QActiveRecord {
         if(isset($landmarks['Landmark']) && $landmarks['LandmarkCount']>0){
             if(is_array($landmarks['Landmark'])){
                 foreach ($landmarks['Landmark'] as $key => $value) {
-                    if(in_array($value['LandName'], array('机场', '地铁', '高速公路', '火车站', '火车站', '公交车站', '会展中心'))) unset($landmarks['Landmark'][$key]);
+                    if(in_array($value['LandName'], array('市中心', '机场', '地铁', '高速公路', '火车站', '火车站', '公交车站', '会展中心'))) unset($landmarks['Landmark'][$key]);
                 }
                 HotelLandmark::model()->deleteAll("hotelId={$hotel->hotelId}");
                 $landmarks = $landmarks['Landmark'];
@@ -197,14 +200,50 @@ class Hotel extends QActiveRecord {
         return $return;
     }
     
+   //$params = array('checkIn'=>'2016-07-20', 'checkOut'=>'2016-07-21',  'cityId' => '0101')
+    static function getLowPrice($hotelId, $params){
+        $cacheKey = self::$lowPriceKeyPrefix.$hotelId.$params['checkIn'].$params['checkOut'];
+        if($priceArray = Yii::app()->cache->get($cacheKey)){
+        }else if(isset($params['cityId'])){
+            if($priceCityArray = self::getCityLowPrice($params['cityId'])){
+                if(isset($priceCityArray[$hotelId])){
+                    $priceArray = $priceCityArray[$hotelId];
+                }
+            }
+        }
+        return $priceArray;
+    }
     
+    static function setLowPrice($hotelId, $params, $priceArray, $fuzzy = true){
+        $cacheKey = self::$lowPriceKeyPrefix.$hotelId.$params['checkIn'].$params['checkOut'];
+        Yii::app()->cache->set($cacheKey, $priceArray, 48*3600);
+        if(isset($params['cityId']) && $fuzzy){
+            if($priceCityArray = self::getCityLowPrice($params['cityId'])){
+                $priceCityArray[$hotelId] = $priceArray;
+            }else $priceCityArray = array($hotelId=>$priceArray);
+            self::setCityLowPrice($params['cityId'], $priceCityArray);
+        }
+    }
+    
+    static function getCityLowPrice($cityId){
+        $cacheKey = self::$cityLowPriceKeyPrefix.$cityId;
+        return Yii::app()->cache->get($cacheKey);
+    }
+    
+    //设置城市价格缓存
+    static function setCityLowPrice($cityId, $priceCityArray){
+        $cacheKey = self::$cityLowPriceKeyPrefix.$cityId;
+        return Yii::app()->cache->set($cacheKey, $priceCityArray);
+    }
+    
+    
+    // $fuzzy 模糊查询 只为获得一个缓存的最低价 无需精确到入职/离开日期
     static function getAllLowPrice($hotels, $params){
-        $allLowPrice = $postParamsMulti = array();
+        $allLowPrice = $postParamsMulti =  $city = $cacheCitys= array();
         foreach ($hotels as $hotel) {
-            //$cacheKey = $hotel->hotelId.$params['checkIn'].$params['checkOut'];
-            $cacheKey = $hotel->hotelId.'|'.$params['checkIn'];
-            if (($priceArray = Yii::app()->cache->get($cacheKey)) === false) {
-                $city = DataHotelCity::getCity($hotel->cityId);
+            $city = DataHotelCity::getCity($hotel->cityId);
+            $cacheCitys[$hotel->hotelId] = $city['cityCode'];
+            if (($priceArray = self::getLowPrice($hotel->hotelId, array_merge($params, array('cityId' => $cacheCitys[$hotel->hotelId])))) === false) {
                 $postParamsMulti[$hotel->hotelId] = array('xmlRequest'=>ProviderCNBOOKING::getRequestXML('RatePlanSearch', array(
                         'CountryId' => $city['CountryId'],
                         'ProvinceId' => $city['ProvinceId'],
@@ -253,9 +292,7 @@ class Hotel extends QActiveRecord {
                 }
             }
             sort($priceArray);
-            $cacheKey = $hotelId.'|'.$params['checkIn'];
-            Q::log($priceArray, 'hotel.price.'.$cacheKey);
-            Yii::app()->cache->set($cacheKey, $priceArray, 3600*72);
+            self::setLowPrice($hotelId, array_merge($params, array('cityId'=>$cacheCitys[$hotelId])), $priceArray);
             $allLowPrice[$hotelId] = $priceArray ? $priceArray[0] : 0;
         }
         return $allLowPrice;

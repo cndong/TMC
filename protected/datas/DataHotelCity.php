@@ -1,6 +1,8 @@
 <?php
 class DataHotelCity {
     public static function getCities() {
+        static $hotelCitys = array();
+        if($hotelCitys) return $hotelCitys;
         $cacheKey = KeyManager::getHotelCitiesKey();
         if (!($hotelCitys = Yii::app()->cache->get($cacheKey))) {
             $hotelCitys = array();
