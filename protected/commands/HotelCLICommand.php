@@ -2,7 +2,7 @@
 class HotelCLICommand extends CConsoleCommand {
     
     
-    //更新所有酒店(遍历城市) /dragon/bin/php-5.3.28/bin/php /dragon/webapp/tmc/ScriptCLI.php HotelCLI updatehotels
+    //更新所有酒店(遍历城市) /dragon/bin/php-5.3.28/bin/php /dragon/webapp/tmc/ScriptCLI.php HotelCLI Updatehotels
     public function actionUpdateHotels() {
         ini_set('memory_limit', '1024M');
         ignore_user_abort(); //忽略用户影响
@@ -51,7 +51,7 @@ class HotelCLICommand extends CConsoleCommand {
             $hotels[] = $hotelObj;
         } */
         echo 'go!----------'.date('m-d H:i:s').'----------';
-        $allLowPrice = Hotel::getAllLowPrice($hotelsARs, array('checkIn'=>date('Y-m-d'), 'checkOut'=>date('Y-m-d', strtotime('+1 day'))));
+        $allLowPrice = Hotel::getAllLowPrice($hotelsARs, array('checkIn'=>date('Y-m-d', strtotime('+1 day')), 'checkOut'=>date('Y-m-d', strtotime('+2 day'))));
         foreach ($hotelsARs as $hotel) {
             $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time()));
         }
