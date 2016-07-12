@@ -161,6 +161,7 @@ class TrainController extends ApiController {
                 $tmpTicket['seatType'] = DictTrain::$seatTypes[$ticket->seatType]['name'];
                 $tmpTicket['isResign'] = in_array($ticket->status, TrainStatus::getCanResignTicketStatus());
                 $tmpTicket['isRefund'] = in_array($ticket->status, TrainStatus::getCanRefundTicketStatus());
+                $tmpTicket['status'] = TrainStatus::getUserDes($ticket->status);
                 $tmp['tickets'][] = $tmpTicket;
             }
 

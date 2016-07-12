@@ -162,7 +162,7 @@ class TrainStatus {
             'sysHdStatus' => array(self::RFD_PUSHED)
         ),
         self::RFD_PUSHED => array(
-            'des' => array('user' => '正在退款'),
+            'des' => array('user' => '申请退票', 'admin' => '申请退票，待推送'),
             'str' => 'RfdPushed',
             'isJumpCheck' => True,
             'isOrder' => False,
@@ -180,7 +180,7 @@ class TrainStatus {
             'btnColor' => 'danger'
         ),
         self::RFD_AGREE => array(
-            'des' => array('user' => '正在退款'),
+            'des' => array('user' => '等待退款'),
             'str' => 'RfdAgree',
             'isJumpCheck' => True,
             'isOrder' => False,
