@@ -142,12 +142,11 @@ class ProviderCNBOOKING{
                 Q::log($ret, 'Provider.CNBOOKING.Error');
             }else $return['rc'] = RC::RC_SUCCESS;
         }else Q::log('', 'Provider.CNBOOKING.Response.None');
+        unset($ret);
         return $return;
     }
     
     public static function addXMLShell($actionName, $xml, $scrollingInfo = array('DisplayReq'=>40, 'PageNo'=>1, 'PageItems'=>'50')) {
-        $sequenceID = Q::getUniqueID();
-        $dateTime = date('Y-m-d H:i:s', Q_TIME);
         $xml = str_replace(array("\n", "\r\r", "\t", '    '), '', $xml);
         $AppId = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['AppId'];
         $SecurityKey = QEnv::$providers[Dict::BUSINESS_HOTEL]['CNBOOKING']['SecurityKey'];

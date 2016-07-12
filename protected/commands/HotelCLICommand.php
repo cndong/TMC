@@ -4,7 +4,7 @@ class HotelCLICommand extends CConsoleCommand {
     
     //更新所有酒店(遍历城市) /dragon/bin/php-5.3.28/bin/php /dragon/webapp/tmc/ScriptCLI.php HotelCLI updatehotels
     public function actionUpdateHotels() {
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '1024M');
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
         $cityList = DataHotelCity::getCities();
@@ -12,7 +12,7 @@ class HotelCLICommand extends CConsoleCommand {
         //Q::log($cityList, 'Hotel._UpdateHotel.$cityList');
         foreach ($cityList as $city) {
             echo "{$city['cityCode']}  "." \n";
-            //if($city['cityCode']<1701) continue;
+            //if($city['cityCode']=='121000001'||$city['cityCode']<2503) continue;
             $searchEnd = false;
             for($pageNo=1; $pageNo<100; $pageNo++){
                 if($searchEnd) break;
@@ -29,7 +29,6 @@ class HotelCLICommand extends CConsoleCommand {
                       }else Q::realtimeLog($res, 'Hotel.HotelSearch.UpdateHotels.Hotels.None');
                  }else $searchEnd = true;
             }
-            
             echo "OK \n";
         }
     }
@@ -39,7 +38,7 @@ class HotelCLICommand extends CConsoleCommand {
         ignore_user_abort(); //忽略用户影响
         set_time_limit(0); //连续运行
         $time = time() - 24 * 3600;
-        $hotelsAR = Hotel::model() ->findAll(array(
+        $hotelsARs = Hotel::model() ->findAll(array(
                                 'select' => array( 'hotelId'),
                                 'condition' => "utime < {$time}",
                                 'limit'=>10,
@@ -52,10 +51,11 @@ class HotelCLICommand extends CConsoleCommand {
             $hotels[] = $hotelObj;
         } */
         echo 'go!----------'.date('m-d H:i:s').'----------';
-        $allLowPrice = Hotel::getAllLowPrice($hotelsAR, array('checkIn'=>date('Y-m-d'), 'checkOut'=>date('Y-m-d', strtotime('+1 day'))));
-        foreach ($hotelsAR as $hotel) {
+        $allLowPrice = Hotel::getAllLowPrice($hotelsARs, array('checkIn'=>date('Y-m-d'), 'checkOut'=>date('Y-m-d', strtotime('+1 day'))));
+        foreach ($hotelsARs as $hotel) {
             $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time()));
         }
+        Q::realtimeLog($allLowPrice, 'Hotel.UpdateHotelPrice');
         var_dump($allLowPrice);
         echo 'end----------'.date('m-d H:i:s').'----------'."\n"."\n";
     }
