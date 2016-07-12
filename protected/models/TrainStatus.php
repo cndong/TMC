@@ -153,7 +153,7 @@ class TrainStatus {
             'userStatus' => array(self::APPLY_RFD)
         ),
         self::APPLY_RFD => array(
-            'des' => array('user' => '申请退票'),
+            'des' => array('user' => '已申请退票'),
             'str' => 'ApplyRfd',
             'isJumpCheck' => True,
             'isOrder' => False,
@@ -162,7 +162,7 @@ class TrainStatus {
             'sysHdStatus' => array(self::RFD_PUSHED)
         ),
         self::RFD_PUSHED => array(
-            'des' => array('user' => '申请退票', 'admin' => '申请退票，待推送'),
+            'des' => array('user' => '已申请退票', 'admin' => '申请退票，待推送'),
             'str' => 'RfdPushed',
             'isJumpCheck' => True,
             'isOrder' => False,
