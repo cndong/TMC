@@ -70,8 +70,7 @@ class HotelController extends ApiController {
         $rtn = array();
         foreach ($hotels as $hotel) {
             $hotelArray = $hotel->getAttributes(array('hotelId', 'hotelName', 'address', 'star', 'image', 'lowPrice'));
-            $path = "/static/images/pc/hotel/{$hotel->hotelId}.jpg";
-            $hotelArray['image'] = 'http://'.Q_HOST.(is_file(Q_ROOT_PATH.$path) ? $path : '/static/images/api/defaultHotel_MainImage.jpg');
+            $hotelArray['image'] = $hotel->getMainImage();
             foreach (Hotel::$starArray as  $key => $stars){
                 foreach ($stars as $star){
                     if($hotelArray['star'] == $star) {
@@ -94,14 +93,13 @@ class HotelController extends ApiController {
                 ))))
             $this->errAjax(RC::RC_VAR_ERROR);
         
-        $hotel = Hotel::model()->findByPK($params['hotelId']);
-        if(!$hotel) $this->errAjax(RC::RC_H_HOTEL_NOT_EXISTS);
+        $hotelAR = Hotel::model()->findByPK($params['hotelId']);
+        if(!$hotelAR) $this->errAjax(RC::RC_H_HOTEL_NOT_EXISTS);
         else{
-             $hotel = $hotel->attributes;
+             $hotel = $hotelAR->attributes;
              
              //图片
-             $path = "/static/images/pc/hotel/{$params['hotelId']}.jpg";
-             $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' =>'http://'.Q_HOST.(is_file(Q_ROOT_PATH.$path) ? $path : '/static/images/api/defaultHotel_MainImage.jpg'));
+             $mainImage = array('ImageId'=>rand(90000, 999999), 'ImageName'=>'主图', 'ImageUrl' =>$hotelAR->getMainImage());
              $hotel['images'] = array($mainImage);
              $hotelImages = HotelImage::model()->findAll("hotelId={$params['hotelId']}");
              foreach ($hotelImages as $hotelImage) {
