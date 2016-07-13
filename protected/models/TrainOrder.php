@@ -596,7 +596,7 @@ class TrainOrder extends QActiveRecord {
             }
         }
         
-        return F::corReturn(array('params' => array('pickNo' => $params['pickNo'])));
+        return F::corReturn(array('params' => array('pickNo' => $params['pickNo'], 'orderPrice' => $totalTicketPrice + $this->insurePrice + $this->invoicePrice)));
     }
     
     private function _cS2ApplyRfdBefore($params) {
