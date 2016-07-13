@@ -30,7 +30,7 @@ class ParamsFormat {
     const U_ID = '/^\d{6,7}$/';
     const M_ID = 'array("Merchant", "isMerchantID")';
     const UNAME = '/^.{1,50}$/';
-    const CARD_NO = '/^[a-zA-Z0-9]{5,18}$/';
+    const CARD_NO = '/^[a-zA-Z0-9]{9,18}$/';
     const CARD_NO_ID = '/^\d{6}(19|20)\d2[01][0-3]\d{4}[\d|x|X]$/';
     const ORDER_ID_U = '/^[A-Z0-9]{15}$/';
     const M_ORDER_ID = '/^\w{5,32}$/';
