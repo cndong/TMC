@@ -47,6 +47,16 @@ class TrainOrder extends QActiveRecord {
         return $rtn;
     }
     
+    public function isCanRefunded() {
+        foreach ($this->tickets as $ticket) {
+            if ($ticket->status == TrainStatus::RFD_AGREE) {
+                return True;
+            }
+        }
+        
+        return False;
+    }
+    
     private static function _getCreateOrderFormats() {
         return array(
             'merchantID' => ParamsFormat::M_ID,
@@ -693,6 +703,45 @@ class TrainOrder extends QActiveRecord {
         }
         
         $this->tickets = TrainTicket::model()->findAllByAttributes(array('orderID' => $this->id));
+        
+        return F::corReturn(array('params' => array('status' => $this->status)));
+    }
+    
+    private function _cS2RfdedBefore($params) {
+        if (!F::checkParams($params, array('tickets' => ParamsFormat::ISARRAY)) || count($params['tickets']) <= 0) {
+            return F::errReturn(RC::RC_VAR_ERROR);
+        }
+        
+        $tickets = F::arrayAddField($this->tickets, 'id');
+        $totalRefundPrice = 0;
+        $passengers = array();
+        foreach ($params['tickets'] as $ticketID => $refundPrice) {
+            if (empty($tickets[$ticketID])) {
+                return F::errReturn(RC::RC_VAR_ERROR);
+            }
+        
+            $ticket = $tickets[$ticketID];
+            if (!in_array($ticket->status, TrainStatus::getCanRefundedTicketStatus())) {
+                return F::errReturn(RC::RC_STATUS_ERROR);
+            }
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
+            $passengerTypeName = Dict::$passengerTypes[$passenger['type']]['name'];;
+            $passengers[] = "{$passenger['name']}({$passengerTypeName})";
+        
+            $refundPrice *= 100;
+            if (!TrainTicket::model()->updateByPk($ticket->id, array('status' => TrainStatus::RFDED, 'refundPrice' => $refundPrice), 'status=:status', array(':status' => $ticket->status))) {
+                return F::errReturn(RC::RC_STATUS_TICKET_CHANGE_ERROR);
+            }
+        
+            $totalRefundPrice += $refundPrice;
+        }
+        
+        if (!$this->isPrivate) {
+            $info = array('orderID' => $this->id, 'departmentName' => $this->department->name, 'userName' => $this->user->name, 'passengers' => implode('、', $passengers));
+            if (!F::isCorrect($res = $this->company->changeFinance(CompanyFinanceLog::TYPE_REFUND, $this, 0, $totalRefundPrice, $info))) {
+                return $res;
+            }
+        }
         
         return F::corReturn(array('params' => array('status' => $this->status)));
     }

@@ -56,7 +56,9 @@
                 ?>
             </td>
             <td rowspan="3" class="text-center">
-                <?php //echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-sm btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . TrainStatus::RFDED . '" data-status-str="' . TrainStatus::$trainStatus[TrainStatus::RFDED]['str'] . '">退款成功</button>' : '无'; ?>
+                <?php 
+                    echo $data->isCanRefunded() ? '<button class="c_change_status btn btn-sm btn-danger btn-sm" data-is-handle="0" data-order-id="' . $data->id . '" data-status="' . TrainStatus::RFDED . '" data-status-str="' . TrainStatus::$trainStatus[TrainStatus::RFDED]['str'] . '">退款成功</button>' : '无';
+                ?>
             </td>
         </tr>
         <tr>

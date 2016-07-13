@@ -45,9 +45,46 @@ class TrainController extends BossController {
         }
         
         $finances = CompanyFinanceLog::model()->findAllByAttributes(array('orderID' => $order->id), array('order' => 'id DESC'));
-        $logs = Log::model()->findAllByAttributes(array('orderID' => $order->id, 'type' => Dict::BUSINESS_FLIGHT), array('order' => 'id DESC'));
+        $logs = Log::model()->findAllByAttributes(array('orderID' => $order->id, 'type' => Dict::BUSINESS_TRAIN), array('order' => 'id DESC'));
         
         $rtn = array('html' => $this->renderPartial('_orderDetail', array('order' => $order, 'finances' => $finances, 'logs' => $logs), True));
         $this->corAjax($rtn);
+    }
+    
+    public function actionGetChangeStatusHtml() {
+        if (!($params = F::checkParams($_GET, array('orderID' => ParamsFormat::INTNZ, 'status' => ParamsFormat::F_STATUS)))) {
+            $this->errAjax(RC::RC_VAR_ERROR);
+        }
+        
+        if (!($order = TrainOrder::model()->findByPk($params['orderID']))) {
+            $this->errAjax(RC::RC_ORDER_NOT_EXISTS);
+        }
+        
+        $statusStr = TrainStatus::$trainStatus[$params['status']]['str'];
+        $func = '_cS2' . $statusStr . 'Html';
+        if (!method_exists($this, $func)) {
+            $this->errAjax(RC::RC_ERROR);
+        }
+        
+        $this->corAjax(array('html' => $this->$func($order)));
+    }
+    
+    private function _cS2RfdedHtml($order) {
+        $rtn = '<div class="row"><div class="col-sm-4 text-right"><span class="checkbox">退款乘客</span></div><div class="col-sm-6">';
+        foreach ($order->tickets as $ticket) {
+            if ($ticket->status != TrainStatus::RFD_AGREE) {
+                continue;
+            }
+            
+            $passenger = UserPassenger::parsePassenger($ticket->passenger);
+            $ticketTypeName = Dict::$passengerTypes[$passenger['type']]['name'];
+            $passengerName = "{$passenger['name']}({$ticketTypeName})";
+            $refundPrice = $ticket->refundPrice;
+            
+            $rtn .= "<div class='checkbox form-inline'><label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passengerName}' data-refund-price='{$refundPrice}' />{$passengerName}</label></div>";
+        }
+        $rtn .= '</div></div>';
+        
+        return $rtn;
     }
 }
