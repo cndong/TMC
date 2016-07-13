@@ -10,6 +10,9 @@ $stations = ProviderT::getStationList();
 $routeTypes = $order->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
 foreach ($routeTypes as $routeType) {
     $route = $routes[$routeType];
+    if (empty($route->tickets)) {
+        continue;
+    }
 ?>
 <div class="panel panel-danger">
     <div class="panel-heading text-center"><?php echo "{$stations[$route->departStationCode]['name']}-{$stations[$route->arriveStationCode]['name']}"; ?></div>
