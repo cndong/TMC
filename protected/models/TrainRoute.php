@@ -16,4 +16,10 @@ class TrainRoute extends QActiveRecord {
             array('id, orderID, isBack, departStationCode, arriveStationCode, departTime, arriveTime, trainNo, seatType, ticketPrice, ctime, utime', 'safe', 'on' => 'search'),
         );
     }
+    
+    public function relations() {
+        return array(
+            'tickets' => array(self::HAS_MANY, 'TrainTicket', 'routeID')
+        );
+    }
 }

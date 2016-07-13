@@ -6,51 +6,37 @@
 <?php } ?>
 <?php 
 $routes = $order->getRoutes();
-$cities = ProviderF::getCNCityList();
-$airports = ProviderF::getCNAirportList();
-$classifyTickets = FlightCNOrder::classifyTickets($order->tickets, 'segmentID');
+$stations = ProviderT::getStationList();
 $routeTypes = $order->isRound ? array('departRoute', 'returnRoute') : array('departRoute');
 foreach ($routeTypes as $routeType) {
-    $routeTypeName = $routeType == 'departRoute' ? '去' : '返';
-    foreach ($routes[$routeType]['segments'] as $segment) {
-        if (empty($classifyTickets[$segment->id])) {
-            continue;
-        }
+    $route = $routes[$routeType];
 ?>
 <div class="panel panel-danger">
-    <div class="panel-heading text-center"><?php echo "{$cities[$segment['departCityCode']]['cityName']}({$airports[$segment['departAirportCode']]['airportName']})-{$cities[$segment['arriveCityCode']]['cityName']}({$airports[$segment['arriveAirportCode']]['airportName']})-{$routeTypeName}"; ?></div>
+    <div class="panel-heading text-center"><?php echo "{$stations[$route->departStationCode]['name']}-{$stations[$route->arriveStationCode]['name']}"; ?></div>
     <div class="panel-body">
         <table class="table table-striped table-bordered table-hover">
             <tr>
-                <th>乘客姓名</th>
+                <th>乘客</th>
                 <th>票种</th>
-                <th>PNR</th>
                 <th>票号</th>
+                <th>坐席</th>
                 <th>票价</th>
-                <th>机建</th>
-                <th>燃油</th>
-                <th>改签手续费</th>
-                <th>退票手续费</th>
-                <th>退款金额</th>
+                <th>退款</th>
                 <th>保险</th>
                 <th>状态</th>
             </tr>
 <?php
-        foreach ($segment->tickets as $ticket) {
+        foreach ($route->tickets as $ticket) {
             $passenger = UserPassenger::parsePassenger($ticket->passenger);
             echo '<tr>';
             echo "<td>{$passenger['name']}</td>";
-            echo '<td>', DictFlight::$ticketTypes[$passenger['type']]['name'], '</td>';
-            echo '<td>', empty($ticket->smallPNR) ? '--' : $ticket->smallPNR, '</td>';
-            echo '<td>', empty($ticket->ticketNo) ? '--' : $ticket->ticketNo, '</td>';
-            echo '<td>', $ticket->ticketPrice / 100, '/', $ticket->realTicketPrice / 100, '</td>';
-            echo '<td>', $ticket->airportTax / 100, '</td>';
-            echo '<td>', $ticket->oilTax / 100, '</td>';
-            echo '<td>', $ticket->resignHandlePrice / 100, '/', $ticket->realResignHandlePrice / 100, '</td>';
-            echo '<td>', $ticket->refundHandlePrice / 100, '/', $ticket->realRefundHandlePrice / 100, '</td>';
-            echo '<td>', $ticket->refundPrice / 100, '</td>';
+            echo '<td>', Dict::$passengerTypes[$passenger['type']]['name'], '</td>';
+            echo '<td>', $ticket->ticketNo, '</td>';
+            echo '<td>', $ticket->ticketInfo, '</td>';
+            echo '<td>', $ticket->ticketPrice / 100, '</td>';
+            echo '<td>', empty($ticket->refundPrice) ? 0 : $ticket->refundPrice / 100, '</td>';
             echo '<td>', $ticket->insurePrice / 100, '</td>';
-            echo '<td>', FlightStatus::getAdminDes($ticket->status), '</td>';
+            echo '<td>', TrainStatus::getAdminDes($ticket->status), '</td>';
             echo '</tr>';
 ?>
 <?php
@@ -60,7 +46,6 @@ foreach ($routeTypes as $routeType) {
     </div>
 </div>
 <?php 
-    }
 }
 ?>
 <?php if (!empty($finances)) { ?>
@@ -105,7 +90,7 @@ foreach ($routeTypes as $routeType) {
                     $info = json_decode($log->info, True);
             ?>
             <tr>
-                <td><?php echo FlightStatus::getAdminDes($info['status'])?></td>
+                <td><?php echo TrainStatus::getAdminDes($info['status'])?></td>
                 <td><?php echo $info['isSucc'] ? '是' : '否'; ?></td>
                 <td><?php echo date('Y-m-d H:i:s', $log->ctime); ?></td>
             </tr>

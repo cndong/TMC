@@ -1,14 +1,5 @@
 $(function() {
 	_$.extend({
-		formats: _$.mergeParams(_$.formats, {
-			"F_FLIGHT_NO": /^[A-Z0-9]{5,6}$/,
-			"F_AIRLINE_CODE": /^[A-Z]{2}$/,
-			"F_CRAFT_CODE": /^[A-Z0-9]{3}$/,
-			"F_CABIN": /^[A-Z]\d?$/,
-			"F_PNR": /^[A-Z0-9]{6}$/,
-			"F_TICKET_NO": /^\d{3}-\d{10}$/,
-			"F_TERM": /^(T\d)|(--)$/,
-		}),
 		changeStatusUrl: "/boss/train/changeStatus",
 		changeStatusRequest: function(params) {
 			if (typeof (params['_obj']) != "undefined") {
@@ -145,7 +136,7 @@ $(function() {
 			var rtn = '<div class="row">获取失败！</div>';
 			$.ajax({
 				type: "GET",
-				url: "/boss/flight/getOrderDetailHtml",
+				url: "/boss/train/getOrderDetailHtml",
 				data: {orderID: orderID},
 				dataType: "json",
 				async: false,

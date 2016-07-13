@@ -79,7 +79,7 @@ class TrainController extends BossController {
             $passenger = UserPassenger::parsePassenger($ticket->passenger);
             $ticketTypeName = Dict::$passengerTypes[$passenger['type']]['name'];
             $passengerName = "{$passenger['name']}({$ticketTypeName})";
-            $refundPrice = $ticket->refundPrice;
+            $refundPrice = $ticket->refundPrice / 100;
             
             $rtn .= "<div class='checkbox form-inline'><label><input type='checkbox' class='c_select_ticket' data-ticket-id='{$ticket->id}' data-passenger-name='{$passengerName}' data-refund-price='{$refundPrice}' />{$passengerName}</label></div>";
         }
