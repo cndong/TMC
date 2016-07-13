@@ -60,6 +60,11 @@ class Hotel extends QActiveRecord {
         );
     }
     
+    public function getMainImage(){
+        $path = "/static/images/pc/hotel/hotelImage/{$this->hotelId}.jpg";
+        return 'http://'.Q_HOST.(is_file(Q_ROOT_PATH.$path) ? $path : '/static/images/api/defaultHotel_MainImage.jpg');
+    }
+    
     static function load($hotelId, $cityId=''){
         $hotel = Hotel::model()->findByPK($hoteId);
         return $hotel ? $hotel : self::getHotelFromCity($hotelId, $cityId);
