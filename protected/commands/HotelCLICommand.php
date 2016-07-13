@@ -39,7 +39,7 @@ class HotelCLICommand extends CConsoleCommand {
         set_time_limit(0); //连续运行
         $time = time() - 24 * 3600;
         $hotelsARs = Hotel::model() ->findAll(array(
-                                'select' => array( 'hotelId'),
+                                'select' => array('hotelId'),
                                 'condition' => "utime < {$time}",
                                 'limit'=>10,
                         ));
@@ -53,7 +53,7 @@ class HotelCLICommand extends CConsoleCommand {
         echo 'go!----------'.date('m-d H:i:s').'----------';
         $allLowPrice = Hotel::getAllLowPrice($hotelsARs, array('checkIn'=>date('Y-m-d', strtotime('+1 day')), 'checkOut'=>date('Y-m-d', strtotime('+2 day'))));
         foreach ($hotelsARs as $hotel) {
-            $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time()));
+            $hotel->updateByPk($hotel->getPrimaryKey(), array('utime'=>time(), 'lowPrice'=>$allLowPrice[$hotel->hotelId]));
         }
         Q::realtimeLog($allLowPrice, 'Hotel.UpdateHotelPrice');
         var_dump($allLowPrice);

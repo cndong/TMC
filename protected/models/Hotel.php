@@ -50,7 +50,7 @@ class Hotel extends QActiveRecord {
     
     public function rules() {
         return array(
-            array('hotelId, ctime, utime', 'numerical', 'integerOnly' => True),
+            array('hotelId, ctime, utime, lowPrice', 'numerical', 'integerOnly' => True),
             array('hotelName, telephone', 'length', 'max' => 64),
             array('countryId, provinceId, cityId', 'length', 'max' => 4),
             array('address, image', 'length', 'max' => 255),
