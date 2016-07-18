@@ -35,8 +35,7 @@ class HotelCLICommand extends CConsoleCommand {
     
     // D:/xampp/php/php.exe D:/www/TMC/ScriptCLI.php HotelCLI UpdateHotelPrice
     public function actionUpdateHotelPrice() {
-        ignore_user_abort(); //忽略用户影响
-        set_time_limit(0); //连续运行
+        set_time_limit(45);
         $time = time() - 24 * 3600;
         $hotelsARs = Hotel::model() ->findAll(array(
                                 'select' => array('hotelId'),
