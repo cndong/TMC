@@ -487,4 +487,16 @@ class F {
    		return $tempArray;
    }
     
+   public static function array_sort_inKey($arrays,$sort_key,$sort_order=SORT_ASC,$sort_type=SORT_NUMERIC ){
+       $key_arrays  = array();
+       if(is_array($arrays)){
+           foreach ($arrays as $array){
+               $key_arrays[] = $array[$sort_key];
+           }
+       }else{
+           return false;
+       }
+       array_multisort($key_arrays,$sort_order,$sort_type,$arrays);
+       return $arrays;
+   }
 }

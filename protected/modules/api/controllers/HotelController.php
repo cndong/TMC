@@ -2,7 +2,8 @@
 class HotelController extends ApiController {
     public function actionCityList() {
         $rtn = array('cityList' => array(), 'hotList' => array());
-        $cityList = DataHotelCity::getCities();
+        $oldCityList = $cityList = DataHotelCity::getCities();
+        $cityList = F::array_sort_inKey($cityList, 'citySpell', SORT_ASC, SORT_REGULAR);
         foreach ($cityList as &$city) {
             unset($city['CountryId']);
             unset($city['CountryName']);
@@ -20,7 +21,7 @@ class HotelController extends ApiController {
         }
         
         $rtn['cityList'] = array_values($rtn['cityList']);
-        $rtn['hotList'] = array_values(F::arrayGetByKeys($cityList, array('0101', '0201', '2003')));
+        $rtn['hotList'] = array_values(F::arrayGetByKeys($oldCityList, array('0101', '0201', '2003')));
         $this->corAjax($rtn);
     }
     
